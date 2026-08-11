@@ -18,6 +18,9 @@ dotenv.config();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
+// Behind Render's Cloudflare edge: trust X-Forwarded-For so rate limits are
+// counted per real visitor IP, not per shared edge IP.
+app.set("trust proxy", 1);
 const PORT = process.env.PORT || 5000;
 const UPLOAD_DIR = path.join(__dirname, "uploads");
 
@@ -76,10 +79,11 @@ app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 // 4) Global rate limit: generous per-IP cap for normal API use
 app.use("/api", rateLimit({ windowMs: 60_000, limit: 120, standardHeaders: "draft-8", legacyHeaders: false }));
-// 5) Strict auth rate limit: block brute-force / credential stuffing at login & register
+// 5) Auth rate limit: generous per-visitor cap (real client IPs) to stop
+//    brute-force without blocking a whole classroom behind one NAT/edge IP
 const authLimiter = rateLimit({
   windowMs: 15 * 60_000,
-  limit: 10,
+  limit: 40,
   standardHeaders: "draft-8",
   legacyHeaders: false,
   handler: (req, res) => res.status(429).json({ error: "Too many login attempts. Please wait a few minutes and try again." }),
