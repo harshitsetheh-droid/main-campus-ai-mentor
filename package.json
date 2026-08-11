@@ -1,0 +1,9 @@
+{
+  "name": "campus-ai-mentor",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "cd backend && npm install && cd ../react && npm install && npm run build",
+    "start": "cd backend && node src/server.js"
+  }
+}
