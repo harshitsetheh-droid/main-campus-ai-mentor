@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ScreenType } from '../types';
 import {
   Target, Users, Bell, Plus, Rocket, Sparkles, X, Check, ExternalLink,
-  ChevronRight, TrendingUp, Award, FileText, FolderGit2, ArrowRight, Pencil
+  ChevronRight, TrendingUp, Award, FileText, FolderGit2, ArrowRight, Pencil, AlertTriangle
 } from 'lucide-react';
 import { api, DashboardResponse, DashboardProject, Notification, ProjectSuggestion } from '../api';
 
@@ -462,6 +462,16 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ onNavigate }) 
                 {project.recommendedByAi && (
                   <span className="absolute top-3 left-3 bg-[#5b5fef]/90 text-white px-2 py-0.5 rounded-full text-[10px] font-bold flex items-center gap-1">
                     <Sparkles className="w-3 h-3" /> AI Recommended
+                  </span>
+                )}
+                {!project.recommendedByAi && project.aiVerified === false && (
+                  <span className="absolute top-3 left-3 bg-rose-600/90 text-white px-2 py-0.5 rounded-full text-[10px] font-bold flex items-center gap-1" title={project.aiVerification}>
+                    <AlertTriangle className="w-3 h-3" /> Not Verified
+                  </span>
+                )}
+                {!project.recommendedByAi && project.aiVerified !== false && (
+                  <span className="absolute top-3 left-3 bg-emerald-600/80 text-white px-2 py-0.5 rounded-full text-[10px] font-bold flex items-center gap-1" title={project.aiVerification || 'AI verified this project'}>
+                    <Check className="w-3 h-3" /> AI Verified
                   </span>
                 )}
                 <span className="absolute top-3 right-3 bg-[#007c96]/80 text-[#edf9ff] px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider">

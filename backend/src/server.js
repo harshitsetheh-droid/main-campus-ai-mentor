@@ -1240,6 +1240,29 @@ app.get("/api/resume/analysis/:num", requireAuth, async (req, res) => {
   }
 });
 
+app.delete("/api/resume/:num", requireAuth, async (req, res) => {
+  try {
+    const num = parseInt(req.params.num, 10);
+    if (!num || num < 1) return res.status(400).json({ error: "Invalid resume number" });
+    const r = await pool.query(
+      "SELECT file_path FROM resumedocs WHERE user_id=$1 AND resume_no=$2 ORDER BY id DESC LIMIT 1",
+      [req.userId, num]
+    );
+    if (r.rowCount === 0) return res.status(404).json({ error: "Resume not found" });
+    const filePath = r.rows[0].file_path;
+    await pool.query("DELETE FROM resume_analysis WHERE user_id=$1 AND resume_no=$2", [req.userId, num]);
+    await pool.query("DELETE FROM resumedocs WHERE user_id=$1 AND resume_no=$2", [req.userId, num]);
+    // remove the physical file from disk if it exists
+    const abs = path.join(UPLOAD_DIR, String(filePath || "").replace(/^\/uploads\//, ""));
+    if (filePath && abs.startsWith(UPLOAD_DIR) && fs.existsSync(abs)) {
+      try { fs.unlinkSync(abs); } catch { /* ignore */ }
+    }
+    res.json({ success: true });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
 // ---------------------------------------------------------------------------
 // RESUME GENERATION (one-page PDF from live profile data)
 // ---------------------------------------------------------------------------
@@ -1403,6 +1426,8 @@ app.get("/api/dashboard", requireAuth, async (req, res) => {
         status: p.status,
         progress: p.progress,
         recommendedByAi: p.recommended_by_ai,
+        aiVerified: p.ai_verified,
+        aiVerification: p.ai_verification || '',
         imageUrl: p.image_url,
         level: p.level,
       })),
@@ -1417,14 +1442,69 @@ app.get("/api/dashboard", requireAuth, async (req, res) => {
 // ---------------------------------------------------------------------------
 // PROJECTS
 // ---------------------------------------------------------------------------
+// AI verification for manually added projects: checks whether the project is
+// real and portfolio-worthy or just filler ("time pass"). Falls back to
+// { verified: true } with a neutral note when Gemini is unavailable.
+async function verifyProjectWithAi(title, description, repoUrl) {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    return { verified: true, verdict: "", reason: "AI verification unavailable (no API key)" };
+  }
+  try {
+    const ai = new GoogleGenAI({ apiKey });
+    const call = ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: [{
+        role: "user",
+        parts: [{
+          text:
+            `You are a strict project validator for a college student portfolio platform (CampusAI Mentor, MBM University).\n` +
+            `The student manually added this project:\n` +
+            `- Title: "${title}"\n` +
+            `- Description: "${description || ""}"\n` +
+            `- GitHub/repo link: "${repoUrl || ""}"\n\n` +
+            `Decide if this is a REAL, portfolio-worthy project or filler/time-pass (vague, trivial, or fake entries like "tic tac toe", "todo list" without substance are SUSPICIOUS; projects with clear scope, tech, and outcomes are REAL).\n` +
+            `Return ONLY a JSON object (no markdown) in this exact shape:\n` +
+            `{"verified": true|false, "reason": "one sentence explaining the verdict"}` +
+            `\nBe conservative but fair: a short but concrete project can still be real. Reject only clearly fake/trivial/filler entries.`
+        }],
+      }],
+    });
+    const resp = await Promise.race([
+      call,
+      new Promise((_, reject) => setTimeout(() => reject(new Error("Gemini timed out")), 15000)),
+    ]);
+    const text = resp.candidates?.[0]?.content?.parts?.[0]?.text || "";
+    const m = text.match(/\{[\s\S]*\}/);
+    if (!m) return { verified: true, verdict: "", reason: "AI could not parse verdict" };
+    const parsed = JSON.parse(m[0]);
+    return {
+      verified: parsed.verified !== false,
+      verdict: parsed.verified !== false ? "verified" : "rejected",
+      reason: String(parsed.reason || "").trim(),
+    };
+  } catch (err) {
+    console.error("Project AI verification error:", err.message);
+    return { verified: true, verdict: "", reason: "AI verification failed - treated as valid" };
+  }
+}
+
 app.post("/api/dashboard/projects", requireAuth, async (req, res) => {
   try {
     const { title, description, repoUrl, level, status, recommendedByAi, progress } = req.body;
     if (!title) return res.status(400).json({ error: "Project title is required" });
+    let aiVerified = true;
+    let aiReason = "";
+    // AI-recommended projects are trusted; only manually added ones get checked
+    if (!recommendedByAi) {
+      const check = await verifyProjectWithAi(title, description, repoUrl);
+      aiVerified = check.verified;
+      aiReason = check.reason || "";
+    }
     const ins = await pool.query(
-      `INSERT INTO projects (user_id, title, description, repo_url, level, status, progress, recommended_by_ai)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id`,
-      [req.userId, title, description || "", repoUrl || "", level || "Beginner", status || "ongoing", progress || 0, !!recommendedByAi]
+      `INSERT INTO projects (user_id, title, description, repo_url, level, status, progress, recommended_by_ai, ai_verified, ai_verification)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING id, ai_verified, ai_verification`,
+      [req.userId, title, description || "", repoUrl || "", level || "Beginner", status || "ongoing", progress || 0, !!recommendedByAi, aiVerified, aiReason]
     );
     res.json(ins.rows[0]);
   } catch (err) {

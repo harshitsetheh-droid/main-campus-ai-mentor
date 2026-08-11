@@ -88,6 +88,14 @@ CREATE TABLE IF NOT EXISTS projects (
   level TEXT NOT NULL DEFAULT 'Beginner'
 );
 
+-- AI verification columns for manually added projects (added later by migration)
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS repo_url TEXT NOT NULL DEFAULT '';
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'ongoing';
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS progress INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS recommended_by_ai BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS ai_verified BOOLEAN NOT NULL DEFAULT TRUE;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS ai_verification TEXT NOT NULL DEFAULT '';
+
 -- Peer comparison skill benchmarks
 CREATE TABLE IF NOT EXISTS skill_benchmarks (
   id SERIAL PRIMARY KEY,

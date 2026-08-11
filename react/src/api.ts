@@ -199,6 +199,8 @@ export interface DashboardProject {
   status: string;
   progress: number;
   recommendedByAi: boolean;
+  aiVerified?: boolean;
+  aiVerification?: string;
   imageUrl: string;
   level: string;
 }
@@ -343,6 +345,7 @@ export const api = {
   getResumes: () => getJson<{ resumes: ResumeRecord[] }>('/resume/list'),
   getResumeAnalysisByNo: (num: number) =>
     getJson<ResumeRecord>('/resume/analysis/' + num),
+  deleteResume: (num: number) => sendJson('/resume/' + num, 'DELETE'),
 
   // Chat
   getChatMessages: () => getJson<{ messages: { id: string; sender: string; text: string }[] }>('/chat/messages'),

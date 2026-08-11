@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { ScreenType } from '../types';
 import { 
   ChevronRight, CheckCircle, AlertCircle, 
-  TrendingUp, Download, Sparkles, FileText, ExternalLink
+  TrendingUp, Download, Sparkles, FileText, ExternalLink, Trash2
 } from 'lucide-react';
 import { api, ProfileResponse, ResumeAnalysis, ResumeRecord, SkillTopics } from '../api';
 
@@ -29,6 +29,28 @@ export const ResumeScreen: React.FC<ResumeScreenProps> = ({ onNavigate }) => {
     api.getResumes()
       .then(({ resumes }) => setResumeList(resumes))
       .catch((err) => console.error('Failed to load resume list', err));
+  };
+
+  const [deletingResumeNo, setDeletingResumeNo] = useState<number | null>(null);
+
+  const handleDeleteResume = async (r: ResumeRecord) => {
+    if (deletingResumeNo != null) return;
+    if (!window.confirm(`Delete resume #${r.resumeNo} ("${r.fileName}")? This cannot be undone.`)) return;
+    setDeletingResumeNo(r.resumeNo);
+    try {
+      await api.deleteResume(r.resumeNo);
+      loadResumeList();
+      if (uploadedResumeNo === r.resumeNo) {
+        setUploadedFileName(null);
+        setUploadedResumeNo(null);
+        setUploadedFileUrl(null);
+      }
+    } catch (err) {
+      console.error('Failed to delete resume', err);
+      window.alert('Failed to delete resume. Please try again.');
+    } finally {
+      setDeletingResumeNo(null);
+    }
   };
 
   useEffect(() => {
@@ -421,24 +443,40 @@ export const ResumeScreen: React.FC<ResumeScreenProps> = ({ onNavigate }) => {
         {resumeList.length ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {resumeList.map((r) => (
-              <a
+              <div
                 key={r.resumeNo}
-                href={r.filePath}
-                target="_blank"
-                rel="noreferrer"
                 className="group flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-[#c0c1ff]/50 hover:bg-[#5b5fef]/10 transition-all"
               >
-                <span className="shrink-0 w-9 h-9 rounded-lg bg-[#5b5fef]/20 text-[#c0c1ff] text-sm font-extrabold flex items-center justify-center">
-                  {r.resumeNo}
-                </span>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-white truncate">{r.fileName}</p>
-                  <p className="text-[11px] text-[#c6c5d7]">
-                    {r.atsScore != null ? `ATS ${r.atsScore}/100` : 'Not analyzed'}
-                  </p>
-                </div>
-                <ExternalLink className="w-4 h-4 text-[#c6c5d7] group-hover:text-[#3cd7ff] shrink-0" />
-              </a>
+                <a
+                  href={r.filePath}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-3 flex-1 min-w-0"
+                >
+                  <span className="shrink-0 w-9 h-9 rounded-lg bg-[#5b5fef]/20 text-[#c0c1ff] text-sm font-extrabold flex items-center justify-center">
+                    {r.resumeNo}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-white truncate">{r.fileName}</p>
+                    <p className="text-[11px] text-[#c6c5d7]">
+                      {r.atsScore != null ? `ATS ${r.atsScore}/100` : 'Not analyzed'}
+                    </p>
+                  </div>
+                  <ExternalLink className="w-4 h-4 text-[#c6c5d7] group-hover:text-[#3cd7ff] shrink-0" />
+                </a>
+                <button
+                  onClick={() => handleDeleteResume(r)}
+                  disabled={deletingResumeNo != null}
+                  title={`Delete resume #${r.resumeNo}`}
+                  className="shrink-0 w-8 h-8 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-400 flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all cursor-pointer disabled:opacity-50"
+                >
+                  {deletingResumeNo === r.resumeNo ? (
+                    <div className="w-3.5 h-3.5 border-2 border-rose-400 border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <Trash2 className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
             ))}
           </div>
         ) : (
