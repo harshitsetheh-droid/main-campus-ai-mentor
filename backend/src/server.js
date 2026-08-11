@@ -1,5 +1,4 @@
 import express from "express";
-import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import path from "path";
@@ -50,21 +49,28 @@ app.use(
     crossOriginResourcePolicy: false, // allow browser to load uploaded images cross-origin
   })
 );
-// 2) CORS: lock down to known origins instead of "*"
+// 2) CORS: allow configured origins AND same-origin requests. The browser
+//    sends an Origin header for every <script>/<link crossorigin> subresource,
+//    so same-origin must be accepted or the deployed frontend refuses to load.
 const allowedOrigins = (process.env.CORS_ORIGINS || "http://localhost:5173,http://localhost:5000")
   .split(",")
   .map((s) => s.trim())
   .filter(Boolean);
-app.use(
-  cors({
-    origin(origin, cb) {
-      // Allow same-origin / no-origin (curl, server-to-server) requests
-      if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
-      return cb(new Error("Not allowed by CORS"));
-    },
-    credentials: true,
-  })
-);
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (!origin) return next();
+  const host = req.headers.host || "";
+  const isSameOrigin = origin === `https://${host}` || origin === `http://${host}`;
+  if (isSameOrigin || allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization");
+    if (req.method === "OPTIONS") return res.sendStatus(204);
+    return next();
+  }
+  return res.status(403).json({ error: "Origin not allowed" });
+});
 // 3) Request body limits (prevent oversized payload DoS)
 app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true, limit: "1mb" }));
