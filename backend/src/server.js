@@ -13,6 +13,7 @@ import { GoogleGenAI } from "@google/genai";
 import PDFDocument from "pdfkit";
 import { cleanupDuplicateSkills } from "./skill-cleanup.js";
 import { searchKnowledgeBase, formatKnowledgeReply, notFoundAck } from "./knowledge-base.js";
+import { isStorageEnabled, isStoragePath, ensureResumeBucket, uploadBytes, readBytes, deleteObject } from "./storage.js";
 
 dotenv.config();
 
@@ -130,6 +131,23 @@ app.use("/uploads", (req, res, next) => {
   next();
 });
 
+// Stream files stored in Supabase Storage (survive server restarts)
+app.use("/storage/uploads", async (req, res) => {
+  try {
+    const key = String(req.path || "").replace(/^\/+/, "");
+    if (!key) return res.status(404).json({ error: "File not found" });
+    const buf = await readBytes(`/storage/uploads/${key}`);
+    const ext = path.extname(key).toLowerCase();
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader("Content-Disposition", `inline; filename="${path.basename(key)}"`);
+    res.setHeader("Content-Security-Policy", "default-src 'none'; sandbox");
+    res.type(MIME_BY_EXT[ext] || "application/octet-stream");
+    res.send(buf);
+  } catch (err) {
+    res.status(404).json({ error: "File not found" });
+  }
+});
+
 // ---------------------------------------------------------------------------
 // Helper: ensure schema on startup (idempotent dev bootstrap)
 // ---------------------------------------------------------------------------
@@ -174,6 +192,11 @@ app.post("/api/upload", requireAuth, async (req, res) => {
     const buf = Buffer.from(m[2], "base64");
     if (buf.length > 10 * 1024 * 1024) {
       return res.status(400).json({ error: "File is too large (max 10MB)" });
+    }
+    if (isStorageEnabled()) {
+      const key = `${req.userId}/${safeName}`;
+      const url = await uploadBytes(key, buf, meta || "application/octet-stream");
+      return res.json({ url });
     }
     fs.writeFileSync(filePath, buf);
     // serve images with a strict content-type so uploaded HTML/SVG can't execute as scripts
@@ -629,15 +652,20 @@ async function analyzeCertificate(filePath, userTitle) {
     return { verified: false, summary: "AI verification pending Gemini key", improvedSkill: "" };
   }
   try {
-    const abs = path.join(UPLOAD_DIR, filePath.replace(/^\/uploads\//, ""));
-    if (!fs.existsSync(abs)) {
-      return { verified: false, summary: "Certificate image not found on server", improvedSkill: "" };
+    let b64;
+    if (isStoragePath(filePath)) {
+      b64 = (await readBytes(filePath)).toString("base64");
+    } else {
+      const abs = path.join(UPLOAD_DIR, filePath.replace(/^\/uploads\//, ""));
+      if (!fs.existsSync(abs)) {
+        return { verified: false, summary: "Certificate image not found on server", improvedSkill: "" };
+      }
+      b64 = fs.readFileSync(abs).toString("base64");
     }
     const mime = filePath.toLowerCase().endsWith(".png") ? "image/png"
       : filePath.toLowerCase().endsWith(".jpg") || filePath.toLowerCase().endsWith(".jpeg") ? "image/jpeg"
       : filePath.toLowerCase().endsWith(".webp") ? "image/webp"
       : filePath.toLowerCase().endsWith(".pdf") ? "application/pdf" : "image/png";
-    const b64 = fs.readFileSync(abs).toString("base64");
     const ai = new GoogleGenAI({ apiKey });
     const prompt =
       `You are a strict, careful certificate verifier for CampusAI Mentor (MBM University). ` +
@@ -853,9 +881,16 @@ async function analyzeResume(uid, filePath) {
     return localResumeAnalysis(uid);
   }
   try {
-    const abs = path.join(UPLOAD_DIR, filePath.replace(/^\/uploads\//, ""));
-    if (!fs.existsSync(abs)) {
-      return { atsScore: 0, strengths: [], additions: [], summary: "Resume file not found on server", skills: [] };
+    let abs;
+    let b64;
+    if (isStoragePath(filePath)) {
+      b64 = (await readBytes(filePath)).toString("base64");
+    } else {
+      abs = path.join(UPLOAD_DIR, filePath.replace(/^\/uploads\//, ""));
+      if (!fs.existsSync(abs)) {
+        return { atsScore: 0, strengths: [], additions: [], summary: "Resume file not found on server", skills: [] };
+      }
+      b64 = fs.readFileSync(abs).toString("base64");
     }
     const lower = filePath.toLowerCase();
     const mime = lower.endsWith(".pdf") ? "application/pdf"
@@ -863,7 +898,6 @@ async function analyzeResume(uid, filePath) {
       : lower.endsWith(".jpg") || lower.endsWith(".jpeg") ? "image/jpeg"
       : lower.endsWith(".docx") ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
       : "application/pdf";
-    const b64 = fs.readFileSync(abs).toString("base64");
 
     // target role context for ATS scoring
     const prof = await pool.query("SELECT target_role, branch FROM profiles WHERE user_id = $1 LIMIT 1", [uid]);
@@ -1252,10 +1286,14 @@ app.delete("/api/resume/:num", requireAuth, async (req, res) => {
     const filePath = r.rows[0].file_path;
     await pool.query("DELETE FROM resume_analysis WHERE user_id=$1 AND resume_no=$2", [req.userId, num]);
     await pool.query("DELETE FROM resumedocs WHERE user_id=$1 AND resume_no=$2", [req.userId, num]);
-    // remove the physical file from disk if it exists
-    const abs = path.join(UPLOAD_DIR, String(filePath || "").replace(/^\/uploads\//, ""));
-    if (filePath && abs.startsWith(UPLOAD_DIR) && fs.existsSync(abs)) {
-      try { fs.unlinkSync(abs); } catch { /* ignore */ }
+    // remove the physical file from disk / storage if it exists
+    if (isStoragePath(filePath)) {
+      try { await deleteObject(filePath); } catch { /* ignore */ }
+    } else {
+      const abs = path.join(UPLOAD_DIR, String(filePath || "").replace(/^\/uploads\//, ""));
+      if (filePath && abs.startsWith(UPLOAD_DIR) && fs.existsSync(abs)) {
+        try { fs.unlinkSync(abs); } catch { /* ignore */ }
+      }
     }
     res.json({ success: true });
   } catch (err) {
@@ -2144,4 +2182,5 @@ if (fs.existsSync(reactDist)) {
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 CampusAI Mentor backend running on http://localhost:${PORT}`);
   ensureSchema();
+  ensureResumeBucket();
 });
