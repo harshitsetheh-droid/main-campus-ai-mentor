@@ -44,6 +44,21 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ onNavigate }) 
 
   useEffect(() => { loadDashboard(); }, []);
 
+  // Live notification polling: pick up achievements from other users without a manual refresh.
+  useEffect(() => {
+    const tick = () => {
+      api.getNotifications()
+        .then((res) => setData((prev) => (prev ? { ...prev, notifications: res.notifications } : prev)))
+        .catch(() => {});
+    };
+    const id = setInterval(tick, 20000);
+    window.addEventListener('focus', tick);
+    return () => {
+      clearInterval(id);
+      window.removeEventListener('focus', tick);
+    };
+  }, []);
+
   const handleSuggestProjects = async () => {
     setSuggestError('');
     setIsSuggesting(true);

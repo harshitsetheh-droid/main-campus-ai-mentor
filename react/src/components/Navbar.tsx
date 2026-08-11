@@ -125,7 +125,11 @@ export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onNavigate, onOpe
               <span className="hidden lg:inline">2-Min Demo</span>
             </button>
             
-            <button className="text-[#c0c1ff] hover:opacity-80 p-2 rounded-full transition-transform active:scale-95">
+            <button
+              onClick={() => onNavigate('dashboard', 'none')}
+              title="Notifications"
+              className="text-[#c0c1ff] hover:opacity-80 p-2 rounded-full transition-transform active:scale-95 cursor-pointer"
+            >
               <Bell className="w-5 h-5" />
             </button>
 
@@ -163,7 +167,11 @@ export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onNavigate, onOpe
               <span>2-Min Demo</span>
             </button>
 
-            <button className="text-[#c0c1ff] p-2 rounded-full">
+            <button
+              onClick={() => onNavigate('dashboard', 'none')}
+              title="Notifications"
+              className="text-[#c0c1ff] p-2 rounded-full cursor-pointer"
+            >
               <Bell className="w-5 h-5" />
             </button>
           </div>

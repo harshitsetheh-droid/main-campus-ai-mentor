@@ -88,6 +88,49 @@ const authLimiter = rateLimit({
   legacyHeaders: false,
   handler: (req, res) => res.status(429).json({ error: "Too many login attempts. Please wait a few minutes and try again." }),
 });
+// Per-username lockout: 3 wrong passwords -> that account can't be tried for 10 minutes.
+// (In-memory; fine for a single-instance college deployment.)
+const LOGIN_LOCK_MAX_FAILS = 3;
+const LOGIN_LOCK_MS = 10 * 60_000;
+const loginLocks = new Map(); // normalized identifier -> { fails, lockedUntil }
+function loginLockKey(identifier) {
+  return String(identifier || "").trim().toLowerCase();
+}
+function loginLockRemainingMins(key) {
+  if (loginLocks.size > 2000) {
+    const now = Date.now();
+    for (const [k, rec] of loginLocks) {
+      if (rec.lockedUntil) {
+        if (rec.lockedUntil <= now) loginLocks.delete(k);
+      } else if (now - rec.lastFail > LOGIN_LOCK_MS) {
+        loginLocks.delete(k); // stale failure counter (no activity for 10 min)
+      }
+    }
+  }
+  const rec = loginLocks.get(key);
+  if (!rec) return 0;
+  if (rec.lockedUntil > Date.now()) {
+    return Math.max(1, Math.ceil((rec.lockedUntil - Date.now()) / 60_000));
+  }
+  if (rec.lockedUntil) loginLocks.delete(key); // expired lock -> start fresh
+  return 0;
+}
+function recordLoginFailure(key) {
+  const now = Date.now();
+  let rec = loginLocks.get(key);
+  if (rec && rec.lockedUntil > now) return; // already locked
+  if (!rec) rec = { fails: 0, lockedUntil: 0 };
+  rec.fails += 1;
+  rec.lastFail = now;
+  if (rec.fails >= LOGIN_LOCK_MAX_FAILS) {
+    rec.lockedUntil = now + LOGIN_LOCK_MS;
+    rec.fails = 0;
+  }
+  loginLocks.set(key, rec);
+}
+function clearLoginLock(key) {
+  loginLocks.delete(key);
+}
 // 6) Upload route: stricter, larger limit only for the single upload endpoint
 app.use("/api/upload", express.json({ limit: "20mb" }), rateLimit({ windowMs: 60_000, limit: 10, standardHeaders: "draft-8", legacyHeaders: false }));
 
@@ -269,6 +312,13 @@ app.post("/api/auth/login", authLimiter, async (req, res) => {
   if (!identifier || !password) {
     return res.status(400).json({ error: "Please enter your username/email/roll number and password." });
   }
+  const lockKey = loginLockKey(identifier);
+  const lockedMins = loginLockRemainingMins(lockKey);
+  if (lockedMins > 0) {
+    return res.status(429).json({
+      error: `Too many failed attempts for this account. Try again in ${lockedMins} minute${lockedMins > 1 ? "s" : ""}.`,
+    });
+  }
   try {
     const userRes = await pool.query(
       "SELECT id, username, email, roll_no, password_hash FROM users WHERE username = $1 OR email = $1 OR roll_no = $1 LIMIT 1",
@@ -278,10 +328,15 @@ app.post("/api/auth/login", authLimiter, async (req, res) => {
     // Constant-ish timing: always run a bcrypt compare to reduce user-enumeration timing signals
     if (!user) {
       await bcrypt.compare(password, "$2b$12$abcdefghijklmnopqrstuu2dummyhashdummyhashdumm");
+      recordLoginFailure(lockKey);
       return res.status(401).json({ error: "Incorrect username or password. Please try again." });
     }
     const ok = await bcrypt.compare(password, user.password_hash);
-    if (!ok) return res.status(401).json({ error: "Incorrect username or password. Please try again." });
+    if (!ok) {
+      recordLoginFailure(lockKey);
+      return res.status(401).json({ error: "Incorrect username or password. Please try again." });
+    }
+    clearLoginLock(lockKey);
     const token = signToken(user.id, user.username);
     res.json({ token, user: { id: user.id, username: user.username, email: user.email, rollNo: user.roll_no || "" } });
   } catch (err) {
