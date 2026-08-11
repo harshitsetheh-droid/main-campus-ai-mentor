@@ -1,0 +1,20 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env
+!.env.example
+pgdata/
+
+# Sensitive / local-only files (do not commit)
+backend/uploads/
+backend/src/uploads/
+backend/.env
+database_backup.sql
+metadata.json
+query/
+assets/.aistudio/
+*.pdf
+start.bat

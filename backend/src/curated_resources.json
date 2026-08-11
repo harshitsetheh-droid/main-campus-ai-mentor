@@ -1,0 +1,2421 @@
+{
+  "generatedAt": "2026-08-09T10:40:34.061Z",
+  "totalTopics": 27,
+  "topics": [
+    {
+      "name": "Python Programming",
+      "resources": [
+        {
+          "level": "beginner",
+          "name": "Python setup, interpreter, IDE & VS Code",
+          "url": "https://docs.python.org/3/using/index.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Variables, data types & type conversion",
+          "url": "https://docs.python.org/3/library/stdtypes.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Operators, expressions, input/output & strings",
+          "url": "https://docs.python.org/3/tutorial/introduction.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Control flow: if/elif/else, loops (for/while)",
+          "url": "https://docs.python.org/3/tutorial/controlflow.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Functions, parameters, scope & recursion basics",
+          "url": "https://docs.python.org/3/tutorial/controlflow.html#defining-functions"
+        },
+        {
+          "level": "beginner",
+          "name": "Core Data Structures: lists, tuples, sets & dicts",
+          "url": "https://docs.python.org/3/tutorial/datastructures.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Exception handling & basic debugging",
+          "url": "https://docs.python.org/3/tutorial/errors.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Modules, packages & imports",
+          "url": "https://docs.python.org/3/tutorial/modules.html"
+        },
+        {
+          "level": "beginner",
+          "name": "File I/O: TXT, CSV, JSON handling",
+          "url": "https://docs.python.org/3/tutorial/inputoutput.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Git basics & clean coding practices",
+          "url": "https://git-scm.com/doc"
+        },
+        {
+          "level": "beginner",
+          "name": "Object-Oriented Programming (Classes, Inheritance, OOP)",
+          "url": "https://docs.python.org/3/tutorial/classes.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Iterators, generators & comprehensions",
+          "url": "https://docs.python.org/3/howto/functional.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Decorators & context managers",
+          "url": "https://docs.python.org/3/reference/compound_stmts.html#with"
+        },
+        {
+          "level": "beginner",
+          "name": "Virtual environments, pip & dependencies",
+          "url": "https://docs.python.org/3/tutorial/venv.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Type hints, dataclasses & enums",
+          "url": "https://docs.python.org/3/library/typing.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Unit testing with pytest & unittest",
+          "url": "https://docs.pytest.org/en/stable/"
+        },
+        {
+          "level": "beginner",
+          "name": "Logging & configuration management",
+          "url": "https://docs.python.org/3/library/logging.html"
+        },
+        {
+          "level": "beginner",
+          "name": "REST API consumption & HTTP clients",
+          "url": "https://requests.readthedocs.io/en/latest/"
+        },
+        {
+          "level": "beginner",
+          "name": "Concurrency basics (threading, asyncio)",
+          "url": "https://docs.python.org/3/library/asyncio.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Algorithmic complexity & data structures",
+          "url": "https://www.geeksforgeeks.org/dsa/analysis-of-algorithms-set-1-asymptotic-analysis/"
+        },
+        {
+          "level": "beginner",
+          "name": "Python internals (Memory model & garbage collection)",
+          "url": "https://docs.python.org/3/c-api/memory.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Advanced asyncio & concurrent execution",
+          "url": "https://docs.python.org/3/library/asyncio-task.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Performance profiling, optimization & caching",
+          "url": "https://docs.python.org/3/library/profile.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Library packaging & PyPI publishing",
+          "url": "https://packaging.python.org/en/latest/"
+        },
+        {
+          "level": "beginner",
+          "name": "Design patterns & clean architecture",
+          "url": "https://refactoring.guru/design-patterns/python"
+        },
+        {
+          "level": "beginner",
+          "name": "Advanced typing & static code analysis",
+          "url": "https://mypy.readthedocs.io/en/stable/"
+        },
+        {
+          "level": "beginner",
+          "name": "Production observability & error handling",
+          "url": "https://docs.sentry.io/platforms/python/"
+        },
+        {
+          "level": "beginner",
+          "name": "Scalable microservice architecture in Python",
+          "url": "https://fastapi.tiangolo.com/"
+        }
+      ]
+    },
+    {
+      "name": "C++ Programming",
+      "resources": [
+        {
+          "level": "beginner",
+          "name": "C++ syntax, compiler setup & build workflow",
+          "url": "https://en.cppreference.com/w/cpp/language.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Variables, fundamental data types & operators",
+          "url": "https://en.cppreference.com/w/cpp/language/types.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Control statements & flow control",
+          "url": "https://www.geeksforgeeks.org/cpp/control-statements-in-cpp/"
+        },
+        {
+          "level": "beginner",
+          "name": "Functions, scope & pass-by-value vs reference",
+          "url": "https://en.cppreference.com/w/cpp/language/functions.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Arrays, basic string operations & raw pointers",
+          "url": "https://en.cppreference.com/w/cpp/language/pointer.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Constructors & basic class structure",
+          "url": "https://en.cppreference.com/w/cpp/language/constructor.html"
+        },
+        {
+          "level": "beginner",
+          "name": "OOP: Inheritance, polymorphism & encapsulation",
+          "url": "https://en.cppreference.com/w/cpp/language/derived_class.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Memory management, references & smart pointers",
+          "url": "https://en.cppreference.com/w/cpp/memory.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Standard Template Library (STL) containers & iterators",
+          "url": "https://en.cppreference.com/w/cpp/container.html"
+        },
+        {
+          "level": "beginner",
+          "name": "File handling & streams (fstream)",
+          "url": "https://en.cppreference.com/w/cpp/io/basic_fstream.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Exception handling & operator overloading",
+          "url": "https://en.cppreference.com/w/cpp/language/exceptions.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Templates & generic functions",
+          "url": "https://en.cppreference.com/w/cpp/language/templates.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Modern C++ features (C++17 / C++20 / C++23)",
+          "url": "https://en.cppreference.com/w/cpp/20.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Move semantics, rvalue references & RAII",
+          "url": "https://en.cppreference.com/w/cpp/language/move_constructor.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Concurrency, multi-threading & mutexes",
+          "url": "https://en.cppreference.com/w/cpp/thread.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Template metaprogramming",
+          "url": "https://en.cppreference.com/w/cpp/language/template_metaprogramming.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Low-level memory optimization & cache alignment",
+          "url": "https://en.cppreference.com/w/cpp/language/alignas.html"
+        },
+        {
+          "level": "beginner",
+          "name": "System-level performance tuning",
+          "url": "https://www.geeksforgeeks.org/cpp/optimization-techniques-in-cpp/"
+        }
+      ]
+    },
+    {
+      "name": "Data Structures & Algorithms (DSA)",
+      "resources": [
+        {
+          "level": "beginner",
+          "name": "Time & space complexity analysis (Big-O)",
+          "url": "https://www.geeksforgeeks.org/dsa/analysis-of-algorithms-set-1-asymptotic-analysis/"
+        },
+        {
+          "level": "beginner",
+          "name": "Linear searching & basic sorting (Bubble, Selection, Insertion)",
+          "url": "https://www.geeksforgeeks.org/dsa/sorting-algorithms/"
+        },
+        {
+          "level": "beginner",
+          "name": "Binary search & two-pointer strategies",
+          "url": "https://www.geeksforgeeks.org/dsa/binary-search/"
+        },
+        {
+          "level": "beginner",
+          "name": "Arrays, strings & basic matrix operations",
+          "url": "https://www.geeksforgeeks.org/dsa/array-data-structure-guide/"
+        },
+        {
+          "level": "beginner",
+          "name": "STL/Collection data structures usage",
+          "url": "https://en.cppreference.com/w/cpp/container.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Linked lists, stacks & queues",
+          "url": "https://www.geeksforgeeks.org/dsa/linked-list-data-structure/"
+        },
+        {
+          "level": "beginner",
+          "name": "Hash tables, hash sets & collision resolution",
+          "url": "https://www.geeksforgeeks.org/dsa/hashing-data-structure/"
+        },
+        {
+          "level": "beginner",
+          "name": "Binary trees, binary search trees (BST) & heaps",
+          "url": "https://www.geeksforgeeks.org/dsa/binary-tree-data-structure/"
+        },
+        {
+          "level": "beginner",
+          "name": "Graph representations, BFS & DFS traversals",
+          "url": "https://www.geeksforgeeks.org/dsa/graph-data-structure-and-algorithms/"
+        },
+        {
+          "level": "beginner",
+          "name": "Recursion & backtracking algorithms",
+          "url": "https://www.geeksforgeeks.org/dsa/backtracking-algorithms/"
+        },
+        {
+          "level": "beginner",
+          "name": "Greedy algorithms & divide-and-conquer",
+          "url": "https://www.geeksforgeeks.org/dsa/greedy-algorithms/"
+        },
+        {
+          "level": "beginner",
+          "name": "Dynamic programming (DP) fundamentals",
+          "url": "https://www.geeksforgeeks.org/dsa/dynamic-programming/"
+        },
+        {
+          "level": "beginner",
+          "name": "Shortest path (Dijkstra, Bellman-Ford) & MST",
+          "url": "https://www.geeksforgeeks.org/dsa/shortest-path-algorithms/"
+        },
+        {
+          "level": "beginner",
+          "name": "Advanced DP & bitmask/state optimizations",
+          "url": "https://www.geeksforgeeks.org/dsa/bitmasking-and-dynamic-programming-set-1-count-ways-to-assign-unique-cap-t"
+        },
+        {
+          "level": "beginner",
+          "name": "Advanced structures: Trie, Segment Tree, Fenwick Tree",
+          "url": "https://www.geeksforgeeks.org/dsa/segment-tree-data-structure/"
+        },
+        {
+          "level": "beginner",
+          "name": "Disjoint-Set Union (DSU) / Union-Find",
+          "url": "https://www.geeksforgeeks.org/dsa/introduction-to-disjoint-set-data-structure-or-union-find-algorithm/"
+        },
+        {
+          "level": "beginner",
+          "name": "String matching algorithms (KMP, Rabin-Karp)",
+          "url": "https://www.geeksforgeeks.org/dsa/pattern-searching/"
+        },
+        {
+          "level": "beginner",
+          "name": "Amortized analysis & competitive programming",
+          "url": "https://www.geeksforgeeks.org/dsa/introduction-to-amortized-analysis/"
+        }
+      ]
+    },
+    {
+      "name": "Java & Core Ecosystem",
+      "resources": [
+        {
+          "level": "beginner",
+          "name": "Java JDK setup, JVM overview & syntax",
+          "url": "https://docs.oracle.com/javase/tutorial/getStarted/index.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Variables, data types & control statements",
+          "url": "https://docs.oracle.com/javase/tutorial/java/nutsandbolts/index.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Arrays, methods & basic exception handling",
+          "url": "https://docs.oracle.com/javase/tutorial/java/data/arrays.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Classes, objects, constructors & packages",
+          "url": "https://docs.oracle.com/javase/tutorial/java/javaOO/index.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Core OOP: Encapsulation & Inheritance",
+          "url": "https://docs.oracle.com/javase/tutorial/java/IandI/index.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Basic Java I/O operations",
+          "url": "https://docs.oracle.com/javase/tutorial/essential/io/index.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Interfaces & abstract classes",
+          "url": "https://docs.oracle.com/javase/tutorial/java/IandI/createinterface.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Collections Framework (List, Set, Map, Queue)",
+          "url": "https://docs.oracle.com/javase/tutorial/collections/index.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Generics & type safety",
+          "url": "https://docs.oracle.com/javase/tutorial/java/generics/index.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Lambdas, functional interfaces & Streams API",
+          "url": "https://docs.oracle.com/javase/tutorial/java/javaOO/lambdaexpressions.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Optional class & null-safety patterns",
+          "url": "https://docs.oracle.com/javase/8/docs/api/java/util/Optional.html"
+        },
+        {
+          "level": "beginner",
+          "name": "JDBC & relational database connectivity",
+          "url": "https://docs.oracle.com/javase/tutorial/jdbc/index.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Maven / Gradle build tools",
+          "url": "https://maven.apache.org/guides/index.html"
+        },
+        {
+          "level": "beginner",
+          "name": "JVM internals, memory management & Garbage Collection",
+          "url": "https://docs.oracle.com/en/java/javase/17/gctuning/introduction-garbage-collection-tuning.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Multithreading, concurrency & Java Memory Model",
+          "url": "https://docs.oracle.com/javase/tutorial/essential/concurrency/index.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Reflection API, annotations & bytecode analysis",
+          "url": "https://docs.oracle.com/javase/tutorial/reflect/index.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Design patterns in Java",
+          "url": "https://refactoring.guru/design-patterns/java"
+        },
+        {
+          "level": "beginner",
+          "name": "High-performance collections & I/O (NIO)",
+          "url": "https://docs.oracle.com/javase/tutorial/essential/io/file.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Enterprise application profiling & tuning",
+          "url": "https://www.oracle.com/java/technologies/javase/vmoptions-jsp.html"
+        }
+      ]
+    },
+    {
+      "name": "Spring Framework & Spring Boot",
+      "resources": [
+        {
+          "level": "beginner",
+          "name": "Spring Core fundamentals & IoC container",
+          "url": "https://docs.spring.io/spring-framework/reference/core/beans/introduction.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Dependency Injection (@Component, @Autowired)",
+          "url": "https://docs.spring.io/spring-framework/reference/core/beans/dependencies.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Spring Boot setup & project initializr",
+          "url": "https://start.spring.io/"
+        },
+        {
+          "level": "beginner",
+          "name": "Application properties & YAML configurations",
+          "url": "https://docs.spring.io/spring-boot/reference/features/external-config.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Basic REST controllers (@RestController)",
+          "url": "https://spring.io/guides/gs/rest-service/"
+        },
+        {
+          "level": "beginner",
+          "name": "Spring Data JPA & Hibernate ORM integration",
+          "url": "https://docs.spring.io/spring-data/jpa/reference/jpa.html"
+        },
+        {
+          "level": "beginner",
+          "name": "CRUD repositories & custom queries",
+          "url": "https://docs.spring.io/spring-data/jpa/reference/repositories/query-methods-details.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Request validation (@Valid) & global error handling",
+          "url": "https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-validation.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Authentication basics & Swagger/OpenAPI docs",
+          "url": "https://springdoc.org/"
+        },
+        {
+          "level": "beginner",
+          "name": "Unit & integration testing (JUnit, Mockito)",
+          "url": "https://docs.spring.io/spring-boot/reference/testing/index.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Spring Security, OAuth2 & JWT role-based access",
+          "url": "https://docs.spring.io/spring-security/reference/index.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Microservices architecture with Spring Cloud",
+          "url": "https://spring.io/projects/spring-cloud"
+        },
+        {
+          "level": "beginner",
+          "name": "Service discovery (Eureka), API Gateway & Config Server",
+          "url": "https://spring.io/projects/spring-cloud-netflix"
+        },
+        {
+          "level": "beginner",
+          "name": "Event-driven messaging with Kafka/RabbitMQ",
+          "url": "https://docs.spring.io/spring-kafka/reference/index.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Distributed transactions, circuit breakers & resilience",
+          "url": "https://resilience4j.readme.io/docs"
+        },
+        {
+          "level": "beginner",
+          "name": "Production monitoring (Actuator, Prometheus, Grafana)",
+          "url": "https://docs.spring.io/spring-boot/reference/actuator/index.html"
+        }
+      ]
+    },
+    {
+      "name": "HTML & CSS Basics",
+      "resources": [
+        {
+          "level": "beginner",
+          "name": "HTML5 structure, semantic tags & document layout",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Heading_Elements"
+        },
+        {
+          "level": "beginner",
+          "name": "Forms, input types, validation attributes & tables",
+          "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms"
+        },
+        {
+          "level": "beginner",
+          "name": "Links, images, audio & video elements",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img"
+        },
+        {
+          "level": "beginner",
+          "name": "CSS selectors, specificity & cascade rules",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_selectors"
+        },
+        {
+          "level": "beginner",
+          "name": "Box model: margin, padding, border, content",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_box_sizing/Box_model"
+        },
+        {
+          "level": "beginner",
+          "name": "Basic typography & color models",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/color_value"
+        },
+        {
+          "level": "beginner",
+          "name": "Flexbox layout & alignment strategies",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_flexible_box_layout"
+        },
+        {
+          "level": "beginner",
+          "name": "CSS Grid layouts & dynamic grid designs",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout"
+        },
+        {
+          "level": "beginner",
+          "name": "Responsive design, media queries & mobile-first approach",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_media_queries"
+        },
+        {
+          "level": "beginner",
+          "name": "Transitions, transforms & CSS animations",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_animations"
+        },
+        {
+          "level": "beginner",
+          "name": "CSS variables (Custom Properties) & themes",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/--*"
+        },
+        {
+          "level": "beginner",
+          "name": "Modern CSS utilities (Tailwind / SASS basics)",
+          "url": "https://tailwindcss.com/docs"
+        },
+        {
+          "level": "beginner",
+          "name": "Advanced CSS architecture (BEM, ITCSS)",
+          "url": "https://en.bem.info/methodology/"
+        },
+        {
+          "level": "beginner",
+          "name": "CSS rendering performance & GPU acceleration",
+          "url": "https://web.dev/articles/animations-guide"
+        },
+        {
+          "level": "beginner",
+          "name": "Complex animations & SVGs manipulation",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/SVG"
+        },
+        {
+          "level": "beginner",
+          "name": "Design systems & tokenized styling",
+          "url": "https://m3.material.io/foundations/design-tokens"
+        },
+        {
+          "level": "beginner",
+          "name": "Cross-browser compatibility & CSS polyfills",
+          "url": "https://caniuse.com/"
+        },
+        {
+          "level": "beginner",
+          "name": "Print CSS & paged media layout design",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_paged_media"
+        }
+      ]
+    },
+    {
+      "name": "JavaScript (JS)",
+      "resources": [
+        {
+          "level": "beginner",
+          "name": "JS variables (var, let, const), types & operators",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Grammar_and_types"
+        },
+        {
+          "level": "beginner",
+          "name": "Control flow, loops & conditional statements",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Control_flow_and_error_handling"
+        },
+        {
+          "level": "beginner",
+          "name": "Functions, parameters & return values",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions"
+        },
+        {
+          "level": "beginner",
+          "name": "Arrays, objects & primitive manipulations",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Indexed_collections"
+        },
+        {
+          "level": "beginner",
+          "name": "DOM selection, manipulation & event handling",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model"
+        },
+        {
+          "level": "beginner",
+          "name": "Browser storage: LocalStorage, SessionStorage, Cookies",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API"
+        },
+        {
+          "level": "beginner",
+          "name": "ES6+ features: destructuring, spread/rest, arrow functions",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment"
+        },
+        {
+          "level": "beginner",
+          "name": "JavaScript Modules (import / export)",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules"
+        },
+        {
+          "level": "beginner",
+          "name": "Asynchronous JS: Callbacks, Promises, async/await",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Asynchronous"
+        },
+        {
+          "level": "beginner",
+          "name": "Fetch API, HTTP requests & JSON parsing",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API"
+        },
+        {
+          "level": "beginner",
+          "name": "Closures, lexical scope & 'this' keyword",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Closures"
+        },
+        {
+          "level": "beginner",
+          "name": "Object prototypes, classes & inheritance",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Object-oriented_programming"
+        },
+        {
+          "level": "beginner",
+          "name": "Basic frontend testing & debugging",
+          "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Testing"
+        },
+        {
+          "level": "beginner",
+          "name": "JS Engine internals (Event Loop, Call Stack, Microtasks)",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Event_loop"
+        },
+        {
+          "level": "beginner",
+          "name": "Memory management & memory leak detection",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Memory_management"
+        },
+        {
+          "level": "beginner",
+          "name": "Functional programming paradigms & immutability",
+          "url": "https://developer.mozilla.org/en-US/docs/Glossary/Functional_programming"
+        },
+        {
+          "level": "beginner",
+          "name": "Web Workers & multithreaded browser execution",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API"
+        },
+        {
+          "level": "beginner",
+          "name": "Security: XSS, CSRF, CORS & secure header management",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/Security"
+        },
+        {
+          "level": "beginner",
+          "name": "Performance optimization & bundle profiling",
+          "url": "https://web.dev/learn/performance"
+        }
+      ]
+    },
+    {
+      "name": "React Framework",
+      "resources": [
+        {
+          "level": "beginner",
+          "name": "React environment setup (Vite/CRA) & JSX",
+          "url": "https://react.dev/learn/writing-markup-with-jsx"
+        },
+        {
+          "level": "beginner",
+          "name": "Components: Functional components & composition",
+          "url": "https://react.dev/learn/your-first-component"
+        },
+        {
+          "level": "beginner",
+          "name": "Props, state & event handling",
+          "url": "https://react.dev/learn/passing-props-to-a-component"
+        },
+        {
+          "level": "beginner",
+          "name": "Conditional rendering & rendering lists",
+          "url": "https://react.dev/learn/rendering-lists"
+        },
+        {
+          "level": "beginner",
+          "name": "Core Hooks: useState & useEffect",
+          "url": "https://react.dev/reference/react/useState"
+        },
+        {
+          "level": "beginner",
+          "name": "Basic API consumption within components",
+          "url": "https://react.dev/learn/synchronizing-with-effects"
+        },
+        {
+          "level": "beginner",
+          "name": "React Router & single-page application navigation",
+          "url": "https://reactrouter.com/start/framework/routing"
+        },
+        {
+          "level": "beginner",
+          "name": "Advanced Hooks (useMemo, useCallback, useRef)",
+          "url": "https://react.dev/reference/react/useMemo"
+        },
+        {
+          "level": "beginner",
+          "name": "Custom Hooks design & state reusability",
+          "url": "https://react.dev/learn/reusing-logic-with-custom-hooks"
+        },
+        {
+          "level": "beginner",
+          "name": "Global State: Context API & Redux Toolkit",
+          "url": "https://redux-toolkit.js.org/introduction/getting-started"
+        },
+        {
+          "level": "beginner",
+          "name": "Form handling, validation & error management",
+          "url": "https://react.dev/reference/react-dom/components/input"
+        },
+        {
+          "level": "beginner",
+          "name": "Reusable UI component library integration",
+          "url": "https://ui.shadcn.com/docs"
+        },
+        {
+          "level": "beginner",
+          "name": "React Fiber architecture & concurrent rendering",
+          "url": "https://react.dev/blog/2022/03/29/react-v18#what-is-concurrent-react"
+        },
+        {
+          "level": "beginner",
+          "name": "Performance profiling, memoization & lazy loading",
+          "url": "https://react.dev/reference/react/lazy"
+        },
+        {
+          "level": "beginner",
+          "name": "Code splitting & bundle size reduction",
+          "url": "https://vitejs.dev/guide/build.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Design systems architecture & micro-frontends",
+          "url": "https://module-federation.io/"
+        },
+        {
+          "level": "beginner",
+          "name": "Advanced state machines & state architecture",
+          "url": "https://stately.ai/docs/xstate"
+        },
+        {
+          "level": "beginner",
+          "name": "Production frontend testing (React Testing Library, Cypress)",
+          "url": "https://testing-library.com/docs/react-testing-library/intro/"
+        }
+      ]
+    },
+    {
+      "name": "Node.js & Express",
+      "resources": [
+        {
+          "level": "beginner",
+          "name": "Node.js runtime basics, V8 engine & npm ecosystem",
+          "url": "https://nodejs.org/en/learn/getting-started/introduction-to-nodejs"
+        },
+        {
+          "level": "beginner",
+          "name": "Core modules: fs, path, http, process",
+          "url": "https://nodejs.org/api/fs.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Creating basic HTTP servers in Node",
+          "url": "https://nodejs.org/en/learn/getting-started/how-to-create-a-web-server-in-nodejs"
+        },
+        {
+          "level": "beginner",
+          "name": "Express.js setup, basic routing & server initialization",
+          "url": "https://expressjs.com/en/starter/installing.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Request/Response objects & query/path parameters",
+          "url": "https://expressjs.com/en/guide/routing.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Express middleware architecture & error handling middleware",
+          "url": "https://expressjs.com/en/guide/using-middleware.html"
+        },
+        {
+          "level": "beginner",
+          "name": "RESTful API design principles & routing structures",
+          "url": "https://expressjs.com/en/guide/routing.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Authentication with JWT, bcrypt & sessions",
+          "url": "https://www.npmjs.com/package/jsonwebtoken"
+        },
+        {
+          "level": "beginner",
+          "name": "Database connection (MongoDB via Mongoose, PostgreSQL via Knex/Prisma)",
+          "url": "https://www.prisma.io/docs"
+        },
+        {
+          "level": "beginner",
+          "name": "Environment variables & secret management",
+          "url": "https://www.npmjs.com/package/dotenv"
+        },
+        {
+          "level": "beginner",
+          "name": "File upload processing & static file serving",
+          "url": "https://expressjs.com/en/starter/static-files.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Event Loop mechanics, thread pool & asynchronous I/O",
+          "url": "https://nodejs.org/en/learn/asynchronous-work/event-loop-timers-and-nexttick"
+        },
+        {
+          "level": "beginner",
+          "name": "Streams, buffers & handling large payload processing",
+          "url": "https://nodejs.org/api/stream.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Scalable Express architecture & clean code practices",
+          "url": "https://expressjs.com/en/advanced/best-practice-performance.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Clustering, process management (PM2) & load handling",
+          "url": "https://pm2.keymetrics.io/docs/usage/quick-start/"
+        },
+        {
+          "level": "beginner",
+          "name": "Rate limiting, security hardening (Helmet) & CORS",
+          "url": "https://expressjs.com/en/advanced/best-practice-security.html"
+        },
+        {
+          "level": "beginner",
+          "name": "WebSockets & real-time bidirectional communication",
+          "url": "https://socket.io/docs/v4/"
+        }
+      ]
+    },
+    {
+      "name": "Next.js Framework",
+      "resources": [
+        {
+          "level": "beginner",
+          "name": "Next.js environment setup & App/Pages router concepts",
+          "url": "https://nextjs.org/docs/app/getting-started/installation"
+        },
+        {
+          "level": "beginner",
+          "name": "File-system based routing, nested routes & layouts",
+          "url": "https://nextjs.org/docs/app/building-your-application/routing"
+        },
+        {
+          "level": "beginner",
+          "name": "Client vs Server Components basics",
+          "url": "https://nextjs.org/docs/app/building-your-application/rendering/server-components"
+        },
+        {
+          "level": "beginner",
+          "name": "Image, Font, and Link optimizations",
+          "url": "https://nextjs.org/docs/app/building-your-application/optimizing/images"
+        },
+        {
+          "level": "beginner",
+          "name": "Basic API Routes setup",
+          "url": "https://nextjs.org/docs/app/building-your-application/routing/route-handlers"
+        },
+        {
+          "level": "beginner",
+          "name": "Data fetching strategies: SSR, SSG, and ISR",
+          "url": "https://nextjs.org/docs/app/building-your-application/data-fetching"
+        },
+        {
+          "level": "beginner",
+          "name": "Server Actions & form submissions",
+          "url": "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations"
+        },
+        {
+          "level": "beginner",
+          "name": "Dynamic routing & catch-all routes",
+          "url": "https://nextjs.org/docs/app/building-your-application/routing/dynamic-routes"
+        },
+        {
+          "level": "beginner",
+          "name": "Authentication integration (NextAuth.js)",
+          "url": "https://authjs.dev/getting-started"
+        },
+        {
+          "level": "beginner",
+          "name": "Middleware & route protection",
+          "url": "https://nextjs.org/docs/app/building-your-application/routing/middleware"
+        },
+        {
+          "level": "beginner",
+          "name": "SEO optimization, Metadata API & OpenGraph tags",
+          "url": "https://nextjs.org/docs/app/building-your-application/optimizing/metadata"
+        },
+        {
+          "level": "beginner",
+          "name": "React Server Components (RSC) deep dive",
+          "url": "https://nextjs.org/docs/app/building-your-application/rendering/server-components"
+        },
+        {
+          "level": "beginner",
+          "name": "Advanced caching, revalidation & suspense boundaries",
+          "url": "https://nextjs.org/docs/app/building-your-application/caching"
+        },
+        {
+          "level": "beginner",
+          "name": "Edge runtime & global deployment (Vercel)",
+          "url": "https://nextjs.org/docs/app/building-your-application/rendering/edge-and-nodejs-runtimes"
+        },
+        {
+          "level": "beginner",
+          "name": "Micro-frontend integration & multi-zone setups",
+          "url": "https://nextjs.org/docs/app/building-your-application/deploying/multi-zones"
+        },
+        {
+          "level": "beginner",
+          "name": "Performance optimization, bundle analysis & Core Web Vitals",
+          "url": "https://nextjs.org/docs/app/building-your-application/optimizing"
+        }
+      ]
+    },
+    {
+      "name": "GraphQL",
+      "resources": [
+        {
+          "level": "beginner",
+          "name": "GraphQL vs REST concepts & core benefits",
+          "url": "https://graphql.org/learn/"
+        },
+        {
+          "level": "beginner",
+          "name": "Schema definition language (SDL) basics",
+          "url": "https://graphql.org/learn/schema/"
+        },
+        {
+          "level": "beginner",
+          "name": "Types, fields, queries & simple resolvers",
+          "url": "https://graphql.org/learn/queries/"
+        },
+        {
+          "level": "beginner",
+          "name": "GraphiQL / Apollo Sandbox exploration",
+          "url": "https://www.apollographql.com/docs/graphos/explorer"
+        },
+        {
+          "level": "beginner",
+          "name": "Mutations & input types",
+          "url": "https://graphql.org/learn/mutations/"
+        },
+        {
+          "level": "beginner",
+          "name": "Apollo Server & Apollo Client integration",
+          "url": "https://www.apollographql.com/docs/apollo-server"
+        },
+        {
+          "level": "beginner",
+          "name": "Connecting GraphQL resolvers to database ORMs",
+          "url": "https://www.apollographql.com/docs/apollo-server/data/resolvers"
+        },
+        {
+          "level": "beginner",
+          "name": "Context, authentication & header authorization",
+          "url": "https://www.apollographql.com/docs/apollo-server/security/authentication"
+        },
+        {
+          "level": "beginner",
+          "name": "Error handling & formatting",
+          "url": "https://www.apollographql.com/docs/apollo-server/data/errors"
+        },
+        {
+          "level": "beginner",
+          "name": "GraphQL Subscriptions & real-time updates",
+          "url": "https://graphql.org/learn/subscriptions/"
+        },
+        {
+          "level": "beginner",
+          "name": "DataLoader & N+1 query problem optimization",
+          "url": "https://github.com/graphql/dataloader"
+        },
+        {
+          "level": "beginner",
+          "name": "Schema stitching & GraphQL Federation",
+          "url": "https://www.apollographql.com/docs/federation"
+        },
+        {
+          "level": "beginner",
+          "name": "Query complexity limits, rate limiting & security",
+          "url": "https://www.apollographql.com/docs/apollo-server/security/terminating-ssl"
+        },
+        {
+          "level": "beginner",
+          "name": "Production caching strategies (CDN & Client)",
+          "url": "https://www.apollographql.com/docs/apollo-server/performance/caching"
+        }
+      ]
+    },
+    {
+      "name": "Django & Django REST Framework",
+      "resources": [
+        {
+          "level": "beginner",
+          "name": "Django project & app architecture",
+          "url": "https://docs.djangoproject.com/en/stable/intro/tutorial01/"
+        },
+        {
+          "level": "beginner",
+          "name": "URLs, views, templates & static file handling",
+          "url": "https://docs.djangoproject.com/en/stable/topics/http/urls/"
+        },
+        {
+          "level": "beginner",
+          "name": "Django Models, fields & SQLite/PostgreSQL configuration",
+          "url": "https://docs.djangoproject.com/en/stable/topics/db/models/"
+        },
+        {
+          "level": "beginner",
+          "name": "Django Admin interface setup",
+          "url": "https://docs.djangoproject.com/en/stable/ref/contrib/admin/"
+        },
+        {
+          "level": "beginner",
+          "name": "Forms, request handling & basic CRUD operations",
+          "url": "https://docs.djangoproject.com/en/stable/topics/forms/"
+        },
+        {
+          "level": "beginner",
+          "name": "Django REST Framework (DRF) setup",
+          "url": "https://www.django-rest-framework.org/tutorial/quickstart/"
+        },
+        {
+          "level": "beginner",
+          "name": "Serializers & ModelSerializers",
+          "url": "https://www.django-rest-framework.org/api-guide/serializers/"
+        },
+        {
+          "level": "beginner",
+          "name": "APIView, Generic Views & ViewSets",
+          "url": "https://www.django-rest-framework.org/api-guide/viewsets/"
+        },
+        {
+          "level": "beginner",
+          "name": "Authentication (Session, Token, JWT) & Permissions",
+          "url": "https://www.django-rest-framework.org/api-guide/authentication/"
+        },
+        {
+          "level": "beginner",
+          "name": "Pagination, filtering, searching & sorting",
+          "url": "https://www.django-rest-framework.org/api-guide/pagination/"
+        },
+        {
+          "level": "beginner",
+          "name": "Class-based views (CBVs) & custom mixins",
+          "url": "https://docs.djangoproject.com/en/stable/topics/class-based-views/"
+        },
+        {
+          "level": "beginner",
+          "name": "Django ORM query optimization (select_related, prefetch_related)",
+          "url": "https://docs.djangoproject.com/en/stable/ref/models/querysets/#select-related"
+        },
+        {
+          "level": "beginner",
+          "name": "Asynchronous Django (ASGI, async views, Channels)",
+          "url": "https://docs.djangoproject.com/en/stable/topics/async/"
+        },
+        {
+          "level": "beginner",
+          "name": "Custom middleware & signal handling",
+          "url": "https://docs.djangoproject.com/en/stable/topics/http/middleware/"
+        },
+        {
+          "level": "beginner",
+          "name": "Celery & Redis task queue integration",
+          "url": "https://docs.celeryq.dev/en/stable/django/first-steps-with-django.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Production deployment (Gunicorn, Nginx, Docker)",
+          "url": "https://docs.djangoproject.com/en/stable/howto/deployment/wsgi/gunicorn/"
+        },
+        {
+          "level": "beginner",
+          "name": "Multi-tenant architecture & security hardening",
+          "url": "https://docs.djangoproject.com/en/stable/topics/security/"
+        }
+      ]
+    },
+    {
+      "name": "FastAPI",
+      "resources": [
+        {
+          "level": "beginner",
+          "name": "FastAPI installation & Uvicorn ASGI server",
+          "url": "https://fastapi.tiangolo.com/tutorial/first-steps/"
+        },
+        {
+          "level": "beginner",
+          "name": "Path parameters, query parameters & request body",
+          "url": "https://fastapi.tiangolo.com/tutorial/path-params/"
+        },
+        {
+          "level": "beginner",
+          "name": "Pydantic models for data validation",
+          "url": "https://fastapi.tiangolo.com/tutorial/body/"
+        },
+        {
+          "level": "beginner",
+          "name": "HTTP status codes & API responses",
+          "url": "https://fastapi.tiangolo.com/tutorial/response-status-code/"
+        },
+        {
+          "level": "beginner",
+          "name": "Automatic OpenAPI / Swagger documentation",
+          "url": "https://fastapi.tiangolo.com/features/#automatic-docs"
+        },
+        {
+          "level": "beginner",
+          "name": "Dependency Injection system in FastAPI",
+          "url": "https://fastapi.tiangolo.com/tutorial/dependencies/"
+        },
+        {
+          "level": "beginner",
+          "name": "Async endpoints & async/await database access",
+          "url": "https://fastapi.tiangolo.com/async/"
+        },
+        {
+          "level": "beginner",
+          "name": "OAuth2 with Password & Bearer JWT tokens",
+          "url": "https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/"
+        },
+        {
+          "level": "beginner",
+          "name": "SQLAlchemy ORM integration & database migrations (Alembic)",
+          "url": "https://fastapi.tiangolo.com/tutorial/sql-databases/"
+        },
+        {
+          "level": "beginner",
+          "name": "Custom error handlers & status code overrides",
+          "url": "https://fastapi.tiangolo.com/tutorial/handling-errors/"
+        },
+        {
+          "level": "beginner",
+          "name": "Automated testing with HTTPX & pytest",
+          "url": "https://fastapi.tiangolo.com/tutorial/testing/"
+        },
+        {
+          "level": "beginner",
+          "name": "High-performance async architecture & background tasks",
+          "url": "https://fastapi.tiangolo.com/tutorial/background-tasks/"
+        },
+        {
+          "level": "beginner",
+          "name": "WebSockets & streaming responses",
+          "url": "https://fastapi.tiangolo.com/advanced/websockets/"
+        },
+        {
+          "level": "beginner",
+          "name": "Middleware design & CORS security policies",
+          "url": "https://fastapi.tiangolo.com/tutorial/middleware/"
+        },
+        {
+          "level": "beginner",
+          "name": "Database connection pooling & performance tuning",
+          "url": "https://fastapi.tiangolo.com/advanced/async-sql-databases/"
+        },
+        {
+          "level": "beginner",
+          "name": "Microservices deployment & containerization",
+          "url": "https://fastapi.tiangolo.com/deployment/docker/"
+        }
+      ]
+    },
+    {
+      "name": "Databases, SQL & PostgreSQL",
+      "resources": [
+        {
+          "level": "beginner",
+          "name": "Relational database concepts (Tables, Rows, Keys)",
+          "url": "https://www.postgresql.org/docs/current/tutorial-concepts.html"
+        },
+        {
+          "level": "beginner",
+          "name": "DDL/DML commands: CREATE, ALTER, INSERT, UPDATE, DELETE",
+          "url": "https://www.postgresql.org/docs/current/sql-commands.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Queries: SELECT, WHERE, ORDER BY, LIMIT",
+          "url": "https://www.postgresql.org/docs/current/queries.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Aggregations: GROUP BY, HAVING, COUNT, SUM, AVG",
+          "url": "https://www.postgresql.org/docs/current/queries-table-expressions.html#QUERIES-GROUP"
+        },
+        {
+          "level": "beginner",
+          "name": "Basic JOINS (INNER, LEFT, RIGHT)",
+          "url": "https://www.postgresql.org/docs/current/queries-table-expressions.html#QUERIES-JOIN"
+        },
+        {
+          "level": "beginner",
+          "name": "Database normalization fundamentals (1NF, 2NF, 3NF)",
+          "url": "https://www.geeksforgeeks.org/dbms/normal-forms-in-dbms/"
+        },
+        {
+          "level": "beginner",
+          "name": "Complex JOINs, Subqueries & Correlated Subqueries",
+          "url": "https://www.postgresql.org/docs/current/functions-subquery.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Common Table Expressions (CTEs) & Window Functions",
+          "url": "https://www.postgresql.org/docs/current/queries-with.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Transactions, Savepoints & ACID properties",
+          "url": "https://www.postgresql.org/docs/current/tutorial-transactions.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Indexes (B-Tree, Hash) & Query Execution Plans (EXPLAIN)",
+          "url": "https://www.postgresql.org/docs/current/indexes.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Views, Stored Procedures & Triggers",
+          "url": "https://www.postgresql.org/docs/current/plpgsql.html"
+        },
+        {
+          "level": "beginner",
+          "name": "PostgreSQL specific features (JSONB, Arrays)",
+          "url": "https://www.postgresql.org/docs/current/datatype-json.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Query optimization, indexing strategies & vacuuming",
+          "url": "https://www.postgresql.org/docs/current/routine-vacuuming.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Table partitioning & sharding strategies",
+          "url": "https://www.postgresql.org/docs/current/ddl-partitioning.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Replication (Primary-Replica), High Availability & Failover",
+          "url": "https://www.postgresql.org/docs/current/high-availability.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Concurrency control, isolation levels & locking strategies",
+          "url": "https://www.postgresql.org/docs/current/mvcc.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Data warehousing schemas (Star, Snowflake) & Analytical SQL",
+          "url": "https://www.geeksforgeeks.org/dbms/data-warehousing-schemas/"
+        }
+      ]
+    },
+    {
+      "name": "Machine Learning & Data Science",
+      "resources": [
+        {
+          "level": "beginner",
+          "name": "NumPy arrays, vectorization & mathematical operations",
+          "url": "https://numpy.org/doc/stable/user/quickstart.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Pandas DataFrames, filtering, merging & transformations",
+          "url": "https://pandas.pydata.org/docs/user_guide/index.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Data cleaning, missing value imputation & encoding",
+          "url": "https://scikit-learn.org/stable/modules/impute.html"
+        },
+        {
+          "level": "beginner",
+          "name": "EDA & data visualization (Matplotlib / Seaborn)",
+          "url": "https://seaborn.pydata.org/tutorial.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Train/Test splits, Bias-Variance tradeoff",
+          "url": "https://scikit-learn.org/stable/modules/cross_validation.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Linear Regression, Logistic Regression, KNN, Decision Trees",
+          "url": "https://scikit-learn.org/stable/supervised_learning.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Evaluation metrics: MSE, Accuracy, Precision, Recall, F1",
+          "url": "https://scikit-learn.org/stable/modules/model_evaluation.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Feature engineering, scaling & selection methods",
+          "url": "https://scikit-learn.org/stable/modules/preprocessing.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Ensemble methods: Random Forest, Gradient Boosting, XGBoost",
+          "url": "https://xgboost.readthedocs.io/en/stable/"
+        },
+        {
+          "level": "beginner",
+          "name": "Unsupervised Learning: K-Means, Hierarchical, PCA",
+          "url": "https://scikit-learn.org/stable/modules/clustering.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Cross-validation & Hyperparameter tuning (GridSearch, Optuna)",
+          "url": "https://optuna.readthedocs.io/en/stable/"
+        },
+        {
+          "level": "beginner",
+          "name": "Imbalanced data techniques (SMOTE, class weights)",
+          "url": "https://imbalanced-learn.org/stable/user_guide.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Scikit-Learn Pipelines & model reproducibility",
+          "url": "https://scikit-learn.org/stable/modules/compose.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Model interpretability (SHAP, LIME)",
+          "url": "https://shap.readthedocs.io/en/latest/"
+        },
+        {
+          "level": "beginner",
+          "name": "Advanced Ensembles & Stacking classifiers",
+          "url": "https://scikit-learn.org/stable/modules/ensemble.html#stacked-generalization"
+        },
+        {
+          "level": "beginner",
+          "name": "Feature stores & automated ML (AutoML) pipelines",
+          "url": "https://www.geeksforgeeks.org/machine-learning/automl-automated-machine-learning/"
+        },
+        {
+          "level": "beginner",
+          "name": "Model compression, quantization & inference speedup",
+          "url": "https://pytorch.org/docs/stable/quantization.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Experiment tracking (MLflow, Weights & Biases)",
+          "url": "https://mlflow.org/docs/latest/index.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Model monitoring, drift detection & governance",
+          "url": "https://docs.evidentlyai.com/"
+        },
+        {
+          "level": "beginner",
+          "name": "Responsible AI, fairness metrics & mitigation",
+          "url": "https://fairlearn.org/main/user_guide/index.html"
+        }
+      ]
+    },
+    {
+      "name": "Deep Learning Core",
+      "resources": [
+        {
+          "level": "beginner",
+          "name": "Perceptrons & Artificial Neural Networks (ANN)",
+          "url": "https://www.geeksforgeeks.org/deep-learning/what-is-perceptron-the-simplest-artificial-neural-network/"
+        },
+        {
+          "level": "beginner",
+          "name": "Activation functions (ReLU, Sigmoid, Softmax)",
+          "url": "https://www.geeksforgeeks.org/machine-learning/activation-functions-neural-networks/"
+        },
+        {
+          "level": "beginner",
+          "name": "Loss functions, Gradient Descent & Backpropagation",
+          "url": "https://www.geeksforgeeks.org/machine-learning/backpropagation-in-neural-network/"
+        },
+        {
+          "level": "beginner",
+          "name": "PyTorch / TensorFlow Tensors & basic training loops",
+          "url": "https://pytorch.org/docs/stable/tensors.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Overfitting prevention: Dropout, Weight Decay",
+          "url": "https://www.geeksforgeeks.org/deep-learning/dropout-regularization-in-deep-learning/"
+        },
+        {
+          "level": "beginner",
+          "name": "Custom PyTorch Datasets & DataLoaders",
+          "url": "https://pytorch.org/docs/stable/data.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Optimizers (Adam, AdamW, SGD with momentum)",
+          "url": "https://pytorch.org/docs/stable/optim.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Learning rate schedulers & early stopping",
+          "url": "https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate"
+        },
+        {
+          "level": "beginner",
+          "name": "Batch Normalization & Layer Normalization",
+          "url": "https://pytorch.org/docs/stable/generated/torch.nn.BatchNorm2d.html"
+        },
+        {
+          "level": "beginner",
+          "name": "GPU training setup (CUDA/MPS) & mixed-precision basics",
+          "url": "https://pytorch.org/docs/stable/amp.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Custom loss function & layer implementations",
+          "url": "https://pytorch.org/docs/stable/notes/extending.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Distributed Data Parallel (DDP) training across multiple GPUs",
+          "url": "https://pytorch.org/tutorials/intermediate/ddp_tutorial.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Model quantization, pruning & TensorRT optimization",
+          "url": "https://pytorch.org/docs/stable/quantization.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Neural Architecture Search (NAS) principles",
+          "url": "https://www.geeksforgeeks.org/deep-learning/neural-architecture-and-search-methods/"
+        },
+        {
+          "level": "beginner",
+          "name": "State-of-the-art research paper implementation",
+          "url": "https://paperswithcode.com/"
+        }
+      ]
+    },
+    {
+      "name": "Computer Vision (CV)",
+      "resources": [
+        {
+          "level": "beginner",
+          "name": "Digital image basics, color spaces (RGB, HSV, Gray)",
+          "url": "https://docs.opencv.org/4.x/df/d9d/tutorial_py_colorspaces.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Image processing with OpenCV (filtering, thresholding, edge detection)",
+          "url": "https://docs.opencv.org/4.x/d2/d96/tutorial_py_table_of_contents_imgproc.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Convolutional Neural Network (CNN) fundamentals",
+          "url": "https://www.geeksforgeeks.org/deep-learning/introduction-convolution-neural-network/"
+        },
+        {
+          "level": "beginner",
+          "name": "Image classification pipelines & augmentations",
+          "url": "https://pytorch.org/vision/stable/transforms.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Classic CNN Architectures (ResNet, VGG, EfficientNet)",
+          "url": "https://pytorch.org/vision/stable/models.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Transfer learning & fine-tuning vision models",
+          "url": "https://pytorch.org/tutorials/beginner/transfer_learning_tutorial.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Object Detection basics: Bounding boxes, IoU, NMS",
+          "url": "https://pytorch.org/vision/stable/models.html#object-detection-instance-segmentation-and-person-keypoint-detection"
+        },
+        {
+          "level": "beginner",
+          "name": "YOLO object detection family & real-time inference",
+          "url": "https://docs.ultralytics.com/"
+        },
+        {
+          "level": "beginner",
+          "name": "Image segmentation (U-Net, Mask R-CNN)",
+          "url": "https://pytorch.org/vision/stable/models.html#semantic-segmentation"
+        },
+        {
+          "level": "beginner",
+          "name": "Vision Transformers (ViT) & Swin Transformers",
+          "url": "https://huggingface.co/docs/transformers/model_doc/vit"
+        },
+        {
+          "level": "beginner",
+          "name": "Multimodal models (CLIP, BLIP, Vision-LLMs)",
+          "url": "https://huggingface.co/docs/transformers/model_doc/clip"
+        },
+        {
+          "level": "beginner",
+          "name": "Generative CV: GANs, Diffusion Models & Image Synthesis",
+          "url": "https://huggingface.co/docs/diffusers/index"
+        },
+        {
+          "level": "beginner",
+          "name": "3D Computer Vision & Point Cloud processing",
+          "url": "https://pytorch3d.org/docs/why_pytorch3d"
+        },
+        {
+          "level": "beginner",
+          "name": "Edge CV deployment (ONNX, OpenVINO, MobileNet)",
+          "url": "https://onnxruntime.ai/docs/"
+        }
+      ]
+    },
+    {
+      "name": "Natural Language Processing (NLP)",
+      "resources": [
+        {
+          "level": "beginner",
+          "name": "Text preprocessing: Tokenization, Stemming, Lemmatization",
+          "url": "https://www.nltk.org/book/ch03.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Bag-of-Words, TF-IDF & N-grams",
+          "url": "https://scikit-learn.org/stable/modules/feature_extraction.html#text-feature-extraction"
+        },
+        {
+          "level": "beginner",
+          "name": "Word Embeddings (Word2Vec, GloVe, FastText)",
+          "url": "https://radimrehurek.com/gensim/models/word2vec.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Basic text classification algorithms",
+          "url": "https://scikit-learn.org/stable/tutorial/text_analytics/working_with_text_data.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Sequential models: RNNs, LSTMs & GRUs",
+          "url": "https://pytorch.org/docs/stable/generated/torch.nn.LSTM.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Sequence-to-sequence architectures",
+          "url": "https://pytorch.org/tutorials/intermediate/seq2seq_translation_tutorial.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Named Entity Recognition (NER) & Part-of-Speech tagging",
+          "url": "https://spacy.io/usage/linguistic-features"
+        },
+        {
+          "level": "beginner",
+          "name": "Attention Mechanism fundamentals",
+          "url": "https://www.geeksforgeeks.org/nlp/self-attention-in-nlp/"
+        },
+        {
+          "level": "beginner",
+          "name": "Hugging Face Transformers library usage",
+          "url": "https://huggingface.co/docs/transformers/index"
+        },
+        {
+          "level": "beginner",
+          "name": "BERT fine-tuning for sequence classification",
+          "url": "https://huggingface.co/docs/transformers/tasks/sequence_classification"
+        },
+        {
+          "level": "beginner",
+          "name": "Transformer internals (Multi-head Self-Attention)",
+          "url": "https://huggingface.co/docs/transformers/model_doc/bert#overview"
+        },
+        {
+          "level": "beginner",
+          "name": "Decoder-only vs Encoder-only vs Encoder-Decoder models",
+          "url": "https://huggingface.co/docs/transformers/model_summary"
+        },
+        {
+          "level": "beginner",
+          "name": "Domain-specific vocabulary adapting & tokenizer training",
+          "url": "https://huggingface.co/docs/tokenizers/quicktour"
+        },
+        {
+          "level": "beginner",
+          "name": "Cross-lingual models & machine translation",
+          "url": "https://huggingface.co/docs/transformers/tasks/translation"
+        },
+        {
+          "level": "beginner",
+          "name": "NLP evaluation metrics (BLEU, ROUGE, Perplexity)",
+          "url": "https://huggingface.co/docs/evaluate/index"
+        }
+      ]
+    },
+    {
+      "name": "Generative AI & Large Language Models (LLMs)",
+      "resources": [
+        {
+          "level": "beginner",
+          "name": "Generative AI concepts & LLM foundation principles",
+          "url": "https://www.geeksforgeeks.org/artificial-intelligence/large-language-model-llm/"
+        },
+        {
+          "level": "beginner",
+          "name": "Tokens, token limits & context windows",
+          "url": "https://platform.openai.com/tokenizer"
+        },
+        {
+          "level": "beginner",
+          "name": "Prompt engineering: Zero-shot, Few-shot, System prompts",
+          "url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview"
+        },
+        {
+          "level": "beginner",
+          "name": "Using Commercial LLM APIs (OpenAI, Gemini, Claude)",
+          "url": "https://docs.claude.com/en/home"
+        },
+        {
+          "level": "beginner",
+          "name": "Basic text generation & summarization scripts",
+          "url": "https://platform.openai.com/docs/guides/text-generation"
+        },
+        {
+          "level": "beginner",
+          "name": "Structured LLM outputs (JSON mode, Pydantic validation)",
+          "url": "https://docs.claude.com/en/docs/build-with-claude/tool-use/overview"
+        },
+        {
+          "level": "beginner",
+          "name": "Tool / Function calling with LLMs",
+          "url": "https://docs.claude.com/en/docs/agents-and-tools/tool-use/overview"
+        },
+        {
+          "level": "beginner",
+          "name": "Open-source LLMs (Llama, Mistral) & local execution (Ollama)",
+          "url": "https://ollama.com/library"
+        },
+        {
+          "level": "beginner",
+          "name": "Embedding models & semantic vector representation",
+          "url": "https://platform.openai.com/docs/guides/embeddings"
+        },
+        {
+          "level": "beginner",
+          "name": "LLM evaluation frameworks & hallucination benchmarks",
+          "url": "https://docs.confident-ai.com/"
+        },
+        {
+          "level": "beginner",
+          "name": "Parameter-Efficient Fine-Tuning (PEFT, LoRA, QLoRA)",
+          "url": "https://huggingface.co/docs/peft/index"
+        },
+        {
+          "level": "beginner",
+          "name": "RLHF & Direct Preference Optimization (DPO)",
+          "url": "https://huggingface.co/docs/trl/index"
+        },
+        {
+          "level": "beginner",
+          "name": "LLM quantization (GGUF, AWQ, GPTQ) & local deployment",
+          "url": "https://github.com/ggml-org/llama.cpp"
+        },
+        {
+          "level": "beginner",
+          "name": "Cost, latency & throughput optimization (vLLM, SGLang)",
+          "url": "https://docs.vllm.ai/en/latest/"
+        },
+        {
+          "level": "beginner",
+          "name": "Guardrails, safety filters & prompt injection defense",
+          "url": "https://guardrailsai.com/docs"
+        }
+      ]
+    },
+    {
+      "name": "RAG & Autonomous AI Agents",
+      "resources": [
+        {
+          "level": "beginner",
+          "name": "Retrieval-Augmented Generation (RAG) concepts",
+          "url": "https://python.langchain.com/docs/concepts/rag/"
+        },
+        {
+          "level": "beginner",
+          "name": "Document parsing & text chunking strategies",
+          "url": "https://python.langchain.com/docs/concepts/text_splitters/"
+        },
+        {
+          "level": "beginner",
+          "name": "Vector database basics (Pinecone, Chroma, Qdrant)",
+          "url": "https://docs.trychroma.com/getting-started"
+        },
+        {
+          "level": "beginner",
+          "name": "Simple similarity search (Cosine, Euclidean)",
+          "url": "https://docs.trychroma.com/guides"
+        },
+        {
+          "level": "beginner",
+          "name": "Advanced RAG: Metadata filtering & Hybrid Search (Sparse+Dense)",
+          "url": "https://docs.llamaindex.ai/en/stable/optimizing/production_rag/"
+        },
+        {
+          "level": "beginner",
+          "name": "Reranking models (Cohere Rerank, BGE)",
+          "url": "https://docs.cohere.com/docs/rerank"
+        },
+        {
+          "level": "beginner",
+          "name": "LangChain & LlamaIndex frameworks",
+          "url": "https://python.langchain.com/docs/introduction/"
+        },
+        {
+          "level": "beginner",
+          "name": "Building simple tool-using AI Agents",
+          "url": "https://python.langchain.com/docs/concepts/agents/"
+        },
+        {
+          "level": "beginner",
+          "name": "RAG evaluation frameworks (Ragas, TruLens)",
+          "url": "https://docs.ragas.io/en/stable/"
+        },
+        {
+          "level": "beginner",
+          "name": "Corrective RAG, Self-RAG & Agentic RAG workflows",
+          "url": "https://docs.llamaindex.ai/en/stable/examples/workflow/"
+        },
+        {
+          "level": "beginner",
+          "name": "Query rewriting, decomposition & routing pipelines",
+          "url": "https://docs.llamaindex.ai/en/stable/optimizing/advanced_retrieval/query_transformations/"
+        },
+        {
+          "level": "beginner",
+          "name": "Multi-Agent Architectures (LangGraph, CrewAI, AutoGen)",
+          "url": "https://langchain-ai.github.io/langgraph/"
+        },
+        {
+          "level": "beginner",
+          "name": "Agent memory persistence & long-context strategies",
+          "url": "https://langchain-ai.github.io/langgraph/concepts/memory/"
+        },
+        {
+          "level": "beginner",
+          "name": "Production-grade AI agent deployment with external APIs",
+          "url": "https://docs.claude.com/en/docs/agents-and-tools/mcp"
+        }
+      ]
+    },
+    {
+      "name": "Cloud Computing, Linux & Bash",
+      "resources": [
+        {
+          "level": "beginner",
+          "name": "Linux filesystem hierarchy, file permissions & processes",
+          "url": "https://tldp.org/LDP/intro-linux/html/index.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Essential Shell/Bash commands & basic scripting",
+          "url": "https://www.gnu.org/software/bash/manual/bash.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Networking basics: IP, DNS, HTTP/HTTPS, SSH & ports",
+          "url": "https://www.geeksforgeeks.org/computer-networks/basics-computer-networking/"
+        },
+        {
+          "level": "beginner",
+          "name": "Cloud computing concepts: IaaS, PaaS, SaaS",
+          "url": "https://aws.amazon.com/what-is-cloud-computing/"
+        },
+        {
+          "level": "beginner",
+          "name": "AWS/GCP core services introduction (EC2, S3)",
+          "url": "https://docs.aws.amazon.com/ec2/"
+        },
+        {
+          "level": "beginner",
+          "name": "AWS Compute (EC2), Storage (S3), Networking (VPC) & IAM",
+          "url": "https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Cloud Managed Databases (RDS, DynamoDB)",
+          "url": "https://docs.aws.amazon.com/rds/"
+        },
+        {
+          "level": "beginner",
+          "name": "Advanced Bash scripting & cron job automation",
+          "url": "https://www.gnu.org/software/bash/manual/bash.html#Shell-Scripts"
+        },
+        {
+          "level": "beginner",
+          "name": "Linux security hardening, SSH keys & firewalls (UFW)",
+          "url": "https://ubuntu.com/server/docs/security-firewall"
+        },
+        {
+          "level": "beginner",
+          "name": "Cloud monitoring, logging & alarm configuration",
+          "url": "https://docs.aws.amazon.com/cloudwatch/"
+        },
+        {
+          "level": "beginner",
+          "name": "Multi-Cloud architecture & hybrid infrastructure",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/guide/multitenant/overview"
+        },
+        {
+          "level": "beginner",
+          "name": "High Availability, Auto-scaling & Load Balancing strategies",
+          "url": "https://docs.aws.amazon.com/autoscaling/"
+        },
+        {
+          "level": "beginner",
+          "name": "Cloud cost optimization & FinOps management",
+          "url": "https://www.finops.org/introduction/what-is-finops/"
+        },
+        {
+          "level": "beginner",
+          "name": "Infrastructure security, Compliance & Zero Trust policies",
+          "url": "https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/welcome.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Disaster recovery planning & automated backups",
+          "url": "https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-workloads-o"
+        }
+      ]
+    },
+    {
+      "name": "DevOps, Docker, Kubernetes & IaC",
+      "resources": [
+        {
+          "level": "beginner",
+          "name": "Git branching strategies & repository management",
+          "url": "https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell"
+        },
+        {
+          "level": "beginner",
+          "name": "CI/CD fundamentals & workflow automation principles",
+          "url": "https://docs.github.com/en/actions/about-github-actions/about-continuous-integration-with-github-actions"
+        },
+        {
+          "level": "beginner",
+          "name": "Docker basics: Images, Containers & Dockerfiles",
+          "url": "https://docs.docker.com/get-started/"
+        },
+        {
+          "level": "beginner",
+          "name": "Running & managing local containerized apps",
+          "url": "https://docs.docker.com/engine/reference/commandline/run/"
+        },
+        {
+          "level": "beginner",
+          "name": "Docker Compose for multi-container applications",
+          "url": "https://docs.docker.com/compose/"
+        },
+        {
+          "level": "beginner",
+          "name": "Container Registries (DockerHub, ECR)",
+          "url": "https://docs.aws.amazon.com/AmazonECR/latest/userguide/what-is-ecr.html"
+        },
+        {
+          "level": "beginner",
+          "name": "GitHub Actions / GitLab CI / Jenkins pipelines",
+          "url": "https://docs.github.com/en/actions"
+        },
+        {
+          "level": "beginner",
+          "name": "Infrastructure as Code (IaC) basics with Terraform",
+          "url": "https://developer.hashicorp.com/terraform/docs"
+        },
+        {
+          "level": "beginner",
+          "name": "Kubernetes (K8s) fundamentals: Pods, Deployments, Services",
+          "url": "https://kubernetes.io/docs/concepts/overview/"
+        },
+        {
+          "level": "beginner",
+          "name": "Kubernetes cluster management, Helm charts & Ingress",
+          "url": "https://helm.sh/docs/"
+        },
+        {
+          "level": "beginner",
+          "name": "GitOps workflows with ArgoCD / Flux",
+          "url": "https://argo-cd.readthedocs.io/en/stable/"
+        },
+        {
+          "level": "beginner",
+          "name": "Advanced Terraform state management & module design",
+          "url": "https://developer.hashicorp.com/terraform/language/state"
+        },
+        {
+          "level": "beginner",
+          "name": "Zero-downtime deployment strategies (Blue-Green, Canary)",
+          "url": "https://kubernetes.io/docs/concepts/workloads/management/#updating-resources"
+        },
+        {
+          "level": "beginner",
+          "name": "Production Observability stack (Prometheus, Grafana, Jaeger)",
+          "url": "https://prometheus.io/docs/introduction/overview/"
+        }
+      ]
+    },
+    {
+      "name": "Cybersecurity & Ethical Hacking",
+      "resources": [
+        {
+          "level": "beginner",
+          "name": "Security principles: CIA Triad (Confidentiality, Integrity, Availability)",
+          "url": "https://www.geeksforgeeks.org/ethical-hacking/the-cia-triad-in-cryptography/"
+        },
+        {
+          "level": "beginner",
+          "name": "Threats, vulnerabilities & risk concepts",
+          "url": "https://owasp.org/www-community/Threat_Modeling"
+        },
+        {
+          "level": "beginner",
+          "name": "Authentication, Passwords, MFA & Access Controls",
+          "url": "https://owasp.org/www-community/controls/Multi_Factor_Authentication"
+        },
+        {
+          "level": "beginner",
+          "name": "Networking fundamentals & traffic inspection basics",
+          "url": "https://www.wireshark.org/docs/wsug_html_chunked/"
+        },
+        {
+          "level": "beginner",
+          "name": "Common attacks: Phishing, Malware, Brute force, DoS",
+          "url": "https://www.cisa.gov/topics/cyber-threats-and-advisories"
+        },
+        {
+          "level": "beginner",
+          "name": "OWASP Top 10 web vulnerabilities (SQLi, XSS, CSRF)",
+          "url": "https://owasp.org/www-project-top-ten/"
+        },
+        {
+          "level": "beginner",
+          "name": "Secure HTTP, SSL/TLS, Cryptography & PKI",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/Security/Transport_Layer_Security"
+        },
+        {
+          "level": "beginner",
+          "name": "Network scanning (Nmap), Wireshark & vulnerability scanners",
+          "url": "https://nmap.org/book/man.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Firewalls, Intrusion Detection/Prevention (IDS/IPS)",
+          "url": "https://www.geeksforgeeks.org/computer-networks/intrusion-detection-system-ids/"
+        },
+        {
+          "level": "beginner",
+          "name": "Identity & Access Management (IAM) policies",
+          "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Security logging, SIEM concepts & incident response basics",
+          "url": "https://www.cisa.gov/topics/cyber-threats-and-advisories/information-sharing/siem"
+        },
+        {
+          "level": "beginner",
+          "name": "Ethical Hacking methodology & penetration testing",
+          "url": "https://owasp.org/www-project-web-security-testing-guide/"
+        },
+        {
+          "level": "beginner",
+          "name": "Advanced Web Application Security testing",
+          "url": "https://owasp.org/www-project-web-security-testing-guide/"
+        },
+        {
+          "level": "beginner",
+          "name": "Threat modeling, secure architecture design & code auditing",
+          "url": "https://owasp.org/www-community/Threat_Modeling"
+        },
+        {
+          "level": "beginner",
+          "name": "Cloud Security Posture Management (CSPM)",
+          "url": "https://docs.aws.amazon.com/securityhub/latest/userguide/what-is-securityhub.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Zero Trust Network Architecture implementation",
+          "url": "https://www.cisa.gov/zero-trust-maturity-model"
+        },
+        {
+          "level": "beginner",
+          "name": "Digital Forensics & Incident Response (DFIR)",
+          "url": "https://www.sans.org/digital-forensics-incident-response/"
+        }
+      ]
+    },
+    {
+      "name": "Data Engineering, Spark & Kafka",
+      "resources": [
+        {
+          "level": "beginner",
+          "name": "Data Engineering lifecycle overview",
+          "url": "https://www.geeksforgeeks.org/data-engineering/data-engineering-lifecycle/"
+        },
+        {
+          "level": "beginner",
+          "name": "Analytical SQL & data transformation basics",
+          "url": "https://www.postgresql.org/docs/current/queries.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Python scripts for automated data pipelines",
+          "url": "https://docs.python.org/3/tutorial/"
+        },
+        {
+          "level": "beginner",
+          "name": "ETL vs ELT architectures",
+          "url": "https://www.geeksforgeeks.org/data-engineering/etl-vs-elt/"
+        },
+        {
+          "level": "beginner",
+          "name": "Data file formats: CSV, JSON, Parquet, Avro",
+          "url": "https://parquet.apache.org/docs/"
+        },
+        {
+          "level": "beginner",
+          "name": "Data quality validation basics",
+          "url": "https://greatexpectations.io/expectations"
+        },
+        {
+          "level": "beginner",
+          "name": "Apache Spark fundamentals (DataFrames, Spark SQL)",
+          "url": "https://spark.apache.org/docs/latest/sql-programming-guide.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Apache Kafka: Producers, Consumers, Topics & Brokers",
+          "url": "https://kafka.apache.org/documentation/#gettingStarted"
+        },
+        {
+          "level": "beginner",
+          "name": "Pipeline Orchestration with Apache Airflow / Prefect",
+          "url": "https://airflow.apache.org/docs/apache-airflow/stable/index.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Data Lake basics (AWS S3 storage structures)",
+          "url": "https://docs.aws.amazon.com/whitepapers/latest/building-data-lakes/building-data-lake-aws.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Data Warehousing (Snowflake / BigQuery fundamentals)",
+          "url": "https://docs.snowflake.com/en/user-guide-intro"
+        },
+        {
+          "level": "beginner",
+          "name": "Stream processing fundamentals",
+          "url": "https://kafka.apache.org/documentation/streams/"
+        },
+        {
+          "level": "beginner",
+          "name": "Distributed Spark optimization (Partitioning, Shuffling, Caching)",
+          "url": "https://spark.apache.org/docs/latest/tuning.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Kafka partitions, consumer groups & exactly-once semantics",
+          "url": "https://kafka.apache.org/documentation/#semantics"
+        },
+        {
+          "level": "beginner",
+          "name": "Delta Lake / Icehouse / Lakehouse architecture",
+          "url": "https://docs.delta.io/latest/index.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Real-time streaming architectures (Structured Streaming)",
+          "url": "https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Data Governance, Schema Evolution & Data Lineage",
+          "url": "https://docs.getdbt.com/docs/collaborate/govern/about-governance"
+        },
+        {
+          "level": "beginner",
+          "name": "Production-grade cloud data platform engineering",
+          "url": "https://docs.aws.amazon.com/whitepapers/latest/big-data-analytics-options/welcome.html"
+        }
+      ]
+    },
+    {
+      "name": "IoT & IoT Analytics",
+      "resources": [
+        {
+          "level": "beginner",
+          "name": "IoT architecture & ecosystem components",
+          "url": "https://www.geeksforgeeks.org/internet-of-things-iot-architectures/"
+        },
+        {
+          "level": "beginner",
+          "name": "Sensors, actuators & microcontrollers (ESP32, Raspberry Pi)",
+          "url": "https://docs.espressif.com/projects/esp-idf/en/latest/esp32/"
+        },
+        {
+          "level": "beginner",
+          "name": "Connectivity basics (Wi-Fi, Bluetooth, Cellular)",
+          "url": "https://www.bluetooth.com/learn-about-bluetooth/tech-overview/"
+        },
+        {
+          "level": "beginner",
+          "name": "MQTT protocol fundamentals",
+          "url": "https://mqtt.org/mqtt-specification/"
+        },
+        {
+          "level": "beginner",
+          "name": "Device identification & basic data transmission",
+          "url": "https://docs.aws.amazon.com/iot/latest/developerguide/iot-thing-registry.html"
+        },
+        {
+          "level": "beginner",
+          "name": "AWS IoT Core / Azure IoT Hub fundamentals",
+          "url": "https://docs.aws.amazon.com/iot/latest/developerguide/what-is-aws-iot.html"
+        },
+        {
+          "level": "beginner",
+          "name": "MQTT topics, wildcards & payload structures",
+          "url": "https://docs.aws.amazon.com/iot/latest/developerguide/topics.html"
+        },
+        {
+          "level": "beginner",
+          "name": "NoSQL storage for time-series IoT data (DynamoDB)",
+          "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Device provisioning, shadow state & fleet management",
+          "url": "https://docs.aws.amazon.com/iot/latest/developerguide/iot-device-shadows.html"
+        },
+        {
+          "level": "beginner",
+          "name": "IoT analytics dashboards & real-time monitoring",
+          "url": "https://docs.aws.amazon.com/iotanalytics/latest/userguide/welcome.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Edge computing concepts",
+          "url": "https://docs.aws.amazon.com/greengrass/v2/developerguide/what-is-iot-greengrass.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Large-scale IoT architecture & high-throughput ingestion",
+          "url": "https://docs.aws.amazon.com/whitepapers/latest/designing-mqtt-topics-aws-iot-core/designing-mqtt-topics-aws-iot-c"
+        },
+        {
+          "level": "beginner",
+          "name": "Edge AI & model deployment on constrained hardware",
+          "url": "https://www.tensorflow.org/lite/microcontrollers"
+        },
+        {
+          "level": "beginner",
+          "name": "IoT security, hardware encryption & threat modeling",
+          "url": "https://docs.aws.amazon.com/iot/latest/developerguide/iot-security.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Predictive maintenance algorithms on time-series streams",
+          "url": "https://docs.aws.amazon.com/lookout-for-equipment/latest/ug/what-is.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Integration with cloud ML pipelines & big data platforms",
+          "url": "https://docs.aws.amazon.com/iotanalytics/latest/userguide/welcome.html"
+        }
+      ]
+    },
+    {
+      "name": "Flutter, Dart & Firebase",
+      "resources": [
+        {
+          "level": "beginner",
+          "name": "Dart language syntax, type safety & null-safety",
+          "url": "https://dart.dev/language"
+        },
+        {
+          "level": "beginner",
+          "name": "Flutter SDK setup & project architecture",
+          "url": "https://docs.flutter.dev/get-started/install"
+        },
+        {
+          "level": "beginner",
+          "name": "Stateless vs Stateful Widgets & basic UI layout",
+          "url": "https://docs.flutter.dev/ui/widgets-intro"
+        },
+        {
+          "level": "beginner",
+          "name": "Forms, user input & basic validation",
+          "url": "https://docs.flutter.dev/cookbook/forms/validation"
+        },
+        {
+          "level": "beginner",
+          "name": "Firebase project setup & connection",
+          "url": "https://firebase.google.com/docs/flutter/setup"
+        },
+        {
+          "level": "beginner",
+          "name": "State Management (Provider, Riverpod, or Bloc)",
+          "url": "https://docs.flutter.dev/data-and-backend/state-mgmt/options"
+        },
+        {
+          "level": "beginner",
+          "name": "REST API consumption & JSON serialization",
+          "url": "https://docs.flutter.dev/cookbook/networking/fetch-data"
+        },
+        {
+          "level": "beginner",
+          "name": "Firebase Auth, Cloud Firestore & Cloud Storage",
+          "url": "https://firebase.google.com/docs/firestore"
+        },
+        {
+          "level": "beginner",
+          "name": "Push notifications setup (FCM)",
+          "url": "https://firebase.google.com/docs/cloud-messaging"
+        },
+        {
+          "level": "beginner",
+          "name": "Local database storage (SQLite / Hive)",
+          "url": "https://docs.flutter.dev/cookbook/persistence/sqlite"
+        },
+        {
+          "level": "beginner",
+          "name": "Responsive layouts for Mobile & Tablet",
+          "url": "https://docs.flutter.dev/ui/adaptive-responsive"
+        },
+        {
+          "level": "beginner",
+          "name": "Advanced state architecture & clean code in Flutter",
+          "url": "https://docs.flutter.dev/app-architecture"
+        },
+        {
+          "level": "beginner",
+          "name": "Offline-first sync algorithms",
+          "url": "https://firebase.google.com/docs/firestore/manage-data/enable-offline"
+        },
+        {
+          "level": "beginner",
+          "name": "Flutter performance optimization & rendering profiling",
+          "url": "https://docs.flutter.dev/perf/rendering-performance"
+        },
+        {
+          "level": "beginner",
+          "name": "Custom animations & native platform integration (MethodChannels)",
+          "url": "https://docs.flutter.dev/platform-integration/platform-channels"
+        },
+        {
+          "level": "beginner",
+          "name": "Production release management (App Store / Play Store CI/CD)",
+          "url": "https://docs.flutter.dev/deployment/cd"
+        }
+      ]
+    },
+    {
+      "name": "Blockchain, Ethereum & Solidity",
+      "resources": [
+        {
+          "level": "beginner",
+          "name": "Blockchain fundamentals, cryptography & hashes",
+          "url": "https://ethereum.org/en/developers/docs/intro-to-ethereum/"
+        },
+        {
+          "level": "beginner",
+          "name": "Distributed ledgers & consensus mechanisms overview",
+          "url": "https://ethereum.org/en/developers/docs/consensus-mechanisms/"
+        },
+        {
+          "level": "beginner",
+          "name": "Bitcoin architecture, transactions & UTXO model",
+          "url": "https://developer.bitcoin.org/devguide/transactions.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Wallets, public/private keys & digital signatures",
+          "url": "https://ethereum.org/en/developers/docs/accounts/"
+        },
+        {
+          "level": "beginner",
+          "name": "Smart contract concepts & Ethereum overview",
+          "url": "https://ethereum.org/en/developers/docs/smart-contracts/"
+        },
+        {
+          "level": "beginner",
+          "name": "Proof of Work (PoW) vs Proof of Stake (PoS)",
+          "url": "https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/"
+        },
+        {
+          "level": "beginner",
+          "name": "Solidity syntax, data types, functions & modifiers",
+          "url": "https://docs.soliditylang.org/en/latest/"
+        },
+        {
+          "level": "beginner",
+          "name": "Smart contract deployment (Hardhat / Foundry)",
+          "url": "https://hardhat.org/docs"
+        },
+        {
+          "level": "beginner",
+          "name": "Gas fees, optimization & EVM execution model",
+          "url": "https://ethereum.org/en/developers/docs/gas/"
+        },
+        {
+          "level": "beginner",
+          "name": "Web3.js / Ethers.js frontend integration",
+          "url": "https://docs.ethers.org/v6/"
+        },
+        {
+          "level": "beginner",
+          "name": "Common smart contract vulnerabilities",
+          "url": "https://docs.soliditylang.org/en/latest/security-considerations.html"
+        },
+        {
+          "level": "beginner",
+          "name": "Advanced Solidity design patterns & contract upgradeability",
+          "url": "https://docs.openzeppelin.com/contracts/5.x/upgradeable"
+        },
+        {
+          "level": "beginner",
+          "name": "Smart contract auditing, formal verification & testing",
+          "url": "https://docs.openzeppelin.com/learn/writing-automated-tests"
+        },
+        {
+          "level": "beginner",
+          "name": "Reentrancy, front-running & exploit mitigation",
+          "url": "https://docs.soliditylang.org/en/latest/security-considerations.html#re-entrancy"
+        },
+        {
+          "level": "beginner",
+          "name": "DeFi primitives, Decentralized Apps (dApps) & DEXs",
+          "url": "https://ethereum.org/en/defi/"
+        },
+        {
+          "level": "beginner",
+          "name": "Layer-2 scaling solutions (Rollups, Sidechains)",
+          "url": "https://ethereum.org/en/layer-2/"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,129 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    background-color: #13131b;
+    color: #e4e1ed;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+}
+
+.glass-card {
+  background: rgba(17, 24, 39, 0.7);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
+}
+
+.glass-panel {
+  background: rgba(17, 24, 39, 0.7);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Signup / form input fields (icons are absolutely placed at left-4) */
+.input {
+  width: 100%;
+  background: #1b1b26;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  padding-left: 3rem;
+  font-size: 0.875rem;
+  color: #ffffff;
+  outline: none;
+  transition: all 0.2s ease;
+}
+.input::placeholder {
+  color: rgba(198, 197, 215, 0.5);
+}
+.input:focus {
+  border-color: rgba(192, 193, 255, 0.5);
+  box-shadow: 0 0 0 3px rgba(91, 95, 239, 0.2);
+}
+
+/* Styled dropdown select (custom chevron, dark options) */
+.styled-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: #1b1b26;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  padding: 0.625rem 2.5rem 0.625rem 0.875rem;
+  font-size: 0.875rem;
+  color: #ffffff;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239089a0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.875rem center;
+  background-size: 14px;
+}
+.styled-select:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+}
+.styled-select:focus {
+  border-color: rgba(192, 193, 255, 0.5);
+  box-shadow: 0 0 0 3px rgba(91, 95, 239, 0.2);
+}
+.styled-select option {
+  background-color: #1b1b26;
+  color: #ffffff;
+  padding: 0.5rem;
+}
+
+.hero-gradient-text {
+  background: linear-gradient(to right, #c0c1ff, #3cd7ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.glow-hover:hover {
+  box-shadow: 0 0 20px rgba(192, 193, 255, 0.3);
+}
+
+.primary-gradient {
+  background: linear-gradient(135deg, #5b5fef 0%, #cdbdff 100%);
+}
+
+.glow-button {
+  background: linear-gradient(135deg, #5b5fef 0%, #370096 100%);
+  box-shadow: 0 4px 15px rgba(91, 95, 239, 0.3);
+}
+
+.glow-button:hover {
+  box-shadow: 0 0 20px rgba(192, 193, 255, 0.5);
+}
+
+.user-bubble {
+  background: linear-gradient(135deg, rgba(91, 95, 239, 0.25), rgba(192, 193, 255, 0.15));
+  border: 1px solid rgba(192, 193, 255, 0.25);
+  box-shadow: 0 0 15px rgba(192, 193, 255, 0.1);
+}
+
+.ai-bubble {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(91, 95, 239, 0.3);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0d0d16;
+}
+::-webkit-scrollbar-thumb {
+  background: #292932;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #464555;
+}

@@ -1,0 +1,1031 @@
+[
+  {
+    "name": "Video Editing & Post-Production",
+    "beginner": [
+      "NLE Interface & Setup (Premiere Pro / DaVinci Resolve)",
+      "Video formats, codecs, frame rates & aspect ratios",
+      "Timeline navigation, basic cuts, trims & ripple edits",
+      "Audio syncing & primary dialogue leveling",
+      "Basic titles, lower thirds & text overlays",
+      "Standard transitions & jump cut management",
+      "File management, media pools & scratch disks",
+      "Export settings & web rendering presets"
+    ],
+    "intermediate": [
+      "Multi-camera editing & angle synchronization",
+      "Color correction, white balance & primary grading",
+      "Audio mixing: EQ, compression & audio ducking",
+      "Speed ramping, time remapping & optical flow",
+      "L-cuts, J-cuts & narrative pacing techniques",
+      "Proxy workflows for high-res 4K/8K media",
+      "Dynamic link integration (After Effects to NLE)",
+      "Subtitling, captioning & localized exports"
+    ],
+    "advanced": [
+      "Color Grading (LOG, RAW, ACES workflows)",
+      "Sound design, Foley, spatial audio & mastering",
+      "Documentary vs Commercial pacing & storytelling",
+      "Conforming, EDL/XML/AAF exchange pipelines",
+      "Archival management & project consolidation",
+      "High-frame-rate & HDR master mastering (Dolby Vision)",
+      "Collaborative studio post-production pipelines",
+      "Automated batch rendering & server transcoding"
+    ]
+  },
+  {
+    "name": "Visual Effects (VFX) & Compositing",
+    "beginner": [
+      "VFX fundamentals: Layer vs Node-based compositing",
+      "Green / Blue screen chroma keying basics",
+      "Masking, rotoscoping concepts & Bezier paths",
+      "2D Point tracking & transform stabilization",
+      "Blending modes, alpha channels & mattes",
+      "Basic motion blur, camera blur & lens flare",
+      "Stock footage integration & asset prep",
+      "Software basics (After Effects / Nuke)"
+    ],
+    "intermediate": [
+      "Planar tracking with Mocha & surface replacement",
+      "Multipass 3D render compositing (Beauty, Depth, AO)",
+      "Keylight, spill suppression & edge refined masking",
+      "3D Camera Solver & spatial point cloud alignment",
+      "Digital matte painting projection & set extension",
+      "Particle systems, fire/smoke/dust integration",
+      "Light wrap, atmospheric haze & grain matching",
+      "Cleanplating & object removal techniques"
+    ],
+    "advanced": [
+      "Deep compositing & volumetric data integration",
+      "Python scripting & pipeline automation in Nuke",
+      "Complex CG photorealistic integration & shadows",
+      "Wire removal, facial prep & beauty retouches",
+      "Lens distortion calibration & optical matching",
+      "Stereoscopic 3D compositing & depth mapping",
+      "Studio render farm management & ACES color spaces",
+      "VFX production pipeline & shot management"
+    ]
+  },
+  {
+    "name": "User Interface (UI) Design & Design Systems",
+    "beginner": [
+      "Figma / Adobe XD interface & vector tools",
+      "Visual hierarchy, scale, contrast & spacing",
+      "Grid systems, column alignment & margins",
+      "Typography scales, line height & font pairing",
+      "Color theory, palettes, semantics & UI contrast",
+      "Core UI components: buttons, inputs, cards, modals",
+      "Iconography integration & vector iconography",
+      "Basic frame-to-frame click-through prototyping"
+    ],
+    "intermediate": [
+      "Auto-layout, flexbox mental models & constraints",
+      "Component libraries, variants & component properties",
+      "Interactive prototyping, smart animate & overlays",
+      "Micro-interactions, state changes & hover effects",
+      "Dark mode architecture & dynamic color tokens",
+      "Accessibility standards (WCAG 2.1 AA/AAA rules)",
+      "Responsive breakpoint layouts (Mobile, Tablet, Web)",
+      "Design specs & developer handoff documentation"
+    ],
+    "advanced": [
+      "Enterprise Design Systems architecture & governance",
+      "Design tokens (Variables, JSON integration, Sync)",
+      "Design-to-code handoff automation (Figma API)",
+      "Atomic design methodology & complex nesting",
+      "Multi-brand & cross-platform system scaling",
+      "Design system auditing & component usage analytics",
+      "Micro-animation design with Lottie & Rive",
+      "Plugin development for Figma workflows"
+    ]
+  },
+  {
+    "name": "Human-Computer Interaction (HCI) & UX Research",
+    "beginner": [
+      "HCI core principles & Usability Heuristics (Nielsen)",
+      "User research fundamentals (Qualitative vs Quant)",
+      "User personas, empathy maps & target archetypes",
+      "User journey mapping & experience flow charts",
+      "Wireframing low-fidelity vs high-fidelity concepts",
+      "Information Architecture (IA) & site mapping",
+      "Mental models, affordances & feedback loops",
+      "Ethics in user research & consent frameworks"
+    ],
+    "intermediate": [
+      "Usability testing methods & cognitive walkthroughs",
+      "Card sorting, tree testing & navigation architecture",
+      "Task analysis, GOMS model & Fitts's Law application",
+      "A/B testing methodology & conversion metrics",
+      "Accessibility (a11y) frameworks & screen readers",
+      "Survey design, user interviewing & data synthesis",
+      "Service blueprinting & cross-channel touchpoints",
+      "UX writing, microcopy & error message design"
+    ],
+    "advanced": [
+      "Spatial computing & AR/VR interaction patterns",
+      "Multimodal interfaces (Voice, Gesture, Haptic, Eye)",
+      "Eye-tracking, biometrics & EEG cognitive metrics",
+      "Ethical AI-driven interface & generative UX design",
+      "Behavioral psychology & persuasive design models",
+      "HCI research paper methodology & academic study",
+      "Cross-cultural UX design & global localization",
+      "Accessibility compliance audits & enterprise strategy"
+    ]
+  },
+  {
+    "name": "Graphic Design & Brand Identity",
+    "beginner": [
+      "Design principles: balance, emphasis, rhythm, unity",
+      "Illustrator & Photoshop essential tools & shortcuts",
+      "Vector vs Raster graphics & resolution standards",
+      "Typography basics: serif, sans, kerning, tracking",
+      "Color models: RGB (digital) vs CMYK (print)",
+      "Basic shape manipulation, pen tool & bezier curves",
+      "Photo retouching, cropping & color balance basics",
+      "Layout composition & Gestalt visual principles"
+    ],
+    "intermediate": [
+      "Brand strategy, positioning & logo design systems",
+      "Print production: bleed, trim, spot colors (Pantone)",
+      "Multi-page layout design (InDesign / grid systems)",
+      "Vector illustration, iconography & isometric art",
+      "Editorial design: magazines, brochures & annuals",
+      "Packaging design basics, dielines & material mockups",
+      "Marketing collateral: social media & ad campaigns",
+      "Photo manipulation, compositing & blending modes"
+    ],
+    "advanced": [
+      "Comprehensive Visual Identity Guidelines & Systems",
+      "Dynamic & generative brand design architecture",
+      "prepress, press checks & specialty inks",
+      "3D packaging mockups & physical render integration",
+      "Intellectual property, copyright & font licensing",
+      "Design studio management & client presentation",
+      "Brand voice, storytelling & environmental design",
+      "Cross-media campaign direction & brand audits"
+    ]
+  },
+  {
+    "name": "Motion Graphics & 2D/3D Animation",
+    "beginner": [
+      "12 Principles of Animation (squash, stretch, timing)",
+      "After Effects interface, composition & timeline",
+      "Keyframing, spatial/temporal interpolation",
+      "Graph editor, ease in / ease out curves",
+      "Shape layers, trim paths & vector animation",
+      "Kinetic typography & text animators",
+      "Lower third animations & logo reveals",
+      "Render queue, Media Encoder & Lottie exports"
+    ],
+    "intermediate": [
+      "Character rigging & puppet animation (Duik / Animate)",
+      "3D space in After Effects, camera depth & lights",
+      "Cinema 4D / Blender motion graphics fundamentals",
+      "Expressions (ExtendScript / JS) for automated motion",
+      "Morphing shapes & complex vector transitions",
+      "Seamless looping animations & GIF optimization",
+      "Audio-reactive visualizers & frequency keyframing",
+      "UI animation for product walkthroughs & demos"
+    ],
+    "advanced": [
+      "Procedural 3D animation with MoGraph & Cinema 4D",
+      "GPU Rendering (Octane, Redshift) & lighting setup",
+      "Particle dynamics, liquid simulations & X- Particles",
+      "Broadcast design packages & show opener design",
+      "Projection mapping & large-format motion installation",
+      "Real-time motion design in Unreal Engine / TouchDesigner",
+      "Character physics, cloth dynamics & hair simulation",
+      "Studio motion pipelines & asset library management"
+    ]
+  },
+  {
+    "name": "C Programming Language & System Concepts",
+    "beginner": [
+      "GCC/Clang setup, compilation phases & Makefile basics",
+      "Variables, fundamental data types, specifiers & operators",
+      "Control flow: switch-case, if-else, while & for loops",
+      "Functions, scope, storage classes (auto, static, extern)",
+      "1D & 2D Arrays, string handling & standard library string.h",
+      "Pointers fundamentals, dereferencing & address-of arithmetic",
+      "Structures (struct), Unions & Typedef declarations",
+      "File I/O: fopen, fread, fwrite, fprintf & file pointers"
+    ],
+    "intermediate": [
+      "Dynamic Memory Allocation: malloc, calloc, realloc, free",
+      "Pointer arithmetic, double pointers & function pointers",
+      "Bitwise operators, bit masking, bit fields & endianness",
+      "Preprocessor directives, macros & conditional compilation",
+      "Data structure implementations in C (LinkedList, Stack, Queue)",
+      "Command line arguments (argc, argv) & error handling (errno)",
+      "Variadic functions (stdarg.h) & generic void pointers",
+      "Debugging with GDB, Valgrind memory leak detection"
+    ],
+    "advanced": [
+      "Inline assembly, compiler optimizations & volatility keyword",
+      "Low-level memory management, custom allocators & alignment",
+      "POSIX Threads (pthreads), mutexes, semaphores & race conditions",
+      "Inter-Process Communication (IPC): pipes, shared memory, queues",
+      "Socket programming (TCP/UDP client- server architecture)",
+      "Embedded C concepts, memory-mapped I/ O & interrupts",
+      "Dynamic loading & shared object libraries (.so / .dll)",
+      "Undefined behavior auditing, buffer overflow security prep"
+    ]
+  },
+  {
+    "name": "Operating Systems (OS) & System Architecture",
+    "beginner": [
+      "OS architecture: Kernel vs User space, System calls",
+      "Process concept, Process Control Block (PCB) & Process states",
+      "CPU Scheduling basics: FCFS, SJF, Round Robin, Priority",
+      "Threads vs Processes, Multithreading fundamentals",
+      "Memory hierarchy, main memory vs secondary storage",
+      "File system concepts, directories, permissions & inodes",
+      "I/O hardware concepts, polling vs interrupts",
+      "Basic Linux command line usage & shell interaction"
+    ],
+    "intermediate": [
+      "Process Synchronization: Critical Section, Mutex, Semaphores",
+      "Classic synchronization problems (Producer- Consumer, Readers-Writers)",
+      "Deadlocks: Characterization, Prevention, Avoidance (Banker's Algo)",
+      "Virtual Memory: Paging, Segmentation, Page Tables, TLB",
+      "Page Replacement Algorithms (FIFO, LRU, Optimal)",
+      "File allocation methods, disk scheduling (SSTF, SCAN, C-SCAN)",
+      "Linux System Calls: fork(), exec(), wait(), pipe(), dup2()",
+      "IPC mechanisms: Shared memory, Message queues, Signal handling"
+    ],
+    "advanced": [
+      "Kernel internals: Monolithic vs Microkernel architecture",
+      "Virtualization mechanics, Hypervisors (KVM, Xen) & Containers",
+      "Real-Time Operating Systems (RTOS) scheduling & priority inversion",
+      "Memory Management: NUMA, Copy-On-Write (COW), Slab Allocator",
+      "Distributed File Systems (NFS, HDFS) & Journaling File Systems",
+      "Kernel Driver Development & Kernel Module writing (LKM)",
+      "OS Security: Access Control Lists (ACLs), SELinux, Memory protection",
+      "System performance tuning, IOSTAT, VMSTAT & eBPF tracing"
+    ]
+  },
+  {
+    "name": "Computer Networks & Network Protocols",
+    "beginner": [
+      "Network topologies, LAN/WAN/MAN & Network hardware",
+      "OSI 7-Layer Model vs TCP/IP 4-Layer Model",
+      "Physical Layer: Transmission media, Modulation, Signals",
+      "Data Link Layer: Framing, Error detection (CRC, Checksum)",
+      "IP Addressing: IPv4 structure, Classful addressing, Subnetting basics",
+      "MAC addresses, ARP (Address Resolution Protocol) fundamentals",
+      "Basic networking utilities: ping, traceroute, ipconfig, nslookup",
+      "Application layer protocols introduction (HTTP, FTP, DNS)"
+    ],
+    "intermediate": [
+      "CIDR (Classless Inter-Domain Routing) & Subnet masking drills",
+      "Network Layer: IP Routing algorithms (Distance Vector, Link State)",
+      "Transport Layer: TCP vs UDP, TCP 3-Way Handshake & Teardown",
+      "TCP Flow Control (Sliding Window) & Congestion Control (Tahoe, Reno)",
+      "DNS resolution architecture & DHCP dynamic configuration",
+      "HTTP/1.1 vs HTTP/2 vs HTTP/3 (QUIC), HTTPS & TLS/SSL Handshake",
+      "VLANs, Switching mechanisms, Spanning Tree Protocol (STP)",
+      "Network packet capturing & analysis using Wireshark"
+    ],
+    "advanced": [
+      "BGP (Border Gateway Protocol) & Autonomous Systems routing",
+      "IPv6 Transition mechanisms, Dual-stack & Tunneling",
+      "Software-Defined Networking (SDN) & Network Function Virtualization",
+      "High-performance Socket Programming (epoll, kqueue, non-blocking I/O)",
+      "Network Security: Firewalls, NAT/PAT, VPNs, IPSec & DDoS mitigation",
+      "Content Delivery Networks (CDN) architecture & Edge Caching",
+      "Custom protocol design, binary packet serialization",
+      "Distributed Network consensus & load balancing algorithms"
+    ]
+  },
+  {
+    "name": "Quantitative Aptitude & Logical Reasoning (Placement / Competitive)",
+    "beginner": [
+      "Number Systems: Divisibility rules, LCM & HCF problems",
+      "Percentages, Averages, Ratio & Proportion fundamentals",
+      "Simple Interest & Compound Interest calculation techniques",
+      "Profit, Loss & Discount application problems",
+      "Time & Work, Pipes & Cisterns foundational concepts",
+      "Speed, Distance & Time basics, Train & Boat problems",
+      "Logical Series: Number, Alphabet & Coding- Decoding",
+      "Blood Relations, Direction Sense & Seating Arrangements (Linear)"
+    ],
+    "intermediate": [
+      "Permutations, Combinations & Probability calculations",
+      "Alligation & Mixtures, Clocks & Calendar logic",
+      "Algebraic equations, Quadratic equations & Progressions (AP/GP)",
+      "Geometry, Mensuration 2D/3D (Area, Volume, Perimeter)",
+      "Complex Circular & Matrix Seating Arrangements",
+      "Syllogisms (Venn Diagrams & 2-statement logic)",
+      "Data Sufficiency & Statement-Assumption/ Conclusion evaluation",
+      "Data Interpretation: Bar charts, Pie charts, Line graphs & Tables"
+    ],
+    "advanced": [
+      "Combinatorics & Conditional Probability puzzles",
+      "Data Interpretation Caselets & Multi-graph analytical sets",
+      "Logical Puzzles (Tower of Hanoi, Constraint satisfaction)",
+      "Game Theory basics, Truth-tellers & Liars logical problems",
+      "Speed math mental calculations & Vedic math shortcuts",
+      "Critical Reasoning & Cause-Effect logical deduction",
+      "Abstract reasoning, spatial visualization & pattern matrix",
+      "Comprehensive mock timed aptitude & technical interview drills"
+    ]
+  },
+  {
+    "name": "Python Programming",
+    "beginner": [
+      "Python setup, interpreter, IDE & VS Code",
+      "Variables, data types & type conversion",
+      "Operators, expressions, input/ output & strings",
+      "Control flow: if/elif/else, loops (for/ while)",
+      "Functions, parameters, scope & recursion basics",
+      "Core Data Structures: lists, tuples, sets & dicts",
+      "Exception handling & basic debugging",
+      "Modules, packages & imports",
+      "File I/O: TXT, CSV, JSON handling",
+      "Git basics & clean coding practices"
+    ],
+    "intermediate": [
+      "Object-Oriented Programming (Classes, Inheritance, OOP)",
+      "Iterators, generators & comprehensions",
+      "Decorators & context managers",
+      "Virtual environments, pip & dependencies",
+      "Type hints, dataclasses & enums",
+      "Unit testing with pytest & unittest",
+      "Logging & configuration management",
+      "REST API consumption & HTTP clients",
+      "Concurrency basics (threading, asyncio)",
+      "Algorithmic complexity & data structures"
+    ],
+    "advanced": [
+      "Python internals (Memory model & garbage collection)",
+      "asyncio & concurrent execution",
+      "Performance profiling, optimization & caching",
+      "Library packaging & PyPI publishing",
+      "Design patterns & clean architecture",
+      "typing & static code analysis",
+      "Production observability & error handling",
+      "Scalable microservice architecture in Python"
+    ]
+  },
+  {
+    "name": "C++ Programming",
+    "beginner": [
+      "C++ syntax, compiler setup & build workflow",
+      "Variables, fundamental data types & operators",
+      "Control statements & flow control",
+      "Functions, scope & pass-by-value vs reference",
+      "Arrays, basic string operations & raw pointers",
+      "Constructors & basic class structure"
+    ],
+    "intermediate": [
+      "OOP: Inheritance, polymorphism & encapsulation",
+      "Memory management, references & smart pointers",
+      "Standard Template Library (STL) containers & iterators",
+      "File handling & streams (fstream)",
+      "Exception handling & operator overloading",
+      "Templates & generic functions"
+    ],
+    "advanced": [
+      "Modern C++ features (C++17 / C++20 / C++23)",
+      "Move semantics, rvalue references & RAII",
+      "Concurrency, multi-threading & mutexes",
+      "Template metaprogramming",
+      "Low-level memory optimization & cache alignment",
+      "System-level performance tuning"
+    ]
+  },
+  {
+    "name": "Data Structures & Algorithms (DSA)",
+    "beginner": [
+      "Time & space complexity analysis (Big-O)",
+      "Linear searching & basic sorting (Bubble, Selection, Insertion)",
+      "Binary search & two-pointer strategies",
+      "Arrays, strings & basic matrix operations",
+      "STL/Collection data structures usage"
+    ],
+    "intermediate": [
+      "Linked lists, stacks & queues",
+      "Hash tables, hash sets & collision resolution",
+      "Binary trees, binary search trees (BST) & heaps",
+      "Graph representations, BFS & DFS traversals",
+      "Recursion & backtracking algorithms",
+      "Greedy algorithms & divide-and- conquer",
+      "Dynamic programming (DP) fundamentals"
+    ],
+    "advanced": [
+      "Shortest path (Dijkstra, Bellman- Ford) & MST",
+      "DP & bitmask/state optimizations",
+      "structures: Trie, Segment Tree, Fenwick Tree",
+      "Disjoint-Set Union (DSU) / Union- Find",
+      "String matching algorithms (KMP, Rabin-Karp)",
+      "Amortized analysis & competitive programming"
+    ]
+  },
+  {
+    "name": "Java & Core Ecosystem",
+    "beginner": [
+      "Java JDK setup, JVM overview & syntax",
+      "Variables, data types & control statements",
+      "Arrays, methods & basic exception handling",
+      "Classes, objects, constructors & packages",
+      "Core OOP: Encapsulation & Inheritance",
+      "Basic Java I/O operations"
+    ],
+    "intermediate": [
+      "Interfaces & abstract classes",
+      "Collections Framework (List, Set, Map, Queue)",
+      "Generics & type safety",
+      "Lambdas, functional interfaces & Streams API",
+      "Optional class & null-safety patterns",
+      "JDBC & relational database connectivity",
+      "Maven / Gradle build tools"
+    ],
+    "advanced": [
+      "JVM internals, memory management & Garbage Collection",
+      "Multithreading, concurrency & Java Memory Model",
+      "Reflection API, annotations & bytecode analysis",
+      "Design patterns in Java",
+      "High-performance collections & I/ O (NIO)",
+      "Enterprise application profiling & tuning"
+    ]
+  },
+  {
+    "name": "Spring Framework & Spring Boot",
+    "beginner": [
+      "Spring Core fundamentals & IoC container",
+      "Dependency Injection (@Component, @Autowired)",
+      "Spring Boot setup & project initializr",
+      "Application properties & YAML configurations",
+      "Basic REST controllers (@RestController)"
+    ],
+    "intermediate": [
+      "Spring Data JPA & Hibernate ORM integration",
+      "CRUD repositories & custom queries",
+      "Request validation (@Valid) & global error handling",
+      "Authentication basics & Swagger/ OpenAPI docs",
+      "Unit & integration testing (JUnit, Mockito)"
+    ],
+    "advanced": [
+      "Spring Security, OAuth2 & JWT role-based access",
+      "Microservices architecture with Spring Cloud",
+      "Service discovery (Eureka), API Gateway & Config Server",
+      "Event-driven messaging with Kafka/RabbitMQ",
+      "Distributed transactions, circuit breakers & resilience",
+      "Production monitoring (Actuator, Prometheus, Grafana)"
+    ]
+  },
+  {
+    "name": "HTML & CSS Basics",
+    "beginner": [
+      "HTML5 structure, semantic tags & document layout",
+      "Forms, input types, validation attributes & tables",
+      "Links, images, audio & video elements",
+      "CSS selectors, specificity & cascade rules",
+      "Box model: margin, padding, border, content",
+      "Basic typography & color models"
+    ],
+    "intermediate": [
+      "Flexbox layout & alignment strategies",
+      "CSS Grid layouts & dynamic grid designs",
+      "Responsive design, media queries & mobile-first approach",
+      "Transitions, transforms & CSS animations",
+      "CSS variables (Custom Properties) & themes",
+      "Modern CSS utilities (Tailwind / SASS basics)"
+    ],
+    "advanced": [
+      "CSS architecture (BEM, ITCSS)",
+      "CSS rendering performance & GPU acceleration",
+      "Complex animations & SVGs manipulation",
+      "Design systems & tokenized styling",
+      "Cross-browser compatibility & CSS polyfills",
+      "Print CSS & paged media layout design"
+    ]
+  },
+  {
+    "name": "JavaScript (JS)",
+    "beginner": [
+      "JS variables (var, let, const), types & operators",
+      "Control flow, loops & conditional statements",
+      "Functions, parameters & return values",
+      "Arrays, objects & primitive manipulations",
+      "DOM selection, manipulation & event handling",
+      "Browser storage: LocalStorage, SessionStorage, Cookies"
+    ],
+    "intermediate": [
+      "ES6+ features: destructuring, spread/rest, arrow functions",
+      "JavaScript Modules (import / export)",
+      "Asynchronous JS: Callbacks, Promises, async/await",
+      "Fetch API, HTTP requests & JSON parsing",
+      "Closures, lexical scope & 'this' keyword",
+      "Object prototypes, classes & inheritance",
+      "Basic frontend testing & debugging"
+    ],
+    "advanced": [
+      "JS Engine internals (Event Loop, Call Stack, Microtasks)",
+      "Memory management & memory leak detection",
+      "Functional programming paradigms & immutability",
+      "Web Workers & multithreaded browser execution",
+      "Security: XSS, CSRF, CORS & secure header management",
+      "Performance optimization & bundle profiling"
+    ]
+  },
+  {
+    "name": "React Framework",
+    "beginner": [
+      "React environment setup (Vite/ CRA) & JSX",
+      "Components: Functional components & composition",
+      "Props, state & event handling",
+      "Conditional rendering & rendering lists",
+      "Core Hooks: useState & useEffect",
+      "Basic API consumption within components"
+    ],
+    "intermediate": [
+      "React Router & single-page application navigation",
+      "Hooks (useMemo, useCallback, useRef)",
+      "Custom Hooks design & state reusability",
+      "Global State: Context API & Redux Toolkit",
+      "Form handling, validation & error management",
+      "Reusable UI component library integration"
+    ],
+    "advanced": [
+      "React Fiber architecture & concurrent rendering",
+      "Performance profiling, memoization & lazy loading",
+      "Code splitting & bundle size reduction",
+      "Design systems architecture & micro-frontends",
+      "state machines & state architecture",
+      "Production frontend testing (React Testing Library, Cypress)"
+    ]
+  },
+  {
+    "name": "Node.js & Express",
+    "beginner": [
+      "Node.js runtime basics, V8 engine & npm ecosystem",
+      "Core modules: fs, path, http, process",
+      "Creating basic HTTP servers in Node",
+      "Express.js setup, basic routing & server initialization",
+      "Request/Response objects & query/path parameters"
+    ],
+    "intermediate": [
+      "Express middleware architecture & error handling middleware",
+      "RESTful API design principles & routing structures",
+      "Authentication with JWT, bcrypt & sessions",
+      "Database connection (MongoDB via Mongoose, PostgreSQL via Knex/Prisma)",
+      "Environment variables & secret management",
+      "File upload processing & static file serving"
+    ],
+    "advanced": [
+      "Event Loop mechanics, thread pool & asynchronous I/O",
+      "Streams, buffers & handling large payload processing",
+      "Scalable Express architecture & clean code practices",
+      "Clustering, process management (PM2) & load handling",
+      "Rate limiting, security hardening (Helmet) & CORS",
+      "WebSockets & real-time bidirectional communication"
+    ]
+  },
+  {
+    "name": "Next.js Framework",
+    "beginner": [
+      "Next.js environment setup & App/ Pages router concepts",
+      "File-system based routing, nested routes & layouts",
+      "Client vs Server Components basics",
+      "Image, Font, and Link optimizations",
+      "Basic API Routes setup"
+    ],
+    "intermediate": [
+      "Data fetching strategies: SSR, SSG, and ISR",
+      "Server Actions & form submissions",
+      "Dynamic routing & catch-all routes",
+      "Authentication integration (NextAuth.js)",
+      "Middleware & route protection",
+      "SEO optimization, Metadata API & OpenGraph tags"
+    ],
+    "advanced": [
+      "React Server Components (RSC) deep dive",
+      "caching, revalidation & suspense boundaries",
+      "Edge runtime & global deployment (Vercel)",
+      "Micro-frontend integration & multi- zone setups",
+      "Performance optimization, bundle analysis & Core Web Vitals"
+    ]
+  },
+  {
+    "name": "GraphQL",
+    "beginner": [
+      "GraphQL vs REST concepts & core benefits",
+      "Schema definition language (SDL) basics",
+      "Types, fields, queries & simple resolvers",
+      "GraphiQL / Apollo Sandbox exploration"
+    ],
+    "intermediate": [
+      "Mutations & input types",
+      "Apollo Server & Apollo Client integration",
+      "Connecting GraphQL resolvers to database ORMs",
+      "Context, authentication & header authorization",
+      "Error handling & formatting"
+    ],
+    "advanced": [
+      "GraphQL Subscriptions & real- time updates",
+      "DataLoader & N+1 query problem optimization",
+      "Schema stitching & GraphQL Federation",
+      "Query complexity limits, rate limiting & security",
+      "Production caching strategies (CDN & Client)"
+    ]
+  },
+  {
+    "name": "Django & Django REST Framework",
+    "beginner": [
+      "Django project & app architecture",
+      "URLs, views, templates & static file handling",
+      "Django Models, fields & SQLite/ PostgreSQL configuration",
+      "Django Admin interface setup",
+      "Forms, request handling & basic CRUD operations"
+    ],
+    "intermediate": [
+      "Django REST Framework (DRF) setup",
+      "Serializers & ModelSerializers",
+      "APIView, Generic Views & ViewSets",
+      "Authentication (Session, Token, JWT) & Permissions",
+      "Pagination, filtering, searching & sorting",
+      "Class-based views (CBVs) & custom mixins"
+    ],
+    "advanced": [
+      "Django ORM query optimization (select_related, prefetch_related)",
+      "Asynchronous Django (ASGI, async views, Channels)",
+      "Custom middleware & signal handling",
+      "Celery & Redis task queue integration",
+      "Production deployment (Gunicorn, Nginx, Docker)",
+      "Multi-tenant architecture & security hardening"
+    ]
+  },
+  {
+    "name": "FastAPI",
+    "beginner": [
+      "FastAPI installation & Uvicorn ASGI server",
+      "Path parameters, query parameters & request body",
+      "Pydantic models for data validation",
+      "HTTP status codes & API responses",
+      "Automatic OpenAPI / Swagger documentation"
+    ],
+    "intermediate": [
+      "Dependency Injection system in FastAPI",
+      "Async endpoints & async/await database access",
+      "OAuth2 with Password & Bearer JWT tokens",
+      "SQLAlchemy ORM integration & database migrations (Alembic)",
+      "Custom error handlers & status code overrides",
+      "Automated testing with HTTPX & pytest"
+    ],
+    "advanced": [
+      "High-performance async architecture & background tasks",
+      "WebSockets & streaming responses",
+      "Middleware design & CORS security policies",
+      "Database connection pooling & performance tuning",
+      "Microservices deployment & containerization"
+    ]
+  },
+  {
+    "name": "Databases, SQL & PostgreSQL",
+    "beginner": [
+      "Relational database concepts (Tables, Rows, Keys)",
+      "DDL/DML commands: CREATE, ALTER, INSERT, UPDATE, DELETE",
+      "Queries: SELECT, WHERE, ORDER BY, LIMIT",
+      "Aggregations: GROUP BY, HAVING, COUNT, SUM, AVG",
+      "Basic JOINS (INNER, LEFT, RIGHT)",
+      "Database normalization fundamentals (1NF, 2NF, 3NF)"
+    ],
+    "intermediate": [
+      "Complex JOINs, Subqueries & Correlated Subqueries",
+      "Common Table Expressions (CTEs) & Window Functions",
+      "Transactions, Savepoints & ACID properties",
+      "Indexes (B-Tree, Hash) & Query Execution Plans (EXPLAIN)",
+      "Views, Stored Procedures & Triggers",
+      "PostgreSQL specific features (JSONB, Arrays)"
+    ],
+    "advanced": [
+      "Query optimization, indexing strategies & vacuuming",
+      "Table partitioning & sharding strategies",
+      "Replication (Primary-Replica), High Availability & Failover",
+      "Concurrency control, isolation levels & locking strategies",
+      "Data warehousing schemas (Star, Snowflake) & Analytical SQL"
+    ]
+  },
+  {
+    "name": "Machine Learning & Data Science",
+    "beginner": [
+      "NumPy arrays, vectorization & mathematical operations",
+      "Pandas DataFrames, filtering, merging & transformations",
+      "Data cleaning, missing value imputation & encoding",
+      "EDA & data visualization (Matplotlib / Seaborn)",
+      "Train/Test splits, Bias-Variance tradeoff",
+      "Linear Regression, Logistic Regression, KNN, Decision Trees",
+      "Evaluation metrics: MSE, Accuracy, Precision, Recall, F1"
+    ],
+    "intermediate": [
+      "Feature engineering, scaling & selection methods",
+      "Ensemble methods: Random Forest, Gradient Boosting, XGBoost",
+      "Unsupervised Learning: K-Means, Hierarchical, PCA",
+      "Cross-validation & Hyperparameter tuning (GridSearch, Optuna)",
+      "Imbalanced data techniques (SMOTE, class weights)",
+      "Scikit-Learn Pipelines & model reproducibility",
+      "Model interpretability (SHAP, LIME)"
+    ],
+    "advanced": [
+      "Ensembles & Stacking classifiers",
+      "Feature stores & automated ML (AutoML) pipelines",
+      "Model compression, quantization & inference speedup",
+      "Experiment tracking (MLflow, Weights & Biases)",
+      "Model monitoring, drift detection & governance",
+      "Responsible AI, fairness metrics & mitigation"
+    ]
+  },
+  {
+    "name": "Deep Learning Core",
+    "beginner": [
+      "Perceptrons & Artificial Neural Networks (ANN)",
+      "Activation functions (ReLU, Sigmoid, Softmax)",
+      "Loss functions, Gradient Descent & Backpropagation",
+      "PyTorch / TensorFlow Tensors & basic training loops",
+      "Overfitting prevention: Dropout, Weight Decay"
+    ],
+    "intermediate": [
+      "Custom PyTorch Datasets & DataLoaders",
+      "Optimizers (Adam, AdamW, SGD with momentum)",
+      "Learning rate schedulers & early stopping",
+      "Batch Normalization & Layer Normalization",
+      "GPU training setup (CUDA/MPS) & mixed-precision basics"
+    ],
+    "advanced": [
+      "Custom loss function & layer implementations",
+      "Distributed Data Parallel (DDP) training across multiple GPUs",
+      "Model quantization, pruning & TensorRT optimization",
+      "Neural Architecture Search (NAS) principles",
+      "State-of-the-art research paper implementation"
+    ]
+  },
+  {
+    "name": "Computer Vision (CV)",
+    "beginner": [
+      "Digital image basics, color spaces (RGB, HSV, Gray)",
+      "Image processing with OpenCV (filtering, thresholding, edge detection)",
+      "Convolutional Neural Network (CNN) fundamentals",
+      "Image classification pipelines & augmentations"
+    ],
+    "intermediate": [
+      "Classic CNN Architectures (ResNet, VGG, EfficientNet)",
+      "Transfer learning & fine-tuning vision models",
+      "Object Detection basics: Bounding boxes, IoU, NMS",
+      "YOLO object detection family & real-time inference",
+      "Image segmentation (U-Net, Mask R-CNN)"
+    ],
+    "advanced": [
+      "Vision Transformers (ViT) & Swin Transformers",
+      "Multimodal models (CLIP, BLIP, Vision-LLMs)",
+      "Generative CV: GANs, Diffusion Models & Image Synthesis",
+      "3D Computer Vision & Point Cloud processing",
+      "Edge CV deployment (ONNX, OpenVINO, MobileNet)"
+    ]
+  },
+  {
+    "name": "Natural Language Processing (NLP)",
+    "beginner": [
+      "Text preprocessing: Tokenization, Stemming, Lemmatization",
+      "Bag-of-Words, TF-IDF & N-grams",
+      "Word Embeddings (Word2Vec, GloVe, FastText)",
+      "Basic text classification algorithms"
+    ],
+    "intermediate": [
+      "Sequential models: RNNs, LSTMs & GRUs",
+      "Sequence-to-sequence architectures",
+      "Named Entity Recognition (NER) & Part-of-Speech tagging",
+      "Attention Mechanism fundamentals",
+      "Hugging Face Transformers library usage",
+      "BERT fine-tuning for sequence classification"
+    ],
+    "advanced": [
+      "Transformer internals (Multi-head Self-Attention)",
+      "Decoder-only vs Encoder-only vs Encoder-Decoder models",
+      "Domain-specific vocabulary adapting & tokenizer training",
+      "Cross-lingual models & machine translation",
+      "NLP evaluation metrics (BLEU, ROUGE, Perplexity)"
+    ]
+  },
+  {
+    "name": "Generative AI & Large Language Models (LLMs)",
+    "beginner": [
+      "Generative AI concepts & LLM foundation principles",
+      "Tokens, token limits & context windows",
+      "Prompt engineering: Zero-shot, Few-shot, System prompts",
+      "Using Commercial LLM APIs (OpenAI, Gemini, Claude)",
+      "Basic text generation & summarization scripts"
+    ],
+    "intermediate": [
+      "Structured LLM outputs (JSON mode, Pydantic validation)",
+      "Tool / Function calling with LLMs",
+      "Open-source LLMs (Llama, Mistral) & local execution (Ollama)",
+      "Embedding models & semantic vector representation",
+      "LLM evaluation frameworks & hallucination benchmarks"
+    ],
+    "advanced": [
+      "Parameter-Efficient Fine-Tuning (PEFT, LoRA, QLoRA)",
+      "RLHF & Direct Preference Optimization (DPO)",
+      "LLM quantization (GGUF, AWQ, GPTQ) & local deployment",
+      "Cost, latency & throughput optimization (vLLM, SGLang)",
+      "Guardrails, safety filters & prompt injection defense"
+    ]
+  },
+  {
+    "name": "RAG & Autonomous AI Agents",
+    "beginner": [
+      "Retrieval-Augmented Generation (RAG) concepts",
+      "Document parsing & text chunking strategies",
+      "Vector database basics (Pinecone, Chroma, Qdrant)",
+      "Simple similarity search (Cosine, Euclidean)"
+    ],
+    "intermediate": [
+      "RAG: Metadata filtering & Hybrid Search (Sparse+Dense)",
+      "Reranking models (Cohere Rerank, BGE)",
+      "LangChain & LlamaIndex frameworks",
+      "Building simple tool-using AI Agents",
+      "RAG evaluation frameworks (Ragas, TruLens)"
+    ],
+    "advanced": [
+      "Corrective RAG, Self-RAG & Agentic RAG workflows",
+      "Query rewriting, decomposition & routing pipelines",
+      "Multi-Agent Architectures (LangGraph, CrewAI, AutoGen)",
+      "Agent memory persistence & long- context strategies",
+      "Production-grade AI agent deployment with external APIs"
+    ]
+  },
+  {
+    "name": "Cloud Computing, Linux & Bash",
+    "beginner": [
+      "Linux filesystem hierarchy, file permissions & processes",
+      "Essential Shell/Bash commands & basic scripting",
+      "Networking basics: IP, DNS, HTTP/HTTPS, SSH & ports",
+      "Cloud computing concepts: IaaS, PaaS, SaaS",
+      "AWS/GCP core services introduction (EC2, S3)"
+    ],
+    "intermediate": [
+      "AWS Compute (EC2), Storage (S3), Networking (VPC) & IAM",
+      "Cloud Managed Databases (RDS, DynamoDB)",
+      "Bash scripting & cron job automation",
+      "Linux security hardening, SSH keys & firewalls (UFW)",
+      "Cloud monitoring, logging & alarm configuration"
+    ],
+    "advanced": [
+      "Multi-Cloud architecture & hybrid infrastructure",
+      "High Availability, Auto-scaling & Load Balancing strategies",
+      "Cloud cost optimization & FinOps management",
+      "Infrastructure security, Compliance & Zero Trust policies",
+      "Disaster recovery planning & automated backups"
+    ]
+  },
+  {
+    "name": "DevOps, Docker, Kubernetes & IaC",
+    "beginner": [
+      "Git branching strategies & repository management",
+      "CI/CD fundamentals & workflow automation principles",
+      "Docker basics: Images, Containers & Dockerfiles",
+      "Running & managing local containerized apps"
+    ],
+    "intermediate": [
+      "Docker Compose for multi- container applications",
+      "Container Registries (DockerHub, ECR)",
+      "GitHub Actions / GitLab CI / Jenkins pipelines",
+      "Infrastructure as Code (IaC) basics with Terraform",
+      "Kubernetes (K8s) fundamentals: Pods, Deployments, Services"
+    ],
+    "advanced": [
+      "Kubernetes cluster management, Helm charts & Ingress",
+      "GitOps workflows with ArgoCD / Flux",
+      "Terraform state management & module design",
+      "Zero-downtime deployment strategies (Blue-Green, Canary)",
+      "Production Observability stack (Prometheus, Grafana, Jaeger)"
+    ]
+  },
+  {
+    "name": "Cybersecurity & Ethical Hacking",
+    "beginner": [
+      "Security principles: CIA Triad (Confidentiality, Integrity, Availability)",
+      "Threats, vulnerabilities & risk concepts",
+      "Authentication, Passwords, MFA & Access Controls",
+      "Networking fundamentals & traffic inspection basics",
+      "Common attacks: Phishing, Malware, Brute force, DoS"
+    ],
+    "intermediate": [
+      "OWASP Top 10 web vulnerabilities (SQLi, XSS, CSRF)",
+      "Secure HTTP, SSL/TLS, Cryptography & PKI",
+      "Network scanning (Nmap), Wireshark & vulnerability scanners",
+      "Firewalls, Intrusion Detection/ Prevention (IDS/IPS)",
+      "Identity & Access Management (IAM) policies",
+      "Security logging, SIEM concepts & incident response basics"
+    ],
+    "advanced": [
+      "Ethical Hacking methodology & penetration testing",
+      "Web Application Security testing",
+      "Threat modeling, secure architecture design & code auditing",
+      "Cloud Security Posture Management (CSPM)",
+      "Zero Trust Network Architecture implementation",
+      "Digital Forensics & Incident Response (DFIR)"
+    ]
+  },
+  {
+    "name": "Data Engineering, Spark & Kafka",
+    "beginner": [
+      "Data Engineering lifecycle overview",
+      "Analytical SQL & data transformation basics",
+      "Python scripts for automated data pipelines",
+      "ETL vs ELT architectures",
+      "Data file formats: CSV, JSON, Parquet, Avro",
+      "Data quality validation basics"
+    ],
+    "intermediate": [
+      "Apache Spark fundamentals (DataFrames, Spark SQL)",
+      "Apache Kafka: Producers, Consumers, Topics & Brokers",
+      "Pipeline Orchestration with Apache Airflow / Prefect",
+      "Data Lake basics (AWS S3 storage structures)",
+      "Data Warehousing (Snowflake / BigQuery fundamentals)",
+      "Stream processing fundamentals"
+    ],
+    "advanced": [
+      "Distributed Spark optimization (Partitioning, Shuffling, Caching)",
+      "Kafka partitions, consumer groups & exactly-once semantics",
+      "Delta Lake / Icehouse / Lakehouse architecture",
+      "Real-time streaming architectures (Structured Streaming)",
+      "Data Governance, Schema Evolution & Data Lineage",
+      "Production-grade cloud data platform engineering"
+    ]
+  },
+  {
+    "name": "IoT & IoT Analytics",
+    "beginner": [
+      "IoT architecture & ecosystem components",
+      "Sensors, actuators & microcontrollers (ESP32, Raspberry Pi)",
+      "Connectivity basics (Wi-Fi, Bluetooth, Cellular)",
+      "MQTT protocol fundamentals",
+      "Device identification & basic data transmission"
+    ],
+    "intermediate": [
+      "AWS IoT Core / Azure IoT Hub fundamentals",
+      "MQTT topics, wildcards & payload structures",
+      "NoSQL storage for time-series IoT data (DynamoDB)",
+      "Device provisioning, shadow state & fleet management",
+      "IoT analytics dashboards & real- time monitoring",
+      "Edge computing concepts"
+    ],
+    "advanced": [
+      "Large-scale IoT architecture & high-throughput ingestion",
+      "Edge AI & model deployment on constrained hardware",
+      "IoT security, hardware encryption & threat modeling",
+      "Predictive maintenance algorithms on time-series streams",
+      "Integration with cloud ML pipelines & big data platforms"
+    ]
+  },
+  {
+    "name": "Flutter, Dart & Firebase",
+    "beginner": [
+      "Dart language syntax, type safety & null-safety",
+      "Flutter SDK setup & project architecture",
+      "Stateless vs Stateful Widgets & basic UI layout",
+      "Forms, user input & basic validation",
+      "Firebase project setup & connection"
+    ],
+    "intermediate": [
+      "State Management (Provider, Riverpod, or Bloc)",
+      "REST API consumption & JSON serialization",
+      "Firebase Auth, Cloud Firestore & Cloud Storage",
+      "Push notifications setup (FCM)",
+      "Local database storage (SQLite / Hive)",
+      "Responsive layouts for Mobile & Tablet"
+    ],
+    "advanced": [
+      "state architecture & clean code in Flutter",
+      "Offline-first sync algorithms",
+      "Flutter performance optimization & rendering profiling",
+      "Custom animations & native platform integration (MethodChannels)",
+      "Production release management (App Store / Play Store CI/CD)"
+    ]
+  },
+  {
+    "name": "Blockchain, Ethereum & Solidity",
+    "beginner": [
+      "Blockchain fundamentals, cryptography & hashes",
+      "Distributed ledgers & consensus mechanisms overview",
+      "Bitcoin architecture, transactions & UTXO model",
+      "Wallets, public/private keys & digital signatures",
+      "Smart contract concepts & Ethereum overview"
+    ],
+    "intermediate": [
+      "Proof of Work (PoW) vs Proof of Stake (PoS)",
+      "Solidity syntax, data types, functions & modifiers",
+      "Smart contract deployment (Hardhat / Foundry)",
+      "Gas fees, optimization & EVM execution model",
+      "Web3.js / Ethers.js frontend integration",
+      "Common smart contract vulnerabilities"
+    ],
+    "advanced": [
+      "Solidity design patterns & contract upgradeability",
+      "Smart contract auditing, formal verification & testing",
+      "Reentrancy, front-running & exploit mitigation",
+      "DeFi primitives, Decentralized Apps (dApps) & DEXs",
+      "Layer-2 scaling solutions (Rollups, Sidechains)"
+    ]
+  }
+]
