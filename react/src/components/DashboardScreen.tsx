@@ -4,7 +4,7 @@ import {
   Target, Users, Bell, Plus, Rocket, Sparkles, X, Check, ExternalLink,
   ChevronRight, TrendingUp, Award, FileText, FolderGit2, ArrowRight, Pencil, AlertTriangle
 } from 'lucide-react';
-import { api, DashboardResponse, DashboardProject, Notification, ProjectSuggestion } from '../api';
+import { api, DashboardResponse, DashboardProject, Notification } from '../api';
 
 interface DashboardScreenProps {
   onNavigate: (screen: ScreenType, transition?: 'none' | 'push' | 'slide_up') => void;
@@ -30,11 +30,6 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ onNavigate }) 
     progress: 0,
   });
   const [showNotifications, setShowNotifications] = useState(false);
-  const [suggestSkills, setSuggestSkills] = useState('');
-  const [suggestRole, setSuggestRole] = useState('');
-  const [suggestions, setSuggestions] = useState<ProjectSuggestion[]>([]);
-  const [isSuggesting, setIsSuggesting] = useState(false);
-  const [suggestError, setSuggestError] = useState('');
 
   const loadDashboard = () => {
     api.getDashboard()
@@ -58,41 +53,6 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ onNavigate }) 
       window.removeEventListener('focus', tick);
     };
   }, []);
-
-  const handleSuggestProjects = async () => {
-    setSuggestError('');
-    setIsSuggesting(true);
-    setSuggestions([]);
-    try {
-      const skills = suggestSkills
-        .split(',')
-        .map((s) => s.trim())
-        .filter(Boolean);
-      const res = await api.suggestProjects(skills.length ? skills : [], suggestRole.trim() || undefined);
-      setSuggestions(res.suggestions || []);
-      if (!(res.suggestions || []).length) setSuggestError('No suggestions returned. Try again.');
-    } catch (err: any) {
-      setSuggestError(err.message || 'Failed to get suggestions');
-    } finally {
-      setIsSuggesting(false);
-    }
-  };
-
-  const handleSaveSuggestion = async (s: ProjectSuggestion) => {
-    try {
-      await api.addProject({
-        title: s.title,
-        description: s.description,
-        level: s.level,
-        status: 'ongoing',
-        progress: 0,
-        recommendedByAi: true,
-      });
-      loadDashboard();
-    } catch (err) {
-      console.error('Failed to save suggestion', err);
-    }
-  };
 
   const handleAddProject = async () => {
     if (!projectForm.title.trim()) return;
@@ -166,7 +126,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ onNavigate }) 
             </button>
 
             {showNotifications && (
-              <div className="absolute right-0 mt-3 w-80 sm:w-96 bg-[#1b1b26] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50">
+              <div className="absolute right-0 mt-3 w-[min(88vw,24rem)] sm:w-96 bg-[#1b1b26] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50">
                 <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
                   <h4 className="text-sm font-bold text-white">Notifications</h4>
                   <span className="text-[10px] text-[#c6c5d7]">
@@ -299,7 +259,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ onNavigate }) 
               const done = s.current >= s.required;
               return (
                 <div key={s.name}>
-                  <div className="flex items-center justify-between mb-1.5">
+                  <div className="flex items-center justify-between mb-1.5 flex-wrap gap-x-3 gap-y-1">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-semibold text-white">{s.name}</span>
                       {done ? (
@@ -357,94 +317,6 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ onNavigate }) 
           </div>
         </section>
       )}
-
-      {/* AI Project Suggestions */}
-      <section className="glass-card rounded-2xl p-6 sm:p-8">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-5">
-          <div>
-            <h3 className="text-xl font-bold text-[#c0c1ff] flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-[#3cd7ff]" /> AI Project Suggestions
-            </h3>
-            <p className="text-xs text-[#c6c5d7] mt-1">
-              Enter your target role + skills and get project ideas that use those exact skills.
-            </p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-          <input
-            type="text"
-            value={suggestSkills}
-            onChange={(e) => setSuggestSkills(e.target.value)}
-            placeholder={`Skills (auto-filled from profile; edit if needed)`}
-            className="px-4 py-2.5 bg-[#1b1b26] border border-white/10 rounded-xl text-sm text-white placeholder-[#c6c5d7]/50 focus:outline-none focus:border-[#c0c1ff]/50"
-          />
-          <input
-            type="text"
-            value={suggestRole}
-            onChange={(e) => setSuggestRole(e.target.value)}
-            placeholder={`Target role (default: ${data?.targetRole || 'Software Engineer'})`}
-            className="px-4 py-2.5 bg-[#1b1b26] border border-white/10 rounded-xl text-sm text-white placeholder-[#c6c5d7]/50 focus:outline-none focus:border-[#c0c1ff]/50"
-          />
-        </div>
-        <button
-          onClick={handleSuggestProjects}
-          disabled={isSuggesting}
-          className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#5b5fef] to-[#3cd7ff] text-white text-sm font-semibold hover:opacity-90 transition-all cursor-pointer disabled:opacity-50 flex items-center gap-2"
-        >
-          {isSuggesting ? (
-            <>
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              Generating…
-            </>
-          ) : (
-            <>
-              <Sparkles className="w-4 h-4" /> Suggest Projects
-            </>
-          )}
-        </button>
-
-        {suggestError && (
-          <div className="mt-4 px-4 py-2.5 rounded-lg bg-rose-500/10 border border-rose-500/30 text-xs text-rose-300">
-            {suggestError}
-          </div>
-        )}
-
-        {suggestions.length > 0 && (
-          <div className="mt-6">
-            <h4 className="text-sm font-bold text-white mb-3">Suggested Projects</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {suggestions.map((s, idx) => (
-                <div key={idx} className="glass-card rounded-2xl p-5 flex flex-col gap-3 hover:border-[#c0c1ff]/40 transition-all">
-                  <div className="flex items-start justify-between gap-2">
-                    <h5 className="text-sm font-bold text-white leading-snug">{s.title}</h5>
-                    <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#007c96]/80 text-[#edf9ff]">
-                      {s.level}
-                    </span>
-                  </div>
-                  <p className="text-xs text-[#c6c5d7] leading-relaxed">{s.description}</p>
-                  <div className="mt-auto pt-1">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-[#3cd7ff] mb-1.5">Skills used</p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {(s.skillsUsed || []).map((sk) => (
-                        <span key={sk} className="text-[10px] px-2 py-0.5 rounded-full bg-[#5b5fef]/15 border border-[#c0c1ff]/30 text-[#c0c1ff]">
-                          {sk}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => handleSaveSuggestion(s)}
-                    className="mt-3 w-full px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#5b5fef]/15 text-[#c0c1ff] border border-[#5b5fef]/30 hover:bg-[#5b5fef]/25 transition-all cursor-pointer flex items-center justify-center gap-1.5"
-                  >
-                    <Plus className="w-3.5 h-3.5" /> Add to my projects
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </section>
 
       {/* Projects */}
       <section className="space-y-4 pt-2">
