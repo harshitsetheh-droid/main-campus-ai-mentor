@@ -1,6 +1,7 @@
-﻿import React from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { ScreenType } from '../types';
-import { Sparkles, Home, LayoutDashboard, Bot, User, Bell, PlayCircle, Users, LogOut, Award, FolderGit2, FileText } from 'lucide-react';
+import { Sparkles, Home, LayoutDashboard, Bot, User, Bell, PlayCircle, Users, LogOut, Award, FolderGit2, FileText, ChevronRight } from 'lucide-react';
+import { api, Notification } from '../api';
 
 interface NavbarProps {
   currentScreen: ScreenType;
@@ -11,7 +12,43 @@ interface NavbarProps {
   onLogout: () => void;
 }
 
+function formatNotificationDate(value: string): string {
+  const d = new Date(value);
+  if (isNaN(d.getTime())) return '';
+  const date = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  const time = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  return `${date}, ${time}`;
+}
+
 export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onNavigate, onOpenWalkthrough, username, photoUrl, onLogout }) => {
+  const [notifs, setNotifs] = useState<Notification[]>([]);
+  const [notifOpen, setNotifOpen] = useState(false);
+
+  const refreshNotifs = () => {
+    api.getNotifications()
+      .then((res) => setNotifs((res.notifications || []).slice(0, 5)))
+      .catch(() => {});
+  };
+
+  useEffect(() => {
+    refreshNotifs();
+    const id = setInterval(refreshNotifs, 20000);
+    window.addEventListener('focus', refreshNotifs);
+    return () => {
+      clearInterval(id);
+      window.removeEventListener('focus', refreshNotifs);
+    };
+  }, []);
+
+  const handleReadNotif = (n: Notification) => {
+    if (!n.is_read) {
+      api.readNotification(n.id).catch(() => {});
+      setNotifs((prev) => prev.map((x) => (x.id === n.id ? { ...x, is_read: true } : x)));
+    }
+  };
+
+  const unreadCount = notifs.filter((n) => !n.is_read).length;
+
   const handleNavClick = (e: React.MouseEvent, screen: ScreenType) => {
     e.preventDefault();
     onNavigate(screen, 'none');
@@ -126,11 +163,16 @@ export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onNavigate, onOpe
             </button>
             
             <button
-              onClick={() => onNavigate('dashboard', 'none')}
+              onClick={() => setNotifOpen((v) => !v)}
               title="Notifications"
-              className="text-[#c0c1ff] hover:opacity-80 p-2 rounded-full transition-transform active:scale-95 cursor-pointer"
+              className="relative text-[#c0c1ff] hover:opacity-80 p-2 rounded-full transition-transform active:scale-95 cursor-pointer"
             >
               <Bell className="w-5 h-5" />
+              {unreadCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 min-w-[18px] px-1 rounded-full bg-rose-500 text-white text-[9px] font-bold flex items-center justify-center">
+                  {unreadCount}
+                </span>
+              )}
             </button>
 
             <div className="flex items-center gap-2 pl-3 border-l border-white/10">
@@ -168,14 +210,72 @@ export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onNavigate, onOpe
             </button>
 
             <button
-              onClick={() => onNavigate('dashboard', 'none')}
+              onClick={() => setNotifOpen((v) => !v)}
               title="Notifications"
-              className="text-[#c0c1ff] p-2 rounded-full cursor-pointer"
+              className="relative text-[#c0c1ff] p-2 rounded-full cursor-pointer"
             >
               <Bell className="w-5 h-5" />
+              {unreadCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 min-w-[18px] px-1 rounded-full bg-rose-500 text-white text-[9px] font-bold flex items-center justify-center">
+                  {unreadCount}
+                </span>
+              )}
             </button>
           </div>
         </div>
+
+        {/* Notifications dropdown (navbar bell) */}
+        {notifOpen && (
+          <>
+            <div className="fixed inset-0 z-40" onClick={() => setNotifOpen(false)} />
+            <div className="absolute right-2 sm:right-6 top-full mt-2 w-[min(92vw,24rem)] bg-[#1b1b26] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+                <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                  <Bell className="w-4 h-4 text-[#3cd7ff]" /> Notifications
+                </h4>
+                {unreadCount > 0 && (
+                  <span className="text-[10px] bg-rose-500/15 text-rose-300 px-2 py-0.5 rounded-full font-bold">
+                    {unreadCount} new
+                  </span>
+                )}
+              </div>
+              <div className="max-h-80 overflow-y-auto">
+                {notifs.length === 0 ? (
+                  <p className="text-xs text-[#c6c5d7] p-4">
+                    No notifications yet. When peers complete skills, projects or earn certificates, you will see updates here.
+                  </p>
+                ) : (
+                  notifs.map((n) => (
+                    <button
+                      key={n.id}
+                      onClick={() => handleReadNotif(n)}
+                      className={`w-full text-left px-4 py-3 border-b border-white/5 hover:bg-white/5 transition-all cursor-pointer ${
+                        n.is_read ? 'opacity-60' : ''
+                      }`}
+                    >
+                      <p className="text-xs font-bold text-white flex items-start gap-2">
+                        {!n.is_read && <span className="w-1.5 h-1.5 rounded-full bg-[#3cd7ff] mt-0.5 shrink-0" />}
+                        <span>{n.title}</span>
+                      </p>
+                      {n.detail && <p className="text-[11px] text-[#c6c5d7] mt-0.5">{n.detail}</p>}
+                      {n.created_at && (
+                        <p className="text-[9px] text-[#7e7d94] mt-1 text-right">
+                          {formatNotificationDate(n.created_at)}
+                        </p>
+                      )}
+                    </button>
+                  ))
+                )}
+              </div>
+              <button
+                onClick={() => { setNotifOpen(false); onNavigate('dashboard', 'none'); }}
+                className="w-full px-4 py-2.5 text-xs font-semibold text-[#3cd7ff] hover:bg-white/5 transition-all cursor-pointer flex items-center justify-center gap-1 border-t border-white/10"
+              >
+                View all notifications <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </>
+        )}
       </header>
 
       {/* Mobile Bottom Navigation Bar inside a nav tag */}

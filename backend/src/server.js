@@ -840,7 +840,7 @@ app.post("/api/profile/certificates", requireAuth, async (req, res) => {
     // notify everyone EXCEPT the actor that the certificate was verified
     await broadcastAchievement(
       req.userId,
-      `{name}'s ${title} certificate has been verified!`,
+      `{name} earned a ${title} certificate in ${skill || "a skill"} from ${org || "an organization"}!`,
       "AI certificate verification passed"
     );
     res.json({ id: String(ins.rows[0].id), verified: true, summary: analysis.summary });
@@ -1634,7 +1634,7 @@ app.patch("/api/dashboard/projects/:id", requireAuth, async (req, res) => {
     if (newProgress >= 100 && (prev.rows[0]?.progress || 0) < 100) {
       await broadcastAchievement(
         req.userId,
-        `{name} has completed ${prev.rows[0]?.title || "a project"} with 100% mastery!`,
+        `{name} has completed the project ${prev.rows[0]?.title || "a project"}!`,
         "Project completed"
       );
     }
