@@ -399,6 +399,8 @@ export const api = {
     sendJson<{ token: string; user: AuthUser }>('/auth/register', 'POST', { username, email, password, rollNo }),
   login: (identifier: string, password: string, role?: string) =>
     sendJson<{ token: string; user: AuthUser }>('/auth/login', 'POST', { identifier, password, role }),
+  checkUsername: (username: string) =>
+    getJson<{ available: boolean; suggestions: string[] }>(`/auth/check-username?u=${encodeURIComponent(username)}`),
   me: () => getJson<{ user: AuthUser }>('/auth/me'),
 
   // Profile

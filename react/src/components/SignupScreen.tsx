@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { Sparkles, Mail, Lock, UserPlus, ArrowRight, Brain, Github, Linkedin, Target, Hash } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Sparkles, Mail, Lock, UserPlus, ArrowRight, Brain, Github, Linkedin, Target, Hash, Check, X, Clock, Loader2 } from 'lucide-react';
 import { api, AuthUser } from '../api';
 
 interface SignupScreenProps {
@@ -9,6 +9,26 @@ interface SignupScreenProps {
 
 const BRANCHES = ['CSE', 'CSE (AI/ML)', 'ECE', 'Electrical', 'Mechanical', 'Civil', 'IT'];
 const SEMESTERS = ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4', 'Sem 5', 'Sem 6', 'Sem 7', 'Sem 8'];
+
+const LiveClock: React.FC = () => {
+  const [t, setT] = useState(() => new Date());
+  useEffect(() => {
+    const i = setInterval(() => setT(new Date()), 1000);
+    return () => clearInterval(i);
+  }, []);
+  return (
+    <div className="flex items-center justify-center gap-2 mb-5">
+      <Clock className="w-4 h-4 text-[#3cd7ff]" />
+      <span className="text-[11px] text-[#c6c5d7] font-semibold tabular-nums">
+        {t.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
+      </span>
+      <span className="w-px h-3 bg-white/15" />
+      <span className="text-sm font-bold text-[#3cd7ff] tabular-nums">
+        {t.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true })}
+      </span>
+    </div>
+  );
+};
 
 export const SignupScreen: React.FC<SignupScreenProps> = ({ onSuccess, onSwitchToLogin }) => {
   const [form, setForm] = useState({
@@ -21,8 +41,43 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ onSuccess, onSwitchT
   });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [usernameStatus, setUsernameStatus] = useState<'idle' | 'invalid' | 'checking' | 'available' | 'taken'>('idle');
+  const [suggestions, setSuggestions] = useState<string[]>([]);
   const resumeRef = useRef<HTMLInputElement>(null);
   const errorRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const u = form.username.trim();
+    if (!u) { setUsernameStatus('idle'); setSuggestions([]); return; }
+    if (!/^[A-Za-z0-9_.-]{3,30}$/.test(u)) { setUsernameStatus('invalid'); setSuggestions([]); return; }
+    setUsernameStatus('checking');
+    const t = setTimeout(async () => {
+      try {
+        const r = await api.checkUsername(u);
+        if (form.username.trim() !== u) return;
+        setUsernameStatus(r.available ? 'available' : 'taken');
+        setSuggestions(r.suggestions || []);
+      } catch {
+        setUsernameStatus('idle');
+      }
+    }, 400);
+    return () => clearTimeout(t);
+  }, [form.username]);
+
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(form.email.trim());
+  const emailTyped = form.email.trim().length > 0;
+
+  const pw = form.password;
+  const pwChecks = [
+    { ok: pw.length >= 8 && pw.length <= 128, label: 'Min 8 characters' },
+    { ok: /[A-Z]/.test(pw), label: '1 capital letter (A-Z)' },
+    { ok: /[a-z]/.test(pw), label: '1 small letter (a-z)' },
+    { ok: /[0-9]/.test(pw), label: '1 number (0-9)' },
+    { ok: /[^A-Za-z0-9]/.test(pw), label: '1 symbol (!@#$...) ' },
+  ];
+  const pwTyped = pw.length > 0;
+  const confirmTyped = form.confirm.length > 0;
+  const confirmOk = confirmTyped && form.confirm === pw;
 
   const showError = (msg: string) => {
     setError(msg);
@@ -104,6 +159,8 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ onSuccess, onSwitchT
           </span>
         </div>
 
+        <LiveClock />
+
         <div className="glass-card rounded-3xl p-8 sm:p-10 border border-white/10 shadow-[0_0_40px_rgba(192,193,255,0.15)]">
           <div className="mb-6 inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card border border-white/10 text-xs font-semibold text-[#c0c1ff]">
             <Brain className="w-4 h-4 text-[#3cd7ff] animate-pulse" />
@@ -129,14 +186,54 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ onSuccess, onSwitchT
                   <div className="relative">
                     <UserIcon />
                     <input type="text" value={form.username} onChange={set('username')} placeholder="Unique username" required className="input" />
+                    {usernameStatus === 'checking' && (
+                      <Loader2 className="w-4 h-4 text-[#3cd7ff] absolute right-4 top-1/2 -translate-y-1/2 animate-spin" />
+                    )}
+                    {usernameStatus === 'available' && (
+                      <Check className="w-4 h-4 text-emerald-400 absolute right-4 top-1/2 -translate-y-1/2" />
+                    )}
+                    {usernameStatus === 'taken' && (
+                      <X className="w-4 h-4 text-rose-400 absolute right-4 top-1/2 -translate-y-1/2" />
+                    )}
+                  </div>
+                  {usernameStatus === 'invalid' && (
+                    <p className="text-[10px] text-amber-400 mt-1.5">3-30 characters, sirf letters, numbers, _ . -</p>
+                  )}
+                  {usernameStatus === 'available' && (
+                    <p className="text-[10px] text-emerald-400 mt-1.5">Username available ✓</p>
+                  )}
+                  {usernameStatus === 'taken' && (
+                    <div className="mt-1.5">
+                      <p className="text-[10px] text-rose-400">Username already taken — try one of these:</p>
+                      <div className="flex flex-wrap gap-1.5 mt-1.5">
+                        {suggestions.map((s) => (
+                          <button
+                            key={s}
+                            type="button"
+                            onClick={() => setForm((f) => ({ ...f, username: s }))}
+                            className="px-2.5 py-1 rounded-full bg-[#5b5fef]/15 border border-[#5b5fef]/40 text-[10px] font-bold text-[#c0c1ff] hover:bg-[#5b5fef]/30 transition-all cursor-pointer"
+                          >
+                            {s}
+                          </button>
+                        ))}
+                      </div>
                     </div>
+                  )}
                 </div>
                 <div>
                   <Label>Email *</Label>
                   <div className="relative">
                     <MailIcon />
                     <input type="email" value={form.email} onChange={set('email')} placeholder="you@example.com" required className="input" />
+                    {emailTyped && (
+                      emailOk
+                        ? <Check className="w-4 h-4 text-emerald-400 absolute right-4 top-1/2 -translate-y-1/2" />
+                        : <X className="w-4 h-4 text-rose-400 absolute right-4 top-1/2 -translate-y-1/2" />
+                    )}
                   </div>
+                  {emailTyped && !emailOk && (
+                    <p className="text-[10px] text-rose-400 mt-1.5">Email format galat hai — e.g. name@college.edu</p>
+                  )}
                 </div>
                 <div>
                   <Label>Roll Number *</Label>
@@ -151,13 +248,31 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ onSuccess, onSwitchT
                     <LockIcon />
                     <input type="password" value={form.password} onChange={set('password')} placeholder="Min 8 chars · Aa1@ symbol" required className="input" />
                   </div>
+                  {pwTyped && (
+                    <div className="mt-1.5 space-y-0.5">
+                      {pwChecks.map((c) => (
+                        <p key={c.label} className={`text-[10px] flex items-center gap-1 ${c.ok ? 'text-emerald-400' : 'text-rose-400'}`}>
+                          {c.ok ? <Check className="w-3 h-3" /> : <X className="w-3 h-3" />}
+                          {c.label}
+                        </p>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <div>
                   <Label>Confirm Password *</Label>
                   <div className="relative">
                     <LockIcon />
                     <input type="password" value={form.confirm} onChange={set('confirm')} placeholder="Re-enter password" required className="input" />
+                    {confirmTyped && (
+                      confirmOk
+                        ? <Check className="w-4 h-4 text-emerald-400 absolute right-4 top-1/2 -translate-y-1/2" />
+                        : <X className="w-4 h-4 text-rose-400 absolute right-4 top-1/2 -translate-y-1/2" />
+                    )}
                   </div>
+                  {confirmTyped && !confirmOk && (
+                    <p className="text-[10px] text-rose-400 mt-1.5">Passwords match nahi kar rahe</p>
+                  )}
                 </div>
               </div>
             </fieldset>

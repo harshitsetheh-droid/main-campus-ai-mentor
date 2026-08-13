@@ -349,6 +349,43 @@ app.post("/api/auth/register", authLimiter, async (req, res) => {
   }
 });
 
+// Live username availability check for signup (with related suggestions)
+app.get("/api/auth/check-username", async (req, res) => {
+  const u = safeString(req.query.u, 30);
+  if (!USERNAME_RE.test(u)) {
+    return res.json({ available: false, suggestions: [] });
+  }
+  try {
+    const taken = await pool.query(
+      "SELECT 1 FROM users WHERE LOWER(username) = LOWER($1) LIMIT 1",
+      [u]
+    );
+    if (taken.rowCount === 0) return res.json({ available: true, suggestions: [] });
+    const base = String(u).toLowerCase().replace(/[^a-z0-9]/g, "") || "user";
+    const cands = [
+      base + "1",
+      base + "23",
+      base + "_" + new Date().getFullYear(),
+      base + "_yt",
+      base.replace(/.$/, "") + "99",
+      base + "2026",
+    ];
+    const suggestions = [];
+    for (const c of cands) {
+      if (suggestions.length >= 4) break;
+      if (c.length > 30) continue;
+      const hit = await pool.query(
+        "SELECT 1 FROM users WHERE LOWER(username) = LOWER($1) LIMIT 1",
+        [c]
+      );
+      if (hit.rowCount === 0 && !suggestions.includes(c)) suggestions.push(c);
+    }
+    res.json({ available: false, suggestions });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
 app.post("/api/auth/login", authLimiter, async (req, res) => {
   const identifier = safeString(req.body.identifier, 200);
   const { password } = req.body;
