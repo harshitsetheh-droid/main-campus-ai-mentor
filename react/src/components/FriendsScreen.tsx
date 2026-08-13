@@ -243,7 +243,7 @@ export const FriendsScreen: React.FC<Props> = ({ onNavigate, initialDmTarget }) 
     try {
       await api.declineFriendRequest(id);
       refreshAll();
-      showToast('Request declined');
+      showToast('Request rejected — sender 5 min baad phir se bhej sakta hai');
     } catch (err: any) {
       showToast(err.message || 'Could not decline');
     }
@@ -595,13 +595,13 @@ export const FriendsScreen: React.FC<Props> = ({ onNavigate, initialDmTarget }) 
                       onClick={() => acceptReq(r.id)}
                       className="px-3.5 py-2 rounded-xl bg-emerald-500 text-white text-xs font-bold flex items-center gap-1.5 hover:bg-emerald-400 transition-all cursor-pointer"
                     >
-                      <Check className="w-3.5 h-3.5" /> Approve
+                      <Check className="w-3.5 h-3.5" /> Accept
                     </button>
                     <button
                       onClick={() => declineReq(r.id)}
-                      className="px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-xs font-bold flex items-center gap-1.5 hover:bg-white/10 transition-all cursor-pointer"
+                      className="px-3.5 py-2 rounded-xl bg-rose-500/15 border border-rose-500/40 text-rose-300 text-xs font-bold flex items-center gap-1.5 hover:bg-rose-500/25 transition-all cursor-pointer"
                     >
-                      <X className="w-3.5 h-3.5" /> Decline
+                      <X className="w-3.5 h-3.5" /> Reject
                     </button>
                   </div>
                 </div>
@@ -620,7 +620,7 @@ export const FriendsScreen: React.FC<Props> = ({ onNavigate, initialDmTarget }) 
                   <div className="min-w-0">
                     <p className="font-bold text-white text-sm truncate">{r.toHandle}</p>
                     <p className="text-[11px] text-amber-300 font-semibold">
-                      {r.status === 'pending' ? 'Pending — approval ka wait' : 'Declined'}
+                      {r.status === 'pending' ? 'Pending — approval ka wait' : 'Rejected · 5 min cooldown'}
                     </p>
                   </div>
                 </div>

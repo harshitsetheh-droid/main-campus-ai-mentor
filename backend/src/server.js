@@ -2192,6 +2192,19 @@ async function pendingRequestBetween(a, b) {
   );
   return r.rows[0] || null;
 }
+// After a request is declined, the requester waits 5 minutes before the same
+// pair can be asked again (either direction) — prevents spam re-requests.
+async function recentlyDeclined(a, b) {
+  const r = await pool.query(
+    `SELECT 1 FROM chat_requests
+     WHERE status='declined'
+       AND ((from_user_id=$1 AND to_user_id=$2) OR (from_user_id=$2 AND to_user_id=$1))
+       AND created_at > NOW() - INTERVAL '5 minutes'
+     LIMIT 1`,
+    [a, b]
+  );
+  return r.rowCount > 0;
+}
 
 app.get("/api/friends", requireAuth, async (req, res) => {
   try {
@@ -2272,6 +2285,9 @@ app.post("/api/friends/request", requireAuth, async (req, res) => {
     if (await friendsWith(req.userId, targetId)) {
       return res.json({ relation: "friends", friend: { id: targetId, handle: anonymousHandle(targetId) } });
     }
+    if (await recentlyDeclined(req.userId, targetId)) {
+      return res.status(429).json({ error: "Request abhi decline hui hai — 5 minute baad phir se bhejna" });
+    }
     const pending = await pendingRequestBetween(req.userId, targetId);
     if (pending) {
       if (pending.from_user_id === req.userId) {
@@ -2280,7 +2296,11 @@ app.post("/api/friends/request", requireAuth, async (req, res) => {
       return res.json({ relation: "pending", requestId: pending.id });
     }
     const ins = await pool.query(
-      "INSERT INTO chat_requests (from_user_id, to_user_id) VALUES ($1,$2) RETURNING id",
+      `INSERT INTO chat_requests (from_user_id, to_user_id)
+       VALUES ($1,$2)
+       ON CONFLICT (from_user_id, to_user_id)
+       DO UPDATE SET status='pending', created_at=NOW()
+       RETURNING id`,
       [req.userId, targetId]
     );
     res.json({ relation: "requested", requestId: ins.rows[0].id, toHandle: anonymousHandle(targetId) });
