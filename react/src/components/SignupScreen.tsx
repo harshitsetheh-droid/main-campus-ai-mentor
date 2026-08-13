@@ -160,34 +160,17 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ onSuccess, onSwitchT
                     <input type="password" value={form.confirm} onChange={set('confirm')} placeholder="Re-enter password" required className="input" />
                   </div>
                 </div>
+                <div>
+                  <Label>Account Type</Label>
+                  <select value={form.role} onChange={set('role')} className="styled-select w-full !py-3">
+                    <option value="student">Student</option>
+                    <option value="placement_officer">Placement Officer</option>
+                    <option value="faculty">Faculty</option>
+                    <option value="club_manager">Club Manager</option>
+                    <option value="super_admin">Super Admin</option>
+                  </select>
+                </div>
               </div>
-            </fieldset>
-
-            {/* Account Type */}
-            <fieldset className="space-y-4">
-              <legend className="text-xs font-bold uppercase tracking-wider text-[#3cd7ff] mb-1">Account Type</legend>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {([
-                  ['student', 'Student', 'Placements, skills, projects aur AI mentor — regular student account'],
-                  ['placement_officer', 'Placement Officer', 'Drives + company question bank manage karo'],
-                  ['faculty', 'Faculty', 'Cohort-level aggregate stats dekho'],
-                ] as [string, string, string][]).map(([val, label, desc]) => (
-                  <button
-                    key={val}
-                    type="button"
-                    onClick={() => setForm((f) => ({ ...f, role: val }))}
-                    className={`text-left p-4 rounded-2xl border transition-all cursor-pointer ${
-                      form.role === val
-                        ? 'bg-[#5b5fef]/20 border-[#5b5fef]/60 shadow-[0_0_20px_rgba(91,95,239,0.15)]'
-                        : 'bg-white/5 border-white/10 hover:border-white/25'
-                    }`}
-                  >
-                    <p className={`text-sm font-bold ${form.role === val ? 'text-[#c0c1ff]' : 'text-white'}`}>{label}</p>
-                    <p className="text-[10px] text-[#7e7d94] mt-1 leading-snug">{desc}</p>
-                  </button>
-                ))}
-              </div>
-              <p className="text-[10px] text-[#7e7d94]">Club Manager aur Super Admin accounts sirf Admin panel se assign hote hain.</p>
             </fieldset>
 
             {/* Academic */}
@@ -196,13 +179,13 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ onSuccess, onSwitchT
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Label>Branch</Label>
-                  <select value={form.branch} onChange={set('branch')} className="input styled-select !pl-3">
+                  <select value={form.branch} onChange={set('branch')} className="styled-select w-full !py-3">
                     {BRANCHES.map((b) => <option key={b}>{b}</option>)}
                   </select>
                 </div>
                 <div>
                   <Label>Semester</Label>
-                  <select value={form.semester} onChange={set('semester')} className="input styled-select !pl-3">
+                  <select value={form.semester} onChange={set('semester')} className="styled-select w-full !py-3">
                     {SEMESTERS.map((s) => <option key={s}>{s}</option>)}
                   </select>
                 </div>
@@ -233,7 +216,7 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ onSuccess, onSwitchT
                 </div>
                 <div>
                   <Label>Internship or Full-time?</Label>
-                  <select value={form.workType} onChange={set('workType')} className="input styled-select !pl-3">
+                  <select value={form.workType} onChange={set('workType')} className="styled-select w-full !py-3">
                     <option value="">Not sure yet</option>
                     <option value="internship">Internship</option>
                     <option value="job">Full-time job</option>

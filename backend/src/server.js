@@ -269,7 +269,9 @@ app.post("/api/auth/register", authLimiter, async (req, res) => {
   const rollNo = safeString(req.body.rollNo, 20);
   const { password } = req.body;
   const role =
-    req.body.role === "placement_officer" || req.body.role === "faculty" ? req.body.role : "student";
+    ["student", "placement_officer", "faculty", "club_manager", "super_admin"].includes(req.body.role)
+      ? req.body.role
+      : "student";
   if (!username || !email || !password) {
     return res.status(400).json({ error: "Please fill in all the required fields." });
   }
