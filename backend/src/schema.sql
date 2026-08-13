@@ -19,6 +19,12 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS qr_token TEXT NOT NULL DEFAULT '';
 CREATE UNIQUE INDEX IF NOT EXISTS users_qr_token_uq ON users(qr_token) WHERE qr_token <> '';
 UPDATE users SET qr_token = md5(random()::text || clock_timestamp()::text || id::text) WHERE qr_token = '';
 
+-- Roles: student (default) | placement_officer | club_manager | faculty | super_admin
+ALTER TABLE users ADD COLUMN IF NOT EXISTS role TEXT NOT NULL DEFAULT 'student';
+CREATE INDEX IF NOT EXISTS users_role_idx ON users(role);
+-- harsh1 is the super admin (idempotent bootstrap)
+UPDATE users SET role = 'super_admin' WHERE username = 'harsh1' AND role <> 'super_admin';
+
 -- Friend requests (anonymous chat request flow: request -> approve -> friend)
 CREATE TABLE IF NOT EXISTS chat_requests (
   id SERIAL PRIMARY KEY,
@@ -231,6 +237,15 @@ CREATE TABLE IF NOT EXISTS club_messages (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- Club managers (appointed by super admin; moderate their clubs' messages)
+CREATE TABLE IF NOT EXISTS club_managers (
+  id SERIAL PRIMARY KEY,
+  club_id INTEGER NOT NULL REFERENCES clubs(id) ON DELETE CASCADE,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE (club_id, user_id)
+);
+
 -- Demo clubs (idempotent seed, safe to run repeatedly)
 INSERT INTO clubs (name, description, emoji) VALUES
   ('DSA Paglu', 'LeetCode grinders ki maha-sabha — problems, patterns aur rank charcha', '🤓'),
@@ -267,6 +282,19 @@ SELECT * FROM (VALUES
   ('Amazon', 'SDE Intern', '22 LPA (Intern offer)', 'Seasonal', 'upcoming')
 ) AS v(company, role, package, deadline, status)
 WHERE NOT EXISTS (SELECT 1 FROM placement_drives);
+
+-- Placement company question bank: PO / super admin share questions for a
+-- specific company (with frequency), every student can browse them
+CREATE TABLE IF NOT EXISTS placement_company_questions (
+  id SERIAL PRIMARY KEY,
+  company TEXT NOT NULL,
+  question TEXT NOT NULL,
+  frequency INTEGER NOT NULL DEFAULT 1 CHECK (frequency >= 1),
+  added_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS placement_company_questions_company_idx
+  ON placement_company_questions (LOWER(company));
 
 -- Shared reference cohorts (global benchmark groups, not user data)
 INSERT INTO cohorts (id, name, total_students, user_rank) VALUES

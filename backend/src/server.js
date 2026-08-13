@@ -299,7 +299,7 @@ app.post("/api/auth/register", authLimiter, async (req, res) => {
       [user.id, username, INSTITUTION]
     );
     const token = signToken(user.id, user.username);
-    res.status(201).json({ token, user: { id: user.id, username: user.username, email: user.email, rollNo: user.roll_no || "" } });
+    res.status(201).json({ token, user: { id: user.id, username: user.username, email: user.email, rollNo: user.roll_no || "", role: user.role || "student" } });
   } catch (err) {
     console.error("Register error:", err);
     res.status(500).json({ error: "Something went wrong. Please try again." });
@@ -321,7 +321,7 @@ app.post("/api/auth/login", authLimiter, async (req, res) => {
   }
   try {
     const userRes = await pool.query(
-      "SELECT id, username, email, roll_no, password_hash FROM users WHERE username = $1 OR email = $1 OR roll_no = $1 LIMIT 1",
+      "SELECT id, username, email, roll_no, password_hash, role FROM users WHERE username = $1 OR email = $1 OR roll_no = $1 LIMIT 1",
       [identifier]
     );
     const user = userRes.rows[0];
@@ -338,7 +338,7 @@ app.post("/api/auth/login", authLimiter, async (req, res) => {
     }
     clearLoginLock(lockKey);
     const token = signToken(user.id, user.username);
-    res.json({ token, user: { id: user.id, username: user.username, email: user.email, rollNo: user.roll_no || "" } });
+    res.json({ token, user: { id: user.id, username: user.username, email: user.email, rollNo: user.roll_no || "", role: user.role || "student" } });
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).json({ error: "Something went wrong. Please try again." });
@@ -347,13 +347,31 @@ app.post("/api/auth/login", authLimiter, async (req, res) => {
 
 app.get("/api/auth/me", requireAuth, async (req, res) => {
   try {
-    const userRes = await pool.query("SELECT id, username, email FROM users WHERE id = $1", [req.userId]);
+    const userRes = await pool.query("SELECT id, username, email, role FROM users WHERE id = $1", [req.userId]);
     if (userRes.rowCount === 0) return res.status(404).json({ error: "User not found" });
-    res.json({ user: userRes.rows[0] });
+    const u = userRes.rows[0];
+    res.json({ user: { id: u.id, username: u.username, email: u.email, role: u.role || "student" } });
   } catch (err) {
     sendServerError(res, err);
   }
 });
+
+// Role guard: pass the roles allowed to hit the route, e.g. requireRole("super_admin")
+function requireRole(...roles) {
+  return async (req, res, next) => {
+    try {
+      const r = await pool.query("SELECT role FROM users WHERE id = $1", [req.userId]);
+      const role = (r.rows[0] && r.rows[0].role) || "student";
+      req.role = role;
+      if (!roles.includes(role)) {
+        return res.status(403).json({ error: "You do not have permission for this action" });
+      }
+      next();
+    } catch (err) {
+      sendServerError(res, err);
+    }
+  };
+}
 
 // ---------------------------------------------------------------------------
 // PROFILE
@@ -2459,6 +2477,243 @@ app.get("/api/me/qrcode", requireAuth, async (req, res) => {
 });
 
 // ---------------------------------------------------------------------------
+// SUPER ADMIN (user management)
+// ---------------------------------------------------------------------------
+app.get("/api/admin/users", requireAuth, requireRole("super_admin"), async (req, res) => {
+  try {
+    const q = safeString(req.query.q, 60).trim();
+    const r = q
+      ? await pool.query(
+          `SELECT id, username, email, roll_no, role, created_at FROM users
+           WHERE LOWER(username) LIKE LOWER($1) OR LOWER(email) LIKE LOWER($1) OR roll_no LIKE $1
+           ORDER BY id LIMIT 100`,
+          [`%${q}%`]
+        )
+      : await pool.query(
+          `SELECT id, username, email, roll_no, role, created_at FROM users ORDER BY id LIMIT 300`
+        );
+    res.json({ users: r.rows });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+app.post("/api/admin/users/:id/role", requireAuth, requireRole("super_admin"), async (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10) || 0;
+    if (id === req.userId) return res.status(400).json({ error: "Apna role khud nahi badal sakte" });
+    const role = String(req.body.role || "").trim();
+    const allowed = ["student", "placement_officer", "club_manager", "faculty", "super_admin"];
+    if (!allowed.includes(role)) return res.status(400).json({ error: "Invalid role" });
+    const r = await pool.query("UPDATE users SET role=$2 WHERE id=$1 RETURNING id, username, role", [id, role]);
+    if (r.rowCount === 0) return res.status(404).json({ error: "User not found" });
+    res.json({ user: r.rows[0] });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+app.delete("/api/admin/users/:id", requireAuth, requireRole("super_admin"), async (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10) || 0;
+    if (id === req.userId) return res.status(400).json({ error: "Apna account yahan delete nahi kar sakte" });
+    const r = await pool.query("DELETE FROM users WHERE id=$1 RETURNING id", [id]);
+    if (r.rowCount === 0) return res.status(404).json({ error: "User not found" });
+    res.json({ success: true });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+// ---------------------------------------------------------------------------
+// CLUB MANAGEMENT (super admin appoints club managers; managers moderate)
+// ---------------------------------------------------------------------------
+app.get("/api/admin/clubs", requireAuth, requireRole("super_admin"), async (req, res) => {
+  try {
+    const r = await pool.query(
+      `SELECT c.id, c.name, c.description, c.emoji,
+              COUNT(DISTINCT m.user_id)::int AS members,
+              COALESCE(JSON_AGG(DISTINCT jsonb_build_object('id', u.id, 'username', u.username)) FILTER (WHERE u.id IS NOT NULL), '[]') AS managers
+       FROM clubs c
+       LEFT JOIN club_members m ON m.club_id = c.id
+       LEFT JOIN club_managers cm ON cm.club_id = c.id
+       LEFT JOIN users u ON u.id = cm.user_id
+       GROUP BY c.id ORDER BY c.id`
+    );
+    // build handle server-side per manager user id
+    const clubs = r.rows.map((c) => ({
+      ...c,
+      managers: (c.managers || []).map((m) => ({ ...m, handle: anonymousHandle(m.id) })),
+    }));
+    res.json({ clubs });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+app.post("/api/admin/clubs", requireAuth, requireRole("super_admin"), async (req, res) => {
+  try {
+    const name = safeString(req.body.name, 80).trim();
+    const description = safeString(req.body.description, 300).trim();
+    const emoji = safeString(req.body.emoji, 10).trim() || "💬";
+    if (!name) return res.status(400).json({ error: "Club name is required" });
+    const r = await pool.query(
+      "INSERT INTO clubs (name, description, emoji) VALUES ($1,$2,$3) ON CONFLICT (name) DO NOTHING RETURNING id, name, description, emoji",
+      [name, description, emoji]
+    );
+    if (r.rowCount === 0) return res.status(409).json({ error: "Is naam ka club pehle se hai" });
+    res.status(201).json({ club: r.rows[0] });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+app.delete("/api/admin/clubs/:id", requireAuth, requireRole("super_admin"), async (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10) || 0;
+    const r = await pool.query("DELETE FROM clubs WHERE id=$1 RETURNING id", [id]);
+    if (r.rowCount === 0) return res.status(404).json({ error: "Club not found" });
+    res.json({ success: true });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+// Super admin appoints / removes a club manager for a specific club
+app.post("/api/admin/clubs/:id/managers", requireAuth, requireRole("super_admin"), async (req, res) => {
+  try {
+    const clubId = parseInt(req.params.id, 10) || 0;
+    const userId = parseInt(req.body.userId, 10) || 0;
+    if (!clubId || !userId) return res.status(400).json({ error: "Club and user are required" });
+    const club = await pool.query("SELECT id FROM clubs WHERE id=$1", [clubId]);
+    if (club.rowCount === 0) return res.status(404).json({ error: "Club not found" });
+    const user = await pool.query("SELECT id, username FROM users WHERE id=$1", [userId]);
+    if (user.rowCount === 0) return res.status(404).json({ error: "User not found" });
+    await pool.query(
+      "INSERT INTO club_managers (club_id, user_id) VALUES ($1,$2) ON CONFLICT (club_id, user_id) DO NOTHING",
+      [clubId, userId]
+    );
+    await pool.query("UPDATE users SET role='club_manager' WHERE id=$1 AND role='student'", [userId]);
+    res.json({ success: true, manager: { id: userId, username: user.rows[0].username, handle: anonymousHandle(userId) } });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+app.delete("/api/admin/clubs/:id/managers/:userId", requireAuth, requireRole("super_admin"), async (req, res) => {
+  try {
+    const clubId = parseInt(req.params.id, 10) || 0;
+    const userId = parseInt(req.params.userId, 10) || 0;
+    await pool.query("DELETE FROM club_managers WHERE club_id=$1 AND user_id=$2", [clubId, userId]);
+    res.json({ success: true });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+// Club manager view: clubs they manage
+app.get("/api/manager/clubs", requireAuth, requireRole("club_manager", "super_admin"), async (req, res) => {
+  try {
+    const r = await pool.query(
+      `SELECT c.id, c.name, c.description, c.emoji
+       FROM club_managers cm JOIN clubs c ON c.id = cm.club_id
+       WHERE cm.user_id = $1 ORDER BY c.id`,
+      [req.userId]
+    );
+    res.json({ clubs: r.rows });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+// Club manager: recent messages in a club they manage (for moderation)
+app.get("/api/manager/clubs/:id/messages", requireAuth, requireRole("club_manager", "super_admin"), async (req, res) => {
+  try {
+    const clubId = parseInt(req.params.id, 10) || 0;
+    const ok = await pool.query(
+      "SELECT 1 FROM club_managers WHERE club_id=$1 AND user_id=$2",
+      [clubId, req.userId]
+    );
+    if (ok.rowCount === 0 && req.role !== "super_admin") {
+      return res.status(403).json({ error: "Tum is club ke manager nahi ho" });
+    }
+    const limit = Math.min(100, parseInt(req.query.limit, 10) || 50);
+    const r = await pool.query(
+      `SELECT id, text, created_at FROM club_messages
+       WHERE club_id = $1 ORDER BY id DESC LIMIT $2`,
+      [clubId, limit]
+    );
+    const messages = r.rows.reverse().map((m) => ({
+      id: m.id,
+      text: m.text,
+      createdAt: m.created_at ? m.created_at.toISOString() : null,
+    }));
+    res.json({ messages });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+// Club manager moderates: delete any message in their club (anonymously —
+// reporter never sees who wrote it, only the text)
+app.delete("/api/manager/clubs/:id/messages/:messageId", requireAuth, requireRole("club_manager", "super_admin"), async (req, res) => {
+  try {
+    const clubId = parseInt(req.params.id, 10) || 0;
+    const messageId = parseInt(req.params.messageId, 10) || 0;
+    const ok = await pool.query(
+      "SELECT 1 FROM club_managers WHERE club_id=$1 AND user_id=$2",
+      [clubId, req.userId]
+    );
+    if (ok.rowCount === 0 && req.role !== "super_admin") {
+      return res.status(403).json({ error: "Tum is club ke manager nahi ho" });
+    }
+    const r = await pool.query("DELETE FROM club_messages WHERE id=$1 AND club_id=$2 RETURNING id", [messageId, clubId]);
+    if (r.rowCount === 0) return res.status(404).json({ error: "Message not found" });
+    res.json({ success: true });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+// ---------------------------------------------------------------------------
+// FACULTY (cohort-level stats, never names/identities)
+// ---------------------------------------------------------------------------
+app.get("/api/faculty/stats", requireAuth, requireRole("faculty", "placement_officer", "super_admin"), async (req, res) => {
+  try {
+    const [users, skillStats, topSkills, clubsActive] = await Promise.all([
+      pool.query("SELECT COUNT(*)::int AS total FROM users WHERE role='student'"),
+      pool.query(
+        `SELECT ROUND(AVG(s.percentage))::int AS avg_skill_percentage, COUNT(DISTINCT s.user_id)::int AS students_with_skills
+         FROM skills s`
+      ),
+      pool.query(
+        `SELECT s.name, COUNT(*)::int AS students, ROUND(AVG(s.percentage))::int AS avg_percentage
+         FROM skills s GROUP BY s.name ORDER BY students DESC, avg_percentage DESC LIMIT 12`
+      ),
+      pool.query(
+        `SELECT COUNT(DISTINCT club_id)::int AS active_clubs,
+                COUNT(*)::int AS total_memberships,
+                COUNT(DISTINCT CASE WHEN created_at > NOW() - INTERVAL '7 days' THEN club_id END)::int AS active_last_7d
+         FROM club_members`
+      ),
+    ]);
+    res.json({
+      stats: {
+        totalStudents: users.rows[0].total,
+        avgSkillPercentage: skillStats.rows[0].avg_skill_percentage,
+        studentsWithSkills: skillStats.rows[0].students_with_skills,
+        topSkills: topSkills.rows,
+        clubsActive: clubsActive.rows[0].active_clubs,
+        clubsMemberships: clubsActive.rows[0].total_memberships,
+        clubsActiveLast7d: clubsActive.rows[0].active_last_7d,
+      },
+    });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+// ---------------------------------------------------------------------------
 // PLACEMENT (on-campus drive feed)
 // ---------------------------------------------------------------------------
 app.get("/api/placement/drives", requireAuth, async (req, res) => {
@@ -2467,6 +2722,124 @@ app.get("/api/placement/drives", requireAuth, async (req, res) => {
       "SELECT id, company, role, package, deadline, status FROM placement_drives ORDER BY id"
     );
     res.json({ drives: r.rows });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+// Drives CRUD — Placement Officer + Super Admin only
+app.post("/api/placement/drives", requireAuth, requireRole("placement_officer", "super_admin"), async (req, res) => {
+  try {
+    const company = safeString(req.body.company, 120).trim();
+    const role = safeString(req.body.role, 120).trim();
+    const pkg = safeString(req.body.package, 60).trim();
+    const deadline = safeString(req.body.deadline, 120).trim();
+    const status = ["open", "upcoming", "closed"].includes(String(req.body.status)) ? String(req.body.status) : "open";
+    if (!company) return res.status(400).json({ error: "Company name is required" });
+    const r = await pool.query(
+      `INSERT INTO placement_drives (company, role, package, deadline, status)
+       VALUES ($1,$2,$3,$4,$5) RETURNING id, company, role, package, deadline, status`,
+      [company, role, pkg, deadline, status]
+    );
+    res.status(201).json({ drive: r.rows[0] });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+app.patch("/api/placement/drives/:id", requireAuth, requireRole("placement_officer", "super_admin"), async (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10) || 0;
+    const company = safeString(req.body.company, 120).trim();
+    const role = safeString(req.body.role, 120).trim();
+    const pkg = safeString(req.body.package, 60).trim();
+    const deadline = safeString(req.body.deadline, 120).trim();
+    const status = ["open", "upcoming", "closed"].includes(String(req.body.status)) ? String(req.body.status) : null;
+    if (!company) return res.status(400).json({ error: "Company name is required" });
+    const r = await pool.query(
+      `UPDATE placement_drives
+       SET company=$2, role=$3, package=$4, deadline=$5, status=COALESCE($6, status)
+       WHERE id=$1 RETURNING id, company, role, package, deadline, status`,
+      [id, company, role, pkg, deadline, status]
+    );
+    if (r.rowCount === 0) return res.status(404).json({ error: "Drive not found" });
+    res.json({ drive: r.rows[0] });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+app.delete("/api/placement/drives/:id", requireAuth, requireRole("placement_officer", "super_admin"), async (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10) || 0;
+    const r = await pool.query("DELETE FROM placement_drives WHERE id=$1 RETURNING id", [id]);
+    if (r.rowCount === 0) return res.status(404).json({ error: "Drive not found" });
+    res.json({ success: true });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+// Company question bank: PO / Super Admin share questions + frequency for a
+// specific company; every student can browse them.
+app.get("/api/placement/company-questions", requireAuth, async (req, res) => {
+  try {
+    const company = safeString(req.query.company, 120).trim();
+    const r = company
+      ? await pool.query(
+          `SELECT q.id, q.company, q.question, q.frequency, q.created_at
+           FROM placement_company_questions q
+           WHERE LOWER(q.company) = LOWER($1)
+           ORDER BY q.frequency DESC, q.id`,
+          [company]
+        )
+      : await pool.query(
+          `SELECT q.id, q.company, q.question, q.frequency, q.created_at
+           FROM placement_company_questions q
+           ORDER BY q.company, q.frequency DESC, q.id`
+        );
+    res.json({ questions: r.rows });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+app.get("/api/placement/company-questions/companies", requireAuth, async (req, res) => {
+  try {
+    const r = await pool.query(
+      `SELECT company, COUNT(*)::int AS question_count, MAX(frequency) AS max_frequency
+       FROM placement_company_questions
+       GROUP BY company ORDER BY company`
+    );
+    res.json({ companies: r.rows });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+app.post("/api/placement/company-questions", requireAuth, requireRole("placement_officer", "super_admin"), async (req, res) => {
+  try {
+    const company = safeString(req.body.company, 120).trim();
+    const question = safeString(req.body.question, 500).trim();
+    const frequency = Math.max(1, Math.min(100, parseInt(req.body.frequency, 10) || 1));
+    if (!company || !question) return res.status(400).json({ error: "Company and question are required" });
+    const r = await pool.query(
+      `INSERT INTO placement_company_questions (company, question, frequency, added_by)
+       VALUES ($1,$2,$3,$4) RETURNING id, company, question, frequency, created_at`,
+      [company, question, frequency, req.userId]
+    );
+    res.status(201).json({ question: r.rows[0] });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+app.delete("/api/placement/company-questions/:id", requireAuth, requireRole("placement_officer", "super_admin"), async (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10) || 0;
+    const r = await pool.query("DELETE FROM placement_company_questions WHERE id=$1 RETURNING id", [id]);
+    if (r.rowCount === 0) return res.status(404).json({ error: "Question not found" });
+    res.json({ success: true });
   } catch (err) {
     sendServerError(res, err);
   }

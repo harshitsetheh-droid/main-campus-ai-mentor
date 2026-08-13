@@ -1,7 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { ScreenType } from '../types';
-import { Sparkles, Home, LayoutDashboard, Bot, User, Bell, PlayCircle, Users, LogOut, Award, FolderGit2, FileText, ChevronRight, MessageSquare, Briefcase, UserPlus } from 'lucide-react';
-import { api, Notification } from '../api';
+import { Sparkles, Home, LayoutDashboard, Bot, User, Bell, PlayCircle, Users, LogOut, Award, FolderGit2, FileText, ChevronRight, MessageSquare, Briefcase, UserPlus, ShieldCheck } from 'lucide-react';
+import { api, Notification, Role } from '../api';
 
 interface NavbarProps {
   currentScreen: ScreenType;
@@ -9,8 +9,17 @@ interface NavbarProps {
   onOpenWalkthrough: () => void;
   username?: string;
   photoUrl?: string;
+  role?: Role;
   onLogout: () => void;
 }
+
+const ROLE_LABELS: Record<string, string> = {
+  student: 'Student',
+  placement_officer: 'PO',
+  club_manager: 'Club Mgr',
+  faculty: 'Faculty',
+  super_admin: 'Super Admin',
+};
 
 function formatNotificationDate(value: string): string {
   const d = new Date(value);
@@ -20,7 +29,7 @@ function formatNotificationDate(value: string): string {
   return `${date}, ${time}`;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onNavigate, onOpenWalkthrough, username, photoUrl, onLogout }) => {
+export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onNavigate, onOpenWalkthrough, username, photoUrl, role, onLogout }) => {
   const [notifs, setNotifs] = useState<Notification[]>([]);
   const [notifOpen, setNotifOpen] = useState(false);
 
@@ -183,6 +192,18 @@ export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onNavigate, onOpe
               <User className="w-4 h-4" />
               <span className="hidden 2xl:inline">Profile</span>
             </a>
+            {role && role !== 'student' && (
+              <a
+                href="#"
+                onClick={(e) => handleNavClick(e, 'admin')}
+                className={`text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-1.5 ${
+                  currentScreen === 'admin' ? 'text-[#c0c1ff]' : 'text-[#c6c5d7] hover:text-white'
+                }`}
+              >
+                <ShieldCheck className="w-4 h-4" />
+                <span className="hidden 2xl:inline">Admin</span>
+              </a>
+            )}
 
             <button
               onClick={onOpenWalkthrough}
@@ -220,6 +241,11 @@ export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onNavigate, onOpe
               <span className="text-xs font-semibold text-white hidden lg:inline max-w-[90px] truncate">
                 {username}
               </span>
+              {role && role !== 'student' && (
+                <span className="hidden lg:inline-flex items-center gap-1 text-[9px] font-extrabold text-[#3cd7ff] bg-[#3cd7ff]/10 border border-[#3cd7ff]/40 px-1.5 py-0.5 rounded-full uppercase tracking-wide">
+                  {ROLE_LABELS[role] || role}
+                </span>
+              )}
               <button
                 onClick={onLogout}
                 title="Logout"
@@ -388,6 +414,21 @@ export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onNavigate, onOpe
             <UserPlus className="w-5 h-5" />
             <span className="text-[10px] font-semibold mt-0.5 whitespace-nowrap max-w-[70px] truncate">Friends</span>
           </a>
+
+          {role && role !== 'student' && (
+            <a
+              href="#"
+              onClick={(e) => handleNavClick(e, 'admin')}
+              className={`flex flex-col items-center justify-center transition-all flex-1 min-w-[58px] shrink-0 ${
+                currentScreen === 'admin'
+                  ? 'text-[#c0c1ff] drop-shadow-[0_0_8px_rgba(192,193,255,0.5)]'
+                  : 'text-[#c6c5d7]/70 hover:text-[#c0c1ff]'
+              }`}
+            >
+              <ShieldCheck className="w-5 h-5" />
+              <span className="text-[10px] font-semibold mt-0.5 whitespace-nowrap max-w-[70px] truncate">Admin</span>
+            </a>
+          )}
 
           <a
             href="#"

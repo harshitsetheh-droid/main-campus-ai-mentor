@@ -12,6 +12,7 @@ import { ProjectsScreen } from './components/ProjectsScreen';
 import { ClubScreen } from './components/ClubScreen';
 import { PlacementScreen } from './components/PlacementScreen';
 import { FriendsScreen } from './components/FriendsScreen';
+import { AdminPanel } from './components/AdminPanel';
 import { VideoWalkthroughModal } from './components/VideoWalkthroughModal';
 import { LoginScreen } from './components/LoginScreen';
 import { SignupScreen } from './components/SignupScreen';
@@ -135,6 +136,7 @@ export default function App() {
         onOpenWalkthrough={() => setIsWalkthroughOpen(true)}
         username={user.username}
         photoUrl={photoUrl}
+        role={user.role}
         onLogout={handleLogout}
       />
 
@@ -183,6 +185,9 @@ export default function App() {
           )}
           {currentScreen === 'friends' && (
             <FriendsScreen onNavigate={handleNavigate} initialDmTarget={dmTarget} />
+          )}
+          {currentScreen === 'admin' && user.role && user.role !== 'student' && (
+            <AdminPanel role={user.role} username={user.username} />
           )}
         </motion.div>
       </AnimatePresence>

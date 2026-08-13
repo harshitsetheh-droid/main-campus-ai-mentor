@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Briefcase, Calendar, IndianRupee, Rocket, Users, Target, FileText, Braces, Sparkles, ArrowRight, Clock, Search, Loader2, History, BarChart3, GraduationCap } from 'lucide-react';
-import { api, PlacementDrive, PlacementQuestion } from '../api';
+import { Briefcase, Calendar, IndianRupee, Rocket, Users, Target, FileText, Braces, Sparkles, ArrowRight, Clock, Search, Loader2, History, BarChart3, GraduationCap, BookOpen, Building2 } from 'lucide-react';
+import { api, PlacementDrive, PlacementQuestion, CompanyQuestion, CompanyQuestionMeta } from '../api';
 
 interface PlacementScreenProps {
   onNavigate: (screen: 'chat' | 'compare' | 'resume' | 'dashboard' | 'landing' | 'profile' | 'certificates' | 'projects' | 'clubs' | 'placement', transition?: 'none' | 'push' | 'slide_up') => void;
@@ -39,6 +39,21 @@ export const PlacementScreen: React.FC<PlacementScreenProps> = ({ onNavigate }) 
   const [qLoading, setQLoading] = useState(false);
   const [qError, setQError] = useState('');
   const [autoLoaded, setAutoLoaded] = useState(false);
+
+  // Shared question bank state (questions shared by placement cell / admin)
+  const [bankCompanies, setBankCompanies] = useState<CompanyQuestionMeta[]>([]);
+  const [bankCompany, setBankCompany] = useState('');
+  const [bankQuestions, setBankQuestions] = useState<CompanyQuestion[]>([]);
+
+  useEffect(() => {
+    api.getCompanyQuestionCompanies().then((r) => setBankCompanies(r.companies || [])).catch(() => {});
+    api.getCompanyQuestions().then((r) => setBankQuestions(r.questions || [])).catch(() => {});
+  }, []);
+
+  const openBank = (c: string) => {
+    setBankCompany(c);
+    api.getCompanyQuestions(c).then((r) => setBankQuestions(r.questions || [])).catch(() => {});
+  };
 
   useEffect(() => {
     api.getPlacementDrives()
@@ -336,6 +351,64 @@ export const PlacementScreen: React.FC<PlacementScreenProps> = ({ onNavigate }) 
             ))}
           </div>
         )}
+      </section>
+
+      {/* Shared Question Bank (placement cell ne share kiya) */}
+      <section className="glass-panel rounded-3xl p-5 sm:p-6">
+        <div>
+          <h2 className="text-lg font-extrabold text-white flex items-center gap-2">
+            <BookOpen className="w-5 h-5 text-[#3cd7ff]" /> Shared Question Bank
+          </h2>
+          <p className="text-xs text-[#c6c5d7] mt-1 max-w-2xl">
+            Placement cell / admin ne in company-specific questions ko frequency ke saath share kiya hai — ye AI se nahi, seniors aur trainers se aaye hain.
+          </p>
+        </div>
+
+        <div className="mt-4 flex gap-2 flex-wrap">
+          <button
+            onClick={() => { setBankCompany(''); api.getCompanyQuestions().then((r) => setBankQuestions(r.questions || [])).catch(() => {}); }}
+            className={`px-3.5 py-1.5 rounded-full text-xs font-bold border transition-all cursor-pointer ${
+              !bankCompany ? 'bg-[#5b5fef]/25 border-[#5b5fef]/60 text-[#c0c1ff]' : 'bg-white/5 border-white/10 text-[#c6c5d7] hover:border-white/25'
+            }`}
+          >
+            Sab ({bankCompanies.length} companies)
+          </button>
+          {bankCompanies.map((c) => (
+            <button
+              key={c.company}
+              onClick={() => openBank(c.company)}
+              className={`px-3.5 py-1.5 rounded-full text-xs font-bold border transition-all cursor-pointer ${
+                bankCompany === c.company ? 'bg-[#5b5fef]/25 border-[#5b5fef]/60 text-[#c0c1ff]' : 'bg-white/5 border-white/10 text-[#c6c5d7] hover:border-white/25'
+              }`}
+            >
+              <span className="inline-flex items-center gap-1.5">
+                <Building2 className="w-3.5 h-3.5" /> {c.company} · {c.question_count}
+              </span>
+            </button>
+          ))}
+          {bankCompanies.length === 0 && (
+            <p className="text-xs text-[#7e7d94]">Abhi koi shared question nahi — placement cell jald hi add karega.</p>
+          )}
+        </div>
+
+        <div className="mt-4 space-y-3">
+          {bankQuestions.map((q) => (
+            <article key={q.id} className="bg-[#191924] rounded-2xl border border-white/10 p-4 sm:p-5 hover:border-[#c0c1ff]/40 transition-all">
+              <div className="flex items-start justify-between gap-3">
+                <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#3cd7ff] bg-[#3cd7ff]/10 border border-[#3cd7ff]/25 px-2.5 py-1 rounded-full shrink-0">
+                  <BarChart3 className="w-3.5 h-3.5" /> Frequency: {q.frequency}/100
+                </span>
+                {bankCompany && (
+                  <span className="text-[10px] font-bold text-[#7e7d94] shrink-0">{q.company}</span>
+                )}
+              </div>
+              <p className="text-sm text-white font-medium mt-3 leading-relaxed">{q.question}</p>
+            </article>
+          ))}
+          {bankQuestions.length > 0 && bankCompany && (
+            <p className="text-[10px] text-[#7e7d94]">Frequency = placement cell ne bataya kitni baar ye question us company mein aata hai.</p>
+          )}
+        </div>
       </section>
 
       {/* Prep tracks */}

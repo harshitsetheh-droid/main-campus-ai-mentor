@@ -65,6 +65,73 @@ export interface AuthUser {
   username: string;
   email: string;
   rollNo?: string;
+  role?: Role;
+}
+
+export type Role = 'student' | 'placement_officer' | 'club_manager' | 'faculty' | 'super_admin';
+
+export interface AdminUser {
+  id: number;
+  username: string;
+  email: string;
+  roll_no?: string;
+  role: string;
+  created_at?: string;
+}
+
+export interface AdminClub {
+  id: number;
+  name: string;
+  description: string;
+  emoji: string;
+  members: number;
+  managers: { id: number; username: string; handle: string }[];
+}
+
+export interface ManagerClub {
+  id: number;
+  name: string;
+  description: string;
+  emoji: string;
+}
+
+export interface ManagerMessage {
+  id: number;
+  text: string;
+  createdAt?: string;
+}
+
+export interface Drive {
+  id: number;
+  company: string;
+  role: string;
+  package: string;
+  deadline: string;
+  status: string;
+}
+
+export interface CompanyQuestion {
+  id: number;
+  company: string;
+  question: string;
+  frequency: number;
+  createdAt?: string;
+}
+
+export interface CompanyQuestionMeta {
+  company: string;
+  question_count: number;
+  max_frequency: number;
+}
+
+export interface FacultyStats {
+  totalStudents: number;
+  avgSkillPercentage: number;
+  studentsWithSkills: number;
+  topSkills: { name: string; students: number; avg_percentage: number }[];
+  clubsActive: number;
+  clubsMemberships: number;
+  clubsActiveLast7d: number;
 }
 
 export interface Skill {
@@ -440,6 +507,40 @@ export const api = {
   sendDmMessage: (friendId: number, text: string) =>
     sendJson<{ message: DmMessage }>(`/dms/${friendId}/messages`, 'POST', { text }),
   getMyQrCode: () => getJson<{ code: string }>('/me/qrcode'),
+
+  // Placement admin (PO + super admin)
+  createDrive: (body: { company: string; role?: string; package?: string; deadline?: string; status?: string }) =>
+    sendJson<{ drive: Drive }>('/placement/drives', 'POST', body),
+  updateDrive: (id: number, body: { company: string; role?: string; package?: string; deadline?: string; status?: string }) =>
+    sendJson<{ drive: Drive }>(`/placement/drives/${id}`, 'PATCH', body),
+  deleteDrive: (id: number) => sendJson<{ success: boolean }>(`/placement/drives/${id}`, 'DELETE', {}),
+  getCompanyQuestions: (company?: string) =>
+    getJson<{ questions: CompanyQuestion[] }>(`/placement/company-questions${company ? `?company=${encodeURIComponent(company)}` : ''}`),
+  getCompanyQuestionCompanies: () => getJson<{ companies: CompanyQuestionMeta[] }>('/placement/company-questions/companies'),
+  addCompanyQuestion: (body: { company: string; question: string; frequency?: number }) =>
+    sendJson<{ question: CompanyQuestion }>('/placement/company-questions', 'POST', body),
+  deleteCompanyQuestion: (id: number) => sendJson<{ success: boolean }>(`/placement/company-questions/${id}`, 'DELETE', {}),
+
+  // Super admin
+  getAdminUsers: (q?: string) => getJson<{ users: AdminUser[] }>(`/admin/users${q ? `?q=${encodeURIComponent(q)}` : ''}`),
+  setUserRole: (id: number, role: string) => sendJson<{ user: AdminUser }>(`/admin/users/${id}/role`, 'POST', { role }),
+  deleteUser: (id: number) => sendJson<{ success: boolean }>(`/admin/users/${id}`, 'DELETE', {}),
+  getAdminClubs: () => getJson<{ clubs: AdminClub[] }>('/admin/clubs'),
+  createClub: (body: { name: string; description: string; emoji: string }) => sendJson<{ club: AdminClub }>('/admin/clubs', 'POST', body),
+  deleteClub: (id: number) => sendJson<{ success: boolean }>(`/admin/clubs/${id}`, 'DELETE', {}),
+  assignClubManager: (clubId: number, userId: number) =>
+    sendJson<{ success: boolean }>(`/admin/clubs/${clubId}/managers`, 'POST', { userId }),
+  removeClubManager: (clubId: number, userId: number) =>
+    sendJson<{ success: boolean }>(`/admin/clubs/${clubId}/managers/${userId}`, 'DELETE', {}),
+
+  // Club manager
+  getManagerClubs: () => getJson<{ clubs: ManagerClub[] }>('/manager/clubs'),
+  getManagerMessages: (clubId: number) => getJson<{ messages: ManagerMessage[] }>(`/manager/clubs/${clubId}/messages`),
+  deleteManagerMessage: (clubId: number, messageId: number) =>
+    sendJson<{ success: boolean }>(`/manager/clubs/${clubId}/messages/${messageId}`, 'DELETE', {}),
+
+  // Faculty
+  getFacultyStats: () => getJson<{ stats: FacultyStats }>('/faculty/stats'),
 
   // Placement
   getPlacementDrives: () => getJson<{ drives: PlacementDrive[] }>('/placement/drives'),
