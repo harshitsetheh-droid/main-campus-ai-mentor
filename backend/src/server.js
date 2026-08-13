@@ -3249,14 +3249,14 @@ app.get("/api/placement/company-questions", requireAuth, async (req, res) => {
     const company = safeString(req.query.company, 120).trim();
     const r = company
       ? await pool.query(
-          `SELECT q.id, q.company, q.question, q.frequency, q.created_at
+          `SELECT q.id, q.company, q.question, q.frequency, q.skills, q.year, q.pdf_url AS "pdfUrl", q.created_at
            FROM placement_company_questions q
            WHERE LOWER(q.company) = LOWER($1)
            ORDER BY q.frequency DESC, q.id`,
           [company]
         )
       : await pool.query(
-          `SELECT q.id, q.company, q.question, q.frequency, q.created_at
+          `SELECT q.id, q.company, q.question, q.frequency, q.skills, q.year, q.pdf_url AS "pdfUrl", q.created_at
            FROM placement_company_questions q
            ORDER BY q.company, q.frequency DESC, q.id`
         );
@@ -3284,11 +3284,20 @@ app.post("/api/placement/company-questions", requireAuth, requireRole("placement
     const company = safeString(req.body.company, 120).trim();
     const question = safeString(req.body.question, 500).trim();
     const frequency = Math.max(1, Math.min(100, parseInt(req.body.frequency, 10) || 1));
-    if (!company || !question) return res.status(400).json({ error: "Company and question are required" });
+    const year = safeString(req.body.year, 20).trim();
+    const pdfUrl = safeString(req.body.pdfUrl, 300).trim();
+    const skills = (safeString(req.body.skills, 200) || "")
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .slice(0, 8);
+    if (!company) return res.status(400).json({ error: "Company is required" });
+    if (!question && !pdfUrl) return res.status(400).json({ error: "Question ya PDF at least ek do" });
     const r = await pool.query(
-      `INSERT INTO placement_company_questions (company, question, frequency, added_by)
-       VALUES ($1,$2,$3,$4) RETURNING id, company, question, frequency, created_at`,
-      [company, question, frequency, req.userId]
+      `INSERT INTO placement_company_questions (company, question, frequency, skills, year, pdf_url, added_by)
+       VALUES ($1,$2,$3,$4,$5,$6,$7)
+       RETURNING id, company, question, frequency, skills, year, pdf_url AS "pdfUrl", created_at`,
+      [company, question, frequency, skills, year, pdfUrl, req.userId]
     );
     res.status(201).json({ question: r.rows[0] });
   } catch (err) {

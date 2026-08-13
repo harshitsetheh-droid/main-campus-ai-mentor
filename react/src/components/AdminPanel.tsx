@@ -396,6 +396,11 @@ function PlacementTab({ onToast }: { onToast: (m: string) => void }) {
   const [qCompany, setQCompany] = useState('');
   const [qText, setQText] = useState('');
   const [qFreq, setQFreq] = useState('50');
+  const [qSkills, setQSkills] = useState('');
+  const [qYear, setQYear] = useState('');
+  const [qPdfUrl, setQPdfUrl] = useState('');
+  const [qPdfName, setQPdfName] = useState('');
+  const [qUploading, setQUploading] = useState(false);
 
   const loadDrives = () => api.getPlacementDrives().then((r) => setDrives(r.drives || [])).catch(() => {});
   const loadApps = () => api.getApplications().then((r) => setApps(r.applications || [])).catch(() => {});
@@ -443,13 +448,42 @@ function PlacementTab({ onToast }: { onToast: (m: string) => void }) {
     try { await api.deleteDrive(id); loadDrives(); onToast('Drive deleted'); } catch (err: any) { onToast(err.message || 'Delete failed'); }
   };
 
+  const handleQuestionPdf = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setQUploading(true);
+    try {
+      const dataUri = await new Promise<string>((resolve, reject) => {
+        const r = new FileReader();
+        r.onloadend = () => resolve(String(r.result));
+        r.onerror = reject;
+        r.readAsDataURL(file);
+      });
+      const uploaded = await api.uploadFile(dataUri, file.name);
+      setQPdfUrl(uploaded.url);
+      setQPdfName(file.name);
+      onToast('PDF upload ho gaya — ab question save karo');
+    } catch (err: any) {
+      onToast(err.message || 'PDF upload failed');
+    } finally {
+      setQUploading(false);
+    }
+  };
+
   const saveQuestion = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!qCompany.trim() || !qText.trim()) return;
+    if (!qCompany.trim() || (!qText.trim() && !qPdfUrl)) return;
     try {
-      await api.addCompanyQuestion({ company: qCompany.trim(), question: qText.trim(), frequency: parseInt(qFreq, 10) || 1 });
+      await api.addCompanyQuestion({
+        company: qCompany.trim(),
+        question: qText.trim(),
+        frequency: parseInt(qFreq, 10) || 1,
+        skills: qSkills.trim(),
+        year: qYear.trim(),
+        pdfUrl: qPdfUrl,
+      });
       onToast('Question add ho gaya');
-      setQText(''); setQFreq('50');
+      setQText(''); setQFreq('50'); setQSkills(''); setQYear(''); setQPdfUrl(''); setQPdfName('');
       loadQ(selCompany || qCompany.trim());
       setSelCompany(qCompany.trim());
     } catch (err: any) {
@@ -528,24 +562,55 @@ function PlacementTab({ onToast }: { onToast: (m: string) => void }) {
       {sub === 'questions' && (
         <div>
           <form onSubmit={saveQuestion} className="glass-panel rounded-2xl p-4 mb-4">
-            <p className="text-xs font-bold text-[#c6c5d7] uppercase tracking-wider mb-2">Company-specific question share karo</p>
-            <div className="flex flex-col sm:flex-row gap-2">
-              <input
-                list="q-companies"
-                type="text"
-                value={qCompany}
-                onChange={(e) => setQCompany(e.target.value)}
-                placeholder="Company (e.g. TCS)"
-                maxLength={120}
-                className="sm:w-48 bg-[#13131b] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-[#6b6b7d] focus:outline-none focus:border-[#c0c1ff]"
-              />
-              <datalist id="q-companies">
-                {companies.map((c) => <option key={c.company} value={c.company} />)}
-              </datalist>
-              <input type="number" value={qFreq} onChange={(e) => setQFreq(e.target.value)} min={1} max={100} placeholder="Frequency 1-100" className="sm:w-32 bg-[#13131b] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-[#6b6b7d] focus:outline-none focus:border-[#c0c1ff]" />
-              <input type="text" value={qText} onChange={(e) => setQText(e.target.value)} placeholder="Question likho…" maxLength={500} className="flex-1 min-w-0 bg-[#13131b] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-[#6b6b7d] focus:outline-none focus:border-[#c0c1ff]" />
-              <button type="submit" disabled={!qCompany.trim() || !qText.trim()} className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#5b5fef] to-[#3cd7ff] text-white text-sm font-bold flex items-center gap-1.5 disabled:opacity-40 cursor-pointer">
-                <Plus className="w-4 h-4" /> Add
+            <p className="text-xs font-bold text-[#c6c5d7] uppercase tracking-wider mb-3">Company-specific question share karo</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-[10px] font-bold text-[#c6c5d7] uppercase tracking-wider mb-1">Company *</label>
+                <input
+                  list="q-companies"
+                  type="text"
+                  value={qCompany}
+                  onChange={(e) => setQCompany(e.target.value)}
+                  placeholder="e.g. TCS"
+                  maxLength={120}
+                  className="w-full bg-[#13131b] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-[#6b6b7d] focus:outline-none focus:border-[#c0c1ff]"
+                />
+                <datalist id="q-companies">
+                  {companies.map((c) => <option key={c.company} value={c.company} />)}
+                </datalist>
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-[#c6c5d7] uppercase tracking-wider mb-1">Question (ya PDF) *</label>
+                <input type="text" value={qText} onChange={(e) => setQText(e.target.value)} placeholder="Question likho — ya neeche PDF upload karo" maxLength={500} className="w-full bg-[#13131b] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-[#6b6b7d] focus:outline-none focus:border-[#c0c1ff]" />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-[#c6c5d7] uppercase tracking-wider mb-1">Skills (optional — comma se alag karo)</label>
+                <input type="text" value={qSkills} onChange={(e) => setQSkills(e.target.value)} placeholder="e.g. Arrays, SQL, OOP" maxLength={200} className="w-full bg-[#13131b] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-[#6b6b7d] focus:outline-none focus:border-[#c0c1ff]" />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-[10px] font-bold text-[#c6c5d7] uppercase tracking-wider mb-1">Year (optional)</label>
+                  <input type="text" value={qYear} onChange={(e) => setQYear(e.target.value)} placeholder="e.g. 2024" maxLength={20} className="w-full bg-[#13131b] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-[#6b6b7d] focus:outline-none focus:border-[#c0c1ff]" />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-[#c6c5d7] uppercase tracking-wider mb-1">Frequency (%)</label>
+                  <input type="number" value={qFreq} onChange={(e) => setQFreq(e.target.value)} min={1} max={100} className="w-full bg-[#13131b] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-[#6b6b7d] focus:outline-none focus:border-[#c0c1ff]" />
+                </div>
+              </div>
+            </div>
+            <div className="mt-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+              <label className={`inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-dashed text-sm font-bold cursor-pointer transition-all ${qPdfUrl ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300' : 'bg-white/5 border-white/15 text-[#c6c5d7] hover:border-[#c0c1ff]/40'}`}>
+                <FileText className="w-4 h-4" />
+                {qUploading ? 'Uploading…' : qPdfUrl ? `PDF: ${qPdfName}` : 'PDF upload karo (optional)'}
+                <input type="file" accept="application/pdf" className="hidden" onChange={handleQuestionPdf} />
+              </label>
+              {qPdfUrl && (
+                <button type="button" onClick={() => { setQPdfUrl(''); setQPdfName(''); }} className="px-3 py-2.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-bold hover:bg-rose-500/20 transition-all cursor-pointer">
+                  Remove PDF
+                </button>
+              )}
+              <button type="submit" disabled={!qCompany.trim() || (!qText.trim() && !qPdfUrl) || qUploading} className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#5b5fef] to-[#3cd7ff] text-white text-sm font-bold flex items-center gap-1.5 disabled:opacity-40 cursor-pointer sm:ml-auto">
+                <Plus className="w-4 h-4" /> Add Question
               </button>
             </div>
           </form>
@@ -565,10 +630,24 @@ function PlacementTab({ onToast }: { onToast: (m: string) => void }) {
             {questions.map((qn) => (
               <div key={qn.id} className="glass-panel rounded-2xl p-4 flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="text-sm text-white leading-relaxed">{qn.question}</p>
-                  <p className="text-[11px] text-[#c6c5d7] mt-1.5">
-                    <span className="font-bold text-[#3cd7ff]">{qn.frequency}% frequency</span> · {qn.company}
-                  </p>
+                  {qn.question ? (
+                    <p className="text-sm text-white leading-relaxed">{qn.question}</p>
+                  ) : (
+                    <p className="text-sm text-[#c6c5d7] italic">(PDF only — question text nahi likha gaya)</p>
+                  )}
+                  <div className="flex flex-wrap items-center gap-2 mt-2">
+                    <span className="text-[11px] font-bold text-[#3cd7ff]">{qn.frequency}% frequency</span>
+                    <span className="text-[11px] font-bold text-[#c6c5d7]">{qn.company}</span>
+                    {qn.year && <span className="text-[11px] text-[#7e7d94]">· {qn.year} mein aaya</span>}
+                    {(qn.skills || []).map((s) => (
+                      <span key={s} className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#5b5fef]/15 border border-[#5b5fef]/30 text-[#c0c1ff]">{s}</span>
+                    ))}
+                    {qn.pdfUrl && (
+                      <a href={qn.pdfUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-300 hover:underline">
+                        <FileText className="w-3.5 h-3.5" /> PDF kholo
+                      </a>
+                    )}
+                  </div>
                 </div>
                 <button onClick={() => removeQuestion(qn.id)} className="w-9 h-9 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-300 hover:bg-rose-500/20 transition-all cursor-pointer shrink-0">
                   <Trash2 className="w-4 h-4" />

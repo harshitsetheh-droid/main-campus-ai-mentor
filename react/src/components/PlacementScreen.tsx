@@ -472,15 +472,23 @@ export const PlacementScreen: React.FC<PlacementScreenProps> = ({ onNavigate }) 
         <div className="mt-4 space-y-3">
           {bankQuestions.map((q) => (
             <article key={q.id} className="bg-[#191924] rounded-2xl border border-white/10 p-4 sm:p-5 hover:border-[#c0c1ff]/40 transition-all">
-              <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start justify-between gap-3 flex-wrap">
                 <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#3cd7ff] bg-[#3cd7ff]/10 border border-[#3cd7ff]/25 px-2.5 py-1 rounded-full shrink-0">
                   <BarChart3 className="w-3.5 h-3.5" /> Frequency: {q.frequency}/100
                 </span>
-                {bankCompany && (
-                  <span className="text-[10px] font-bold text-[#7e7d94] shrink-0">{q.company}</span>
+                <span className="text-[10px] font-bold text-[#7e7d94] shrink-0">{q.company}{q.year ? ` · ${q.year}` : ''}</span>
+              </div>
+              {q.question && <p className="text-sm text-white font-medium mt-3 leading-relaxed">{q.question}</p>}
+              <div className="flex flex-wrap items-center gap-1.5 mt-3">
+                {(q.skills || []).map((s) => (
+                  <span key={s} className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#5b5fef]/15 border border-[#5b5fef]/30 text-[#c0c1ff]">{s}</span>
+                ))}
+                {q.pdfUrl && (
+                  <a href={q.pdfUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-300 hover:underline">
+                    <FileText className="w-3.5 h-3.5" /> PDF kholo
+                  </a>
                 )}
               </div>
-              <p className="text-sm text-white font-medium mt-3 leading-relaxed">{q.question}</p>
             </article>
           ))}
           {bankQuestions.length > 0 && bankCompany && (

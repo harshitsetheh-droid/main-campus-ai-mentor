@@ -282,6 +282,9 @@ CREATE TABLE IF NOT EXISTS placement_company_questions (
 );
 CREATE INDEX IF NOT EXISTS placement_company_questions_company_idx
   ON placement_company_questions (LOWER(company));
+ALTER TABLE placement_company_questions ADD COLUMN IF NOT EXISTS skills TEXT[] NOT NULL DEFAULT '{}';
+ALTER TABLE placement_company_questions ADD COLUMN IF NOT EXISTS year TEXT NOT NULL DEFAULT '';
+ALTER TABLE placement_company_questions ADD COLUMN IF NOT EXISTS pdf_url TEXT NOT NULL DEFAULT '';
 
 -- Placement applications: student applies to a drive, PO/super admin moves it
 -- through applied -> waiting -> selected (or rejected). Drives the "kis

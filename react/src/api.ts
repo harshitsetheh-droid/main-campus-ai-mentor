@@ -116,6 +116,9 @@ export interface CompanyQuestion {
   company: string;
   question: string;
   frequency: number;
+  skills?: string[];
+  year?: string;
+  pdfUrl?: string;
   createdAt?: string;
 }
 
@@ -573,7 +576,7 @@ export const api = {
   getCompanyQuestions: (company?: string) =>
     getJson<{ questions: CompanyQuestion[] }>(`/placement/company-questions${company ? `?company=${encodeURIComponent(company)}` : ''}`),
   getCompanyQuestionCompanies: () => getJson<{ companies: CompanyQuestionMeta[] }>('/placement/company-questions/companies'),
-  addCompanyQuestion: (body: { company: string; question: string; frequency?: number }) =>
+  addCompanyQuestion: (body: { company: string; question: string; frequency?: number; skills?: string; year?: string; pdfUrl?: string }) =>
     sendJson<{ question: CompanyQuestion }>('/placement/company-questions', 'POST', body),
   deleteCompanyQuestion: (id: number) => sendJson<{ success: boolean }>(`/placement/company-questions/${id}`, 'DELETE', {}),
 
