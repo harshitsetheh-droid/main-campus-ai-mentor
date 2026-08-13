@@ -10,8 +10,18 @@ interface LoginScreenProps {
 export const LoginScreen: React.FC<LoginScreenProps> = ({ onSuccess, onSwitchToSignup }) => {
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
+  const [loginRole, setLoginRole] = useState('auto');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  const ROLE_OPTIONS: [string, string][] = [
+    ['auto', 'Auto-detect'],
+    ['student', 'Student'],
+    ['placement_officer', 'Placement Officer'],
+    ['faculty', 'Faculty'],
+    ['club_manager', 'Club Manager'],
+    ['super_admin', 'Super Admin'],
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,6 +29,13 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onSuccess, onSwitchToS
     setIsLoading(true);
     try {
       const res = await api.login(identifier, password);
+      const actual = res.user.role || 'student';
+      if (loginRole !== 'auto' && loginRole !== actual) {
+        const actualLabel = ROLE_OPTIONS.find(([v]) => v === actual)?.[1] || actual;
+        setError(`Ye account "${actualLabel}" hai — "${ROLE_OPTIONS.find(([v]) => v === loginRole)?.[1]}" account se login nahi ho sakta. Roles sirf Super Admin assign karta hai.`);
+        setIsLoading(false);
+        return;
+      }
       sessionStorage.setItem('campusai_token', res.token);
       sessionStorage.setItem('campusai_user', JSON.stringify(res.user));
       localStorage.removeItem('campusai_token');
@@ -120,7 +137,25 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onSuccess, onSwitchToS
           <div className="mt-6 text-center">
             <p className="text-sm text-[#c6c5d7]">
               Don't have an account?{' '}
-              <button
+            <div>
+              <label className="block text-xs font-semibold text-[#c6c5d7] uppercase tracking-wider mb-2">
+                Account Type
+              </label>
+              <select
+                value={loginRole}
+                onChange={(e) => setLoginRole(e.target.value)}
+                className="styled-select w-full !py-3"
+              >
+                {ROLE_OPTIONS.map(([v, l]) => (
+                  <option key={v} value={v}>{l}</option>
+                ))}
+              </select>
+              <p className="text-[10px] text-[#7e7d94] mt-1.5">
+                Roles sirf Super Admin (harsh1) assign karta hai — galat type chuno toh login block ho jayega.
+              </p>
+            </div>
+
+            <button
                 onClick={onSwitchToSignup}
                 className="text-[#3cd7ff] font-semibold hover:underline inline-flex items-center gap-1 cursor-pointer"
               >

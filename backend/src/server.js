@@ -268,10 +268,8 @@ app.post("/api/auth/register", authLimiter, async (req, res) => {
   const email = safeString(req.body.email, 200);
   const rollNo = safeString(req.body.rollNo, 20);
   const { password } = req.body;
-  const role =
-    ["student", "placement_officer", "faculty", "club_manager", "super_admin"].includes(req.body.role)
-      ? req.body.role
-      : "student";
+  // Signup always creates a Student account — staff roles are assigned only by the super admin
+  const role = "student";
   if (!username || !email || !password) {
     return res.status(400).json({ error: "Please fill in all the required fields." });
   }

@@ -14,7 +14,6 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ onSuccess, onSwitchT
   const [form, setForm] = useState({
     username: '', email: '', password: '', confirm: '',
     rollNo: '',
-    role: 'student',
     name: '', branch: 'CSE', semester: 'Sem 1', targetRole: '',
     targetCgpa: '', targetCompanyType: '', targetCompanyName: '',
     workType: '', timelineCurrent: 'This Semester', timelineNext: 'Next Semester',
@@ -64,7 +63,7 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ onSuccess, onSwitchT
 
     setIsLoading(true);
     try {
-      const res = await api.register(form.username, form.email, form.password, form.rollNo, form.role);
+      const res = await api.register(form.username, form.email, form.password, form.rollNo);
       sessionStorage.setItem('campusai_token', res.token);
       sessionStorage.setItem('campusai_user', JSON.stringify(res.user));
       localStorage.removeItem('campusai_token');
@@ -159,16 +158,6 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ onSuccess, onSwitchT
                     <LockIcon />
                     <input type="password" value={form.confirm} onChange={set('confirm')} placeholder="Re-enter password" required className="input" />
                   </div>
-                </div>
-                <div>
-                  <Label>Account Type</Label>
-                  <select value={form.role} onChange={set('role')} className="styled-select w-full !py-3">
-                    <option value="student">Student</option>
-                    <option value="placement_officer">Placement Officer</option>
-                    <option value="faculty">Faculty</option>
-                    <option value="club_manager">Club Manager</option>
-                    <option value="super_admin">Super Admin</option>
-                  </select>
                 </div>
               </div>
             </fieldset>
