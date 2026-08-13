@@ -131,6 +131,47 @@ function recordLoginFailure(key) {
 function clearLoginLock(key) {
   loginLocks.delete(key);
 }
+// Per-username lockout for wrong Account Type at login:
+// 3 consecutive mismatches -> 5 minute block. (In-memory like password lock.)
+const ROLE_LOCK_MAX_FAILS = 3;
+const ROLE_LOCK_MS = 5 * 60_000;
+const roleLocks = new Map(); // normalized identifier -> { fails, lockedUntil }
+function roleLockRemainingMins(key) {
+  if (roleLocks.size > 2000) {
+    const now = Date.now();
+    for (const [k, rec] of roleLocks) {
+      if (rec.lockedUntil) {
+        if (rec.lockedUntil <= now) roleLocks.delete(k);
+      } else if (now - rec.lastFail > ROLE_LOCK_MS) {
+        roleLocks.delete(k);
+      }
+    }
+  }
+  const rec = roleLocks.get(key);
+  if (!rec) return 0;
+  if (rec.lockedUntil > Date.now()) {
+    return Math.max(1, Math.ceil((rec.lockedUntil - Date.now()) / 60_000));
+  }
+  if (rec.lockedUntil) roleLocks.delete(key);
+  return 0;
+}
+function recordRoleFailure(key) {
+  const now = Date.now();
+  let rec = roleLocks.get(key);
+  if (rec && rec.lockedUntil > now) return roleLockRemainingMins(key);
+  if (!rec) rec = { fails: 0, lockedUntil: 0 };
+  rec.fails += 1;
+  rec.lastFail = now;
+  if (rec.fails >= ROLE_LOCK_MAX_FAILS) {
+    rec.lockedUntil = now + ROLE_LOCK_MS;
+    rec.fails = 0;
+  }
+  roleLocks.set(key, rec);
+  return roleLockRemainingMins(key);
+}
+function clearRoleLock(key) {
+  roleLocks.delete(key);
+}
 // 6) Upload route: stricter, larger limit only for the single upload endpoint
 app.use("/api/upload", express.json({ limit: "20mb" }), rateLimit({ windowMs: 60_000, limit: 10, standardHeaders: "draft-8", legacyHeaders: false }));
 
@@ -321,6 +362,10 @@ app.post("/api/auth/login", authLimiter, async (req, res) => {
       error: `Too many failed attempts for this account. Try again in ${lockedMins} minute${lockedMins > 1 ? "s" : ""}.`,
     });
   }
+  const roleLockedMins = roleLockRemainingMins(lockKey);
+  if (roleLockedMins > 0) {
+    return res.status(429).json({ error: `ROLE_BLOCK:${roleLockedMins}` });
+  }
   try {
     const userRes = await pool.query(
       "SELECT id, username, email, roll_no, password_hash, role FROM users WHERE username = $1 OR email = $1 OR roll_no = $1 LIMIT 1",
@@ -339,6 +384,14 @@ app.post("/api/auth/login", authLimiter, async (req, res) => {
       return res.status(401).json({ error: "Incorrect username or password. Please try again." });
     }
     clearLoginLock(lockKey);
+    const selectedRole =
+      req.body.role && req.body.role !== "auto" ? String(req.body.role) : "";
+    if (selectedRole && selectedRole !== (user.role || "student")) {
+      const mins = recordRoleFailure(lockKey);
+      if (mins > 0) return res.status(429).json({ error: `ROLE_BLOCK:${mins}` });
+      return res.status(403).json({ error: "ROLE_MISMATCH" });
+    }
+    clearRoleLock(lockKey);
     const token = signToken(user.id, user.username);
     res.json({ token, user: { id: user.id, username: user.username, email: user.email, rollNo: user.roll_no || "", role: user.role || "student" } });
   } catch (err) {

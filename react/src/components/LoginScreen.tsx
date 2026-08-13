@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Sparkles, Mail, Lock, LogIn, ArrowRight, Brain } from 'lucide-react';
 import { api, AuthUser } from '../api';
 
@@ -7,12 +7,25 @@ interface LoginScreenProps {
   onSwitchToSignup: () => void;
 }
 
+const ROLE_BLOCK_MS = 5 * 60 * 1000;
+
 export const LoginScreen: React.FC<LoginScreenProps> = ({ onSuccess, onSwitchToSignup }) => {
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [loginRole, setLoginRole] = useState('auto');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [roleFails, setRoleFails] = useState(() => Number(sessionStorage.getItem('campusai_role_fails') || 0));
+  const [blockUntil, setBlockUntil] = useState(() => Number(sessionStorage.getItem('campusai_role_block') || 0));
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    const t = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(t);
+  }, []);
+
+  const blockedFor = blockUntil - now;
+  const isBlocked = blockedFor > 0;
 
   const ROLE_OPTIONS: [string, string][] = [
     ['auto', 'Auto-detect'],
@@ -23,29 +36,55 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onSuccess, onSwitchToS
     ['super_admin', 'Super Admin'],
   ];
 
+  const applyRoleBlock = (minutes: number) => {
+    const until = Date.now() + minutes * 60 * 1000;
+    sessionStorage.setItem('campusai_role_block', String(until));
+    sessionStorage.setItem('campusai_role_fails', '0');
+    setBlockUntil(until);
+    setRoleFails(0);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isBlocked) return;
     setError('');
     setIsLoading(true);
     try {
-      const res = await api.login(identifier, password);
-      const actual = res.user.role || 'student';
-      if (loginRole !== 'auto' && loginRole !== actual) {
-        const actualLabel = ROLE_OPTIONS.find(([v]) => v === actual)?.[1] || actual;
-        setError(`Ye account "${actualLabel}" hai — "${ROLE_OPTIONS.find(([v]) => v === loginRole)?.[1]}" account se login nahi ho sakta. Roles sirf Super Admin assign karta hai.`);
-        setIsLoading(false);
-        return;
-      }
+      const res = await api.login(identifier, password, loginRole);
+      sessionStorage.removeItem('campusai_role_fails');
+      sessionStorage.removeItem('campusai_role_block');
       sessionStorage.setItem('campusai_token', res.token);
       sessionStorage.setItem('campusai_user', JSON.stringify(res.user));
       localStorage.removeItem('campusai_token');
       localStorage.removeItem('campusai_user');
       onSuccess(res.user);
     } catch (err: any) {
-      setError(err.message || 'Login failed');
+      const msg = err.message || '';
+      if (msg.startsWith('ROLE_BLOCK:')) {
+        const mins = Number(msg.split(':')[1]) || 5;
+        applyRoleBlock(mins);
+        setError(`Galat account type 3 baar chuna — login ${mins} minute ke liye block hai.`);
+      } else if (msg === 'ROLE_MISMATCH') {
+        const next = roleFails + 1;
+        if (next >= 3) {
+          applyRoleBlock(5);
+          setError('Galat account type 3 baar chuna — login 5 minute ke liye block ho gaya.');
+        } else {
+          sessionStorage.setItem('campusai_role_fails', String(next));
+          setRoleFails(next);
+          setError(`Galat account type chuna. ${3 - next} aur attempt baaki hai.`);
+        }
+      } else {
+        setError(msg);
+      }
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const fmt = (ms: number) => {
+    const s = Math.max(0, Math.ceil(ms / 1000));
+    return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
   };
 
   return (
@@ -115,28 +154,6 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onSuccess, onSwitchToS
               </div>
             </div>
 
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#5b5fef] to-[#5203d5] text-white font-semibold text-sm shadow-[0_0_25px_rgba(192,193,255,0.3)] hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
-            >
-              {isLoading ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>Signing in...</span>
-                </>
-              ) : (
-                <>
-                  <LogIn className="w-4 h-4" />
-                  <span>Login</span>
-                </>
-              )}
-            </button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-sm text-[#c6c5d7]">
-              Don't have an account?{' '}
             <div>
               <label className="block text-xs font-semibold text-[#c6c5d7] uppercase tracking-wider mb-2">
                 Account Type
@@ -153,10 +170,37 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onSuccess, onSwitchToS
             </div>
 
             <button
+              type="submit"
+              disabled={isLoading || isBlocked}
+              className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#5b5fef] to-[#5203d5] text-white font-semibold text-sm shadow-[0_0_25px_rgba(192,193,255,0.3)] hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isBlocked ? (
+                <>
+                  <Lock className="w-4 h-4" />
+                  <span>Blocked — {fmt(blockedFor)}</span>
+                </>
+              ) : isLoading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span>Signing in...</span>
+                </>
+              ) : (
+                <>
+                  <LogIn className="w-4 h-4" />
+                  <span>Login</span>
+                </>
+              )}
+            </button>
+          </form>
+
+          <div className="mt-6 text-center">
+            <p className="text-sm text-[#c6c5d7]">
+              Don't have an account?{' '}
+              <button
                 onClick={onSwitchToSignup}
                 className="text-[#3cd7ff] font-semibold hover:underline inline-flex items-center gap-1 cursor-pointer"
               >
-                <span>Sign up</span>
+                <span>Sign Up</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </p>

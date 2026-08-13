@@ -397,8 +397,8 @@ export const api = {
   // Auth
   register: (username: string, email: string, password: string, rollNo?: string) =>
     sendJson<{ token: string; user: AuthUser }>('/auth/register', 'POST', { username, email, password, rollNo }),
-  login: (identifier: string, password: string) =>
-    sendJson<{ token: string; user: AuthUser }>('/auth/login', 'POST', { identifier, password }),
+  login: (identifier: string, password: string, role?: string) =>
+    sendJson<{ token: string; user: AuthUser }>('/auth/login', 'POST', { identifier, password, role }),
   me: () => getJson<{ user: AuthUser }>('/auth/me'),
 
   // Profile
