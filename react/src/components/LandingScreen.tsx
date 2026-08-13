@@ -148,7 +148,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNavigate, onOpen
 
       {/* CTA Section */}
       <section className="relative z-10 py-16 px-4 max-w-4xl mx-auto text-center">
-        <div className="glass-card relative overflow-hidden rounded-3xl p-10 sm:p-14 border border-[#5b5fef]/30">
+        <div className="glass-card relative overflow-hidden rounded-3xl p-6 sm:p-14 border border-[#5b5fef]/30">
           <div className="absolute inset-0 bg-gradient-to-br from-[#5b5fef]/10 via-transparent to-[#3cd7ff]/10 pointer-events-none" />
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4 relative z-10">
             Ready to fast-track your career?

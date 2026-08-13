@@ -417,7 +417,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ onNavigate }) => {
 
             {showAddCoding ? (
               <div className="space-y-2 mt-4">
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                   <select value={newCoding.platform} onChange={(e) => setNewCoding({ ...newCoding, platform: e.target.value })} className="styled-select !bg-[#13131b]">
                     <option value="github">GitHub</option>
                     <option value="linkedin">LinkedIn</option>

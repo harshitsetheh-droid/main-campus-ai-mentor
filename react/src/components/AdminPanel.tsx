@@ -404,7 +404,7 @@ function PlacementTab({ onToast }: { onToast: (m: string) => void }) {
 
   return (
     <div>
-      <div className="flex gap-2 mb-4">
+      <div className="flex flex-wrap gap-2 mb-4">
         <button onClick={() => setSub('drives')} className={`px-4 py-2 rounded-xl text-sm font-bold transition-all cursor-pointer border ${sub === 'drives' ? 'bg-[#5b5fef]/20 border-[#5b5fef]/50 text-[#c0c1ff]' : 'bg-white/5 border-white/10 text-[#c6c5d7]'}`}>
           <span className="flex items-center gap-1.5"><Briefcase className="w-4 h-4" /> Drives</span>
         </button>

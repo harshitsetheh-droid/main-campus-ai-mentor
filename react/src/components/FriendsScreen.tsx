@@ -454,7 +454,7 @@ export const FriendsScreen: React.FC<Props> = ({ onNavigate, initialDmTarget }) 
       </section>
 
       {/* Tabs */}
-      <div className="mt-6 flex gap-2">
+      <div className="mt-6 flex flex-wrap gap-2">
         {([
           ['friends', 'Friends', Users],
           ['requests', `Requests${incoming.length ? ` (${incoming.length})` : ''}`, UserPlus],
@@ -580,7 +580,7 @@ export const FriendsScreen: React.FC<Props> = ({ onNavigate, initialDmTarget }) 
             <div>
               <p className="text-[11px] font-bold text-[#7e7d94] uppercase tracking-wider mb-2">Incoming ({incoming.length})</p>
               {incoming.map((r) => (
-                <div key={r.id} className="glass-panel rounded-2xl p-4 flex items-center justify-between gap-3 mb-3">
+                <div key={r.id} className="glass-panel rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
                   <div className="flex items-center gap-3 min-w-0">
                     <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#5b5fef] to-[#3cd7ff] flex items-center justify-center text-lg font-extrabold text-white shrink-0">
                       {r.fromHandle?.split(' ')[1] || '?'}
@@ -590,7 +590,7 @@ export const FriendsScreen: React.FC<Props> = ({ onNavigate, initialDmTarget }) 
                       <p className="text-[11px] text-[#7e7d94]">Approve karne par friend list mein add</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
                     <button
                       onClick={() => acceptReq(r.id)}
                       className="px-3.5 py-2 rounded-xl bg-emerald-500 text-white text-xs font-bold flex items-center gap-1.5 hover:bg-emerald-400 transition-all cursor-pointer"

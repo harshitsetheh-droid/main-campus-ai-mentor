@@ -1020,9 +1020,9 @@ export const PeerComparisonScreen: React.FC<PeerComparisonScreenProps> = ({ onNa
                     <div key={lvl.key} className="rounded-2xl border border-white/10 bg-[#181824] overflow-hidden">
                       <button
                         onClick={() => setSimOpenLevel(open ? '' : lvl.key)}
-                        className="w-full px-4 py-3 flex items-center justify-between text-left cursor-pointer hover:bg-white/5 transition-all"
+                        className="w-full px-4 py-3 flex flex-wrap items-center gap-2 justify-between text-left cursor-pointer hover:bg-white/5 transition-all"
                       >
-                        <div className="flex items-center gap-2.5">
+                        <div className="flex items-center gap-2.5 min-w-0">
                           <span className={`text-xs font-bold ${lvl.color}`}>{lvl.label}</span>
                           {arr.length > 0 && (
                             <button
@@ -1042,9 +1042,9 @@ export const PeerComparisonScreen: React.FC<PeerComparisonScreenProps> = ({ onNa
                           <span className={`text-[10px] px-2 py-0.5 rounded-full ${lvl.bg} ${lvl.color} font-bold`}>
                             {checkedCount}/{arr.length}
                           </span>
-                          <span className="text-[10px] text-[#c6c5d7]">~{33.33.toFixed(1)}% level · {perTopic.toFixed(1)}%/topic</span>
+                          <span className="hidden min-[420px]:inline text-[10px] text-[#c6c5d7]">~{33.33.toFixed(1)}% level · {perTopic.toFixed(1)}%/topic</span>
                         </div>
-                        <ChevronDown className={`w-4 h-4 text-[#c6c5d7] transition-transform ${open ? 'rotate-180' : ''}`} />
+                        <ChevronDown className={`w-4 h-4 shrink-0 text-[#c6c5d7] transition-transform ${open ? 'rotate-180' : ''}`} />
                       </button>
 
                       {open && (

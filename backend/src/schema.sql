@@ -246,18 +246,6 @@ CREATE TABLE IF NOT EXISTS club_managers (
   UNIQUE (club_id, user_id)
 );
 
--- Demo clubs (idempotent seed, safe to run repeatedly)
-INSERT INTO clubs (name, description, emoji) VALUES
-  ('DSA Paglu', 'LeetCode grinders ki maha-sabha — problems, patterns aur rank charcha', '🤓'),
-  ('Senior Bitching', 'Seniors ki latest tips, gossip aur college ke andar ki baatein', '😏'),
-  ('Placement Charcha', 'Drives, packages aur interview experiences — sab kuch', '🎯'),
-  ('Exam Ki Tension', 'Assignments, internals aur viva ka darr — yahan sab saath hain', '🥶'),
-  ('Canteen & Chai', 'Khaane-peene ki recommendations aur chai pe charcha', '☕'),
-  ('Hackathon Warriors', 'Hackathons, team building aur all-nighters ke shahid', '💻'),
-  ('Doubt Buddy', 'Coding doubts — koi bhi pucho, anonymously', '🆘'),
-  ('Late Night Memes', 'Raat 2 baje ke memes aur sleepy-heads club', '😴')
-ON CONFLICT (name) DO NOTHING;
-
 -- On-campus placement drives (shared college feed)
 CREATE TABLE IF NOT EXISTS placement_drives (
   id SERIAL PRIMARY KEY,
@@ -268,20 +256,6 @@ CREATE TABLE IF NOT EXISTS placement_drives (
   status TEXT NOT NULL DEFAULT 'open',
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-
--- Demo placement drives (idempotent seed, safe to run repeatedly)
-INSERT INTO placement_drives (company, role, package, deadline, status)
-SELECT * FROM (VALUES
-  ('TCS', 'Systems Engineer', '7.5 LPA', 'Open', 'open'),
-  ('Infosys', 'System Engineer Trainee', '8.0 LPA', 'Open', 'open'),
-  ('Wipro', 'Project Engineer', '6.5 LPA', 'Open', 'open'),
-  ('Cognizant', 'Programmer Analyst', '7.0 LPA', 'Open', 'open'),
-  ('Accenture', 'Associate Software Engineer', '9.0 LPA', 'This Friday', 'open'),
-  ('Capgemini', 'Analyst', '7.5 LPA', 'Next Week', 'open'),
-  ('Microsoft', 'SDE Intern', '25 LPA (Intern offer)', 'Seasonal', 'upcoming'),
-  ('Amazon', 'SDE Intern', '22 LPA (Intern offer)', 'Seasonal', 'upcoming')
-) AS v(company, role, package, deadline, status)
-WHERE NOT EXISTS (SELECT 1 FROM placement_drives);
 
 -- Placement company question bank: PO / super admin share questions for a
 -- specific company (with frequency), every student can browse them
@@ -295,15 +269,6 @@ CREATE TABLE IF NOT EXISTS placement_company_questions (
 );
 CREATE INDEX IF NOT EXISTS placement_company_questions_company_idx
   ON placement_company_questions (LOWER(company));
-
--- Shared reference cohorts (global benchmark groups, not user data)
-INSERT INTO cohorts (id, name, total_students, user_rank) VALUES
-  ('mbm_cse_s1', 'MBM CSE - Sem 1', 120, 0),
-  ('mbm_cse_s3', 'MBM CSE - Sem 3', 130, 0),
-  ('mbm_cse_s5', 'MBM CSE - Sem 5', 110, 0),
-  ('mbm_ece_s3', 'MBM ECE - Sem 3', 95, 0),
-  ('mbm_mech_s3', 'MBM Mechanical - Sem 3', 80, 0)
-ON CONFLICT (id) DO UPDATE SET user_rank = 0;
 
 -- ---------------------------------------------------------------------------
 -- IDEMPOTENT ADDITIONS FOR THE 2026 USER-CENTRIC REDESIGN
@@ -398,13 +363,6 @@ CREATE TABLE IF NOT EXISTS platforms (
   name TEXT NOT NULL,
   base_url TEXT NOT NULL DEFAULT ''
 );
-INSERT INTO platforms (id, name, base_url) VALUES
-  ('leetcode', 'LeetCode', 'https://leetcode.com'),
-  ('gfg', 'GeeksforGeeks', 'https://www.geeksforgeeks.org'),
-  ('cf', 'Codeforces', 'https://codeforces.com'),
-  ('cc', 'CodeChef', 'https://www.codechef.com'),
-  ('tuf', 'Take U Forward', 'https://takeuforward.org')
-ON CONFLICT (id) DO NOTHING;
 
 -- RAG knowledge chunks (embeddings stored as JSON array, cosine sim in app layer)
 CREATE TABLE IF NOT EXISTS rag_chunks (

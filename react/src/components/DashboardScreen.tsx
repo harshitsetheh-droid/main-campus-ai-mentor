@@ -90,8 +90,10 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ onNavigate }) 
   return (
     <main className="pt-24 pb-28 px-4 max-w-7xl mx-auto space-y-8">
       {/* Welcome Banner */}
-      <section className="relative overflow-hidden rounded-2xl p-6 sm:p-8 bg-gradient-to-br from-[#5b5fef] to-[#5203d5] shadow-xl">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+      <section className="relative rounded-2xl p-6 sm:p-8 bg-gradient-to-br from-[#5b5fef] to-[#5203d5] shadow-xl">
+        <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full blur-3xl" />
+        </div>
         <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           <div className="space-y-2">
             <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
@@ -465,7 +467,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ onNavigate }) 
                   className="w-full bg-[#13131b] border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-[#c0c1ff]/50"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-[#c6c5d7] mb-1">Level</label>
                   <select

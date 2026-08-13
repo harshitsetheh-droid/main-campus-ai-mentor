@@ -75,7 +75,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onNavigate, onOpe
             onClick={(e) => handleNavClick(e, 'landing')}
           >
             <Sparkles className="w-6 h-6 text-[#c0c1ff] shrink-0" />
-            <span className="font-bold text-lg sm:text-xl xl:text-2xl 2xl:text-3xl leading-none whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r from-[#c0c1ff] to-[#3cd7ff]">
+            <span className="font-bold text-base sm:text-lg xl:text-2xl 2xl:text-3xl leading-none whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r from-[#c0c1ff] to-[#3cd7ff]">
               CampusAI Mentor
             </span>
           </div>
@@ -256,13 +256,13 @@ export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onNavigate, onOpe
             </div>
           </nav>
 
-          <div className="lg:hidden flex items-center gap-2 ml-auto">
+          <div className="lg:hidden flex items-center gap-1.5 ml-auto">
             <button
               onClick={onOpenWalkthrough}
-              className="bg-[#5b5fef] text-white px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1"
+              className="bg-[#5b5fef] text-white px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1"
             >
               <PlayCircle className="w-3.5 h-3.5" />
-              <span>2-Min Demo</span>
+              <span className="hidden min-[380px]:inline">2-Min Demo</span>
             </button>
 
             <button
