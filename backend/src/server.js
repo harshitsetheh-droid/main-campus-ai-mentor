@@ -2064,7 +2064,7 @@ app.get("/api/clubs", requireAuth, async (req, res) => {
        GROUP BY c.id ORDER BY c.id`,
       [req.userId]
     );
-    res.json({ clubs: r.rows });
+    res.json({ clubs: r.rows, me: anonymousHandle(req.userId) });
   } catch (err) {
     sendServerError(res, err);
   }

@@ -64,8 +64,10 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ onSuccess, onSwitchT
     setIsLoading(true);
     try {
       const res = await api.register(form.username, form.email, form.password, form.rollNo);
-      localStorage.setItem('campusai_token', res.token);
-      localStorage.setItem('campusai_user', JSON.stringify(res.user));
+      sessionStorage.setItem('campusai_token', res.token);
+      sessionStorage.setItem('campusai_user', JSON.stringify(res.user));
+      localStorage.removeItem('campusai_token');
+      localStorage.removeItem('campusai_user');
       // persist the captured profile details
       await api.updateProfile({
         name: form.username, branch: form.branch, semester: form.semester,

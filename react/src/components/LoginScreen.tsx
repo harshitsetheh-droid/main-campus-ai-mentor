@@ -19,8 +19,10 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onSuccess, onSwitchToS
     setIsLoading(true);
     try {
       const res = await api.login(identifier, password);
-      localStorage.setItem('campusai_token', res.token);
-      localStorage.setItem('campusai_user', JSON.stringify(res.user));
+      sessionStorage.setItem('campusai_token', res.token);
+      sessionStorage.setItem('campusai_user', JSON.stringify(res.user));
+      localStorage.removeItem('campusai_token');
+      localStorage.removeItem('campusai_user');
       onSuccess(res.user);
     } catch (err: any) {
       setError(err.message || 'Login failed');

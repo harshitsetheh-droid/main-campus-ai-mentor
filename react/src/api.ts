@@ -1,7 +1,7 @@
 const BASE = '/api';
 
 function getToken(): string | null {
-  return localStorage.getItem('campusai_token');
+  return sessionStorage.getItem('campusai_token') || localStorage.getItem('campusai_token');
 }
 
 function headers(extra: Record<string, string> = {}): Record<string, string> {
@@ -26,6 +26,8 @@ function friendlyError(err: unknown): Error {
 
 async function handleResponse(res: Response): Promise<unknown> {
   if (res.status === 401) {
+    sessionStorage.removeItem('campusai_token');
+    sessionStorage.removeItem('campusai_user');
     localStorage.removeItem('campusai_token');
     localStorage.removeItem('campusai_user');
   }
@@ -415,7 +417,7 @@ export const api = {
     sendJson<{ reply: string }>('/mentor', 'POST', { message, history }),
 
   // Clubs (anonymous)
-  getClubs: () => getJson<{ clubs: Club[] }>('/clubs'),
+  getClubs: () => getJson<{ clubs: Club[]; me?: string }>('/clubs'),
   joinClub: (clubId: number) => sendJson<{ joined: boolean; members: number }>(`/club/${clubId}/join`, 'POST', {}),
   leaveClub: (clubId: number) => sendJson<{ joined: boolean; members: number }>(`/club/${clubId}/leave`, 'POST', {}),
   getClubMessages: (clubId: number, after?: number) =>

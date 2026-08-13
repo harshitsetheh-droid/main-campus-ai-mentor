@@ -28,21 +28,33 @@ export default function App() {
   const [dmTarget, setDmTarget] = useState<{ id: number; handle: string } | null>(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem('campusai_user');
-    const token = localStorage.getItem('campusai_token');
+    // Per-tab session: do alag tabs = do alag accounts, no cross-tab confusion.
+    // Fall back to old localStorage once so existing logins survive the move.
+    let saved = sessionStorage.getItem('campusai_user');
+    let token = sessionStorage.getItem('campusai_token');
+    if (!saved || !token) {
+      saved = localStorage.getItem('campusai_user');
+      token = localStorage.getItem('campusai_token');
+      if (saved && token) {
+        sessionStorage.setItem('campusai_user', saved);
+        sessionStorage.setItem('campusai_token', token);
+      }
+      localStorage.removeItem('campusai_token');
+      localStorage.removeItem('campusai_user');
+    }
     if (!saved || !token) return;
     try {
       setUser(JSON.parse(saved));
     } catch {
-      localStorage.removeItem('campusai_user');
+      sessionStorage.removeItem('campusai_user');
       return;
     }
     // Validate the stored token so stale/expired sessions are cleared cleanly.
     api.me()
       .then((res) => setUser(res.user))
       .catch(() => {
-        localStorage.removeItem('campusai_token');
-        localStorage.removeItem('campusai_user');
+        sessionStorage.removeItem('campusai_token');
+        sessionStorage.removeItem('campusai_user');
         setUser(null);
       });
   }, []);
@@ -57,6 +69,8 @@ export default function App() {
   }, [user, currentScreen]);
 
   const handleLogout = () => {
+    sessionStorage.removeItem('campusai_token');
+    sessionStorage.removeItem('campusai_user');
     localStorage.removeItem('campusai_token');
     localStorage.removeItem('campusai_user');
     setUser(null);

@@ -17,6 +17,7 @@ function formatTime(value?: string): string {
 
 export const ClubScreen: React.FC<Props> = ({ onNavigate }) => {
   const [clubs, setClubs] = useState<Club[]>([]);
+  const [meHandle, setMeHandle] = useState('');
   const [activeClub, setActiveClub] = useState<Club | null>(null);
   const [messages, setMessages] = useState<ClubMessage[]>([]);
   const [text, setText] = useState('');
@@ -48,7 +49,10 @@ export const ClubScreen: React.FC<Props> = ({ onNavigate }) => {
 
   useEffect(() => {
     api.getClubs()
-      .then((res) => setClubs(res.clubs || []))
+      .then((res) => {
+        setClubs(res.clubs || []);
+        if (res.me) setMeHandle(res.me);
+      })
       .catch(() => {});
   }, []);
 
@@ -144,6 +148,12 @@ export const ClubScreen: React.FC<Props> = ({ onNavigate }) => {
               <MessageSquare className="w-3.5 h-3.5 text-[#3cd7ff]" />
               <span>MBM University · Anonymous Clubs</span>
             </div>
+            {meHandle && (
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#3cd7ff]/10 border border-[#3cd7ff]/40 text-[#3cd7ff] text-xs font-bold mb-3 ml-2">
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span>Is tab mein tum ho: {meHandle}</span>
+              </div>
+            )}
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight flex items-center gap-3 flex-wrap">
               Student Clubs
               <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 rounded-full normal-case">
