@@ -270,6 +270,7 @@ export interface Club {
   description: string;
   emoji: string;
   members: number;
+  joined?: boolean;
 }
 
 export interface ClubMessage {
@@ -415,6 +416,8 @@ export const api = {
 
   // Clubs (anonymous)
   getClubs: () => getJson<{ clubs: Club[] }>('/clubs'),
+  joinClub: (clubId: number) => sendJson<{ joined: boolean; members: number }>(`/club/${clubId}/join`, 'POST', {}),
+  leaveClub: (clubId: number) => sendJson<{ joined: boolean; members: number }>(`/club/${clubId}/leave`, 'POST', {}),
   getClubMessages: (clubId: number, after?: number) =>
     getJson<{ messages: ClubMessage[] }>(`/club/${clubId}/messages${after ? `?after=${after}` : ''}`),
   sendClubMessage: (clubId: number, text: string) =>

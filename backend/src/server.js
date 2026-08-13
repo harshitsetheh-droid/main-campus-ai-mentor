@@ -2057,12 +2057,44 @@ app.get("/api/clubs", requireAuth, async (req, res) => {
   try {
     const r = await pool.query(
       `SELECT c.id, c.name, c.description, c.emoji,
-              COUNT(m.id)::int AS members
+              COUNT(m.id)::int AS members,
+              EXISTS(SELECT 1 FROM club_members me WHERE me.club_id = c.id AND me.user_id = $1) AS joined
        FROM clubs c
        LEFT JOIN club_members m ON m.club_id = c.id
-       GROUP BY c.id ORDER BY c.id`
+       GROUP BY c.id ORDER BY c.id`,
+      [req.userId]
     );
     res.json({ clubs: r.rows });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+// Explicit join/leave so the member count reflects who really joined
+app.post("/api/club/:id/join", requireAuth, async (req, res) => {
+  try {
+    const clubId = parseInt(req.params.id, 10);
+    if (!clubId || Number.isNaN(clubId)) return res.status(400).json({ error: "Invalid club" });
+    const club = await pool.query("SELECT id FROM clubs WHERE id=$1", [clubId]);
+    if (club.rowCount === 0) return res.status(404).json({ error: "Club not found" });
+    await pool.query(
+      "INSERT INTO club_members (club_id, user_id) VALUES ($1,$2) ON CONFLICT (club_id, user_id) DO NOTHING",
+      [clubId, req.userId]
+    );
+    const n = await pool.query("SELECT COUNT(*)::int AS members FROM club_members WHERE club_id=$1", [clubId]);
+    res.json({ joined: true, members: n.rows[0].members });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+app.post("/api/club/:id/leave", requireAuth, async (req, res) => {
+  try {
+    const clubId = parseInt(req.params.id, 10);
+    if (!clubId || Number.isNaN(clubId)) return res.status(400).json({ error: "Invalid club" });
+    await pool.query("DELETE FROM club_members WHERE club_id=$1 AND user_id=$2", [clubId, req.userId]);
+    const n = await pool.query("SELECT COUNT(*)::int AS members FROM club_members WHERE club_id=$1", [clubId]);
+    res.json({ joined: false, members: n.rows[0].members });
   } catch (err) {
     sendServerError(res, err);
   }
@@ -2075,11 +2107,6 @@ app.get("/api/club/:id/messages", requireAuth, async (req, res) => {
     const after = parseInt(req.query.after, 10) || 0;
     const club = await pool.query("SELECT id FROM clubs WHERE id=$1", [clubId]);
     if (club.rowCount === 0) return res.status(404).json({ error: "Club not found" });
-    // auto-join so member counts reflect real activity
-    await pool.query(
-      "INSERT INTO club_members (club_id, user_id) VALUES ($1,$2) ON CONFLICT (club_id, user_id) DO NOTHING",
-      [clubId, req.userId]
-    );
     const r = await pool.query(
       `SELECT id, user_id, text, created_at
        FROM club_messages WHERE club_id = $1 AND id > $2
@@ -2113,10 +2140,13 @@ app.post("/api/club/:id/messages", requireAuth, async (req, res) => {
     if (text.length > 300) return res.status(400).json({ error: "Message too long (max 300)" });
     const club = await pool.query("SELECT id FROM clubs WHERE id=$1", [clubId]);
     if (club.rowCount === 0) return res.status(404).json({ error: "Club not found" });
-    await pool.query(
-      "INSERT INTO club_members (club_id, user_id) VALUES ($1,$2) ON CONFLICT (club_id, user_id) DO NOTHING",
+    const member = await pool.query(
+      "SELECT 1 FROM club_members WHERE club_id=$1 AND user_id=$2",
       [clubId, req.userId]
     );
+    if (member.rowCount === 0) {
+      return res.status(403).json({ error: "Pehle club join karo — chat sirf members ke liye hai" });
+    }
     const r = await pool.query(
       `INSERT INTO club_messages (club_id, user_id, text)
        VALUES ($1,$2,$3) RETURNING id, user_id, text, created_at`,
