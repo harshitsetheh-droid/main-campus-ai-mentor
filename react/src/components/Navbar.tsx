@@ -257,6 +257,11 @@ export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onNavigate, onOpe
           </nav>
 
           <div className="lg:hidden flex items-center gap-1.5 ml-auto">
+            {role && role !== 'student' && (
+              <span className="flex items-center gap-1 text-[9px] font-extrabold text-[#3cd7ff] bg-[#3cd7ff]/10 border border-[#3cd7ff]/40 px-1.5 py-1 rounded-full uppercase tracking-wide whitespace-nowrap">
+                {ROLE_LABELS[role] || role}
+              </span>
+            )}
             <button
               onClick={onOpenWalkthrough}
               className="bg-[#5b5fef] text-white px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1"
