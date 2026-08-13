@@ -2924,6 +2924,127 @@ app.delete("/api/manager/clubs/:id/messages/:messageId", requireAuth, requireRol
   }
 });
 
+// Club manager: members of their OWN club with real usernames (only this club —
+// managers never see usernames from clubs they don't manage)
+app.get("/api/manager/clubs/:id/members", requireAuth, requireRole("club_manager", "super_admin"), async (req, res) => {
+  try {
+    const clubId = parseInt(req.params.id, 10) || 0;
+    const ok = await pool.query(
+      "SELECT 1 FROM club_managers WHERE club_id=$1 AND user_id=$2",
+      [clubId, req.userId]
+    );
+    if (ok.rowCount === 0 && req.role !== "super_admin") {
+      return res.status(403).json({ error: "Tum is club ke manager nahi ho" });
+    }
+    const r = await pool.query(
+      `SELECT u.id, u.username, m.joined_at,
+              (SELECT 1 FROM club_blocks b WHERE b.club_id = $1 AND b.user_id = u.id) AS is_blocked
+       FROM club_members m JOIN users u ON u.id = m.user_id
+       WHERE m.club_id = $1 ORDER BY m.joined_at DESC LIMIT 500`,
+      [clubId]
+    );
+    res.json({
+      members: r.rows.map((m) => ({
+        id: m.id,
+        username: m.username,
+        joinedAt: m.joined_at ? m.joined_at.toISOString() : null,
+        blocked: Boolean(m.is_blocked),
+      })),
+    });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+// Club manager: add a user (by username) to their OWN club
+app.post("/api/manager/clubs/:id/members", requireAuth, requireRole("club_manager", "super_admin"), async (req, res) => {
+  try {
+    const clubId = parseInt(req.params.id, 10) || 0;
+    const ok = await pool.query(
+      "SELECT 1 FROM club_managers WHERE club_id=$1 AND user_id=$2",
+      [clubId, req.userId]
+    );
+    if (ok.rowCount === 0 && req.role !== "super_admin") {
+      return res.status(403).json({ error: "Tum is club ke manager nahi ho" });
+    }
+    const username = safeString(req.body.username, 30).trim();
+    if (!username) return res.status(400).json({ error: "Username required" });
+    const user = await pool.query(
+      "SELECT id, username FROM users WHERE LOWER(username) = LOWER($1) LIMIT 1",
+      [username]
+    );
+    if (user.rowCount === 0) return res.status(404).json({ error: "Is username ka koi user nahi hai" });
+    const userId = user.rows[0].id;
+    const blocked = await pool.query(
+      "SELECT 1 FROM club_blocks WHERE club_id=$1 AND user_id=$2",
+      [clubId, userId]
+    );
+    if (blocked.rowCount > 0) {
+      return res.status(403).json({ error: "Ye user is club se block hai — pehle unblock karo" });
+    }
+    const ins = await pool.query(
+      "INSERT INTO club_members (club_id, user_id) VALUES ($1, $2) ON CONFLICT (club_id, user_id) DO NOTHING RETURNING user_id",
+      [clubId, userId]
+    );
+    if (ins.rowCount === 0) return res.status(409).json({ error: "Ye user pehle se club ka member hai" });
+    res.status(201).json({ success: true, member: { id: userId, username: user.rows[0].username } });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+// Club manager: block users (by user id list) from their OWN club
+app.post("/api/manager/clubs/:id/block", requireAuth, requireRole("club_manager", "super_admin"), async (req, res) => {
+  try {
+    const clubId = parseInt(req.params.id, 10) || 0;
+    const ok = await pool.query(
+      "SELECT 1 FROM club_managers WHERE club_id=$1 AND user_id=$2",
+      [clubId, req.userId]
+    );
+    if (ok.rowCount === 0 && req.role !== "super_admin") {
+      return res.status(403).json({ error: "Tum is club ke manager nahi ho" });
+    }
+    const ids = Array.isArray(req.body.userIds)
+      ? req.body.userIds.map((x) => parseInt(x, 10)).filter((x) => Number.isInteger(x) && x > 0)
+      : [];
+    if (ids.length === 0) return res.status(400).json({ error: "Kisi user ko select karo" });
+    await pool.query(
+      `INSERT INTO club_blocks (club_id, user_id)
+       SELECT $1, unnest($2::int[]) ON CONFLICT (club_id, user_id) DO NOTHING`,
+      [clubId, ids]
+    );
+    await pool.query("DELETE FROM club_members WHERE club_id=$1 AND user_id = ANY($2::int[])", [clubId, ids]);
+    res.json({ success: true, blocked: ids.length });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+// Club manager: unblock users from their OWN club
+app.post("/api/manager/clubs/:id/unblock", requireAuth, requireRole("club_manager", "super_admin"), async (req, res) => {
+  try {
+    const clubId = parseInt(req.params.id, 10) || 0;
+    const ok = await pool.query(
+      "SELECT 1 FROM club_managers WHERE club_id=$1 AND user_id=$2",
+      [clubId, req.userId]
+    );
+    if (ok.rowCount === 0 && req.role !== "super_admin") {
+      return res.status(403).json({ error: "Tum is club ke manager nahi ho" });
+    }
+    const ids = Array.isArray(req.body.userIds)
+      ? req.body.userIds.map((x) => parseInt(x, 10)).filter((x) => Number.isInteger(x) && x > 0)
+      : [];
+    if (ids.length === 0) return res.status(400).json({ error: "Kisi user ko select karo" });
+    await pool.query(
+      "DELETE FROM club_blocks WHERE club_id=$1 AND user_id = ANY($2::int[])",
+      [clubId, ids]
+    );
+    res.json({ success: true, unblocked: ids.length });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
 // ---------------------------------------------------------------------------
 // FACULTY (cohort-level stats, never names/identities)
 // ---------------------------------------------------------------------------

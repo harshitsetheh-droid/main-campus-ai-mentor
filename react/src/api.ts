@@ -628,4 +628,14 @@ export const api = {
     }>('/placement/applications'),
   updateApplicationStatus: (appId: number, status: string) =>
     sendJson<{ application: { id: number; status: string } }>(`/placement/applications/${appId}`, 'PATCH', { status }),
+
+  // Club manager (own clubs only)
+  getClubMembers: (clubId: number) =>
+    getJson<{ members: { id: number; username: string; joinedAt?: string | null; blocked: boolean }[] }>(`/manager/clubs/${clubId}/members`),
+  addClubMember: (clubId: number, username: string) =>
+    sendJson<{ success: boolean; member: { id: number; username: string } }>(`/manager/clubs/${clubId}/members`, 'POST', { username }),
+  managerBlockUsers: (clubId: number, userIds: number[]) =>
+    sendJson<{ success: boolean; blocked: number }>(`/manager/clubs/${clubId}/block`, 'POST', { userIds }),
+  managerUnblockUsers: (clubId: number, userIds: number[]) =>
+    sendJson<{ success: boolean; unblocked: number }>(`/manager/clubs/${clubId}/unblock`, 'POST', { userIds }),
 };

@@ -627,6 +627,10 @@ function ModerationTab({ onToast }: { onToast: (m: string) => void }) {
   const [clubs, setClubs] = useState<ManagerClub[]>([]);
   const [activeClub, setActiveClub] = useState<ManagerClub | null>(null);
   const [messages, setMessages] = useState<ManagerMessage[]>([]);
+  const [members, setMembers] = useState<{ id: number; username: string; joinedAt?: string | null; blocked: boolean }[]>([]);
+  const [clubSub, setClubSub] = useState<'messages' | 'members'>('messages');
+  const [addUser, setAddUser] = useState('');
+  const [memberBusy, setMemberBusy] = useState(false);
 
   useEffect(() => {
     api.getManagerClubs().then((r) => setClubs(r.clubs || [])).catch(() => {});
@@ -636,9 +640,60 @@ function ModerationTab({ onToast }: { onToast: (m: string) => void }) {
     api.getManagerMessages(clubId).then((r) => setMessages(r.messages || [])).catch(() => {});
   };
 
+  const loadMembers = (clubId: number) => {
+    api.getClubMembers(clubId).then((r) => setMembers(r.members || [])).catch(() => {});
+  };
+
   const openClub = (c: ManagerClub) => {
     setActiveClub(c);
+    setClubSub('messages');
     loadMsgs(c.id);
+    loadMembers(c.id);
+  };
+
+  const addMember = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!activeClub || !addUser.trim()) return;
+    setMemberBusy(true);
+    try {
+      await api.addClubMember(activeClub.id, addUser.trim());
+      onToast(`${addUser.trim()} club mein add ho gaya`);
+      setAddUser('');
+      loadMembers(activeClub.id);
+    } catch (err: any) {
+      onToast(err.message || 'Add failed');
+    } finally {
+      setMemberBusy(false);
+    }
+  };
+
+  const blockMember = async (userId: number, username: string) => {
+    if (!activeClub) return;
+    if (!window.confirm(`"${username}" ko is club se block karna hai? Woh dubara join nahi kar payega.`)) return;
+    setMemberBusy(true);
+    try {
+      await api.managerBlockUsers(activeClub.id, [userId]);
+      onToast(`${username} → club se block ho gaya`);
+      loadMembers(activeClub.id);
+    } catch (err: any) {
+      onToast(err.message || 'Block failed');
+    } finally {
+      setMemberBusy(false);
+    }
+  };
+
+  const unblockMember = async (userId: number, username: string) => {
+    if (!activeClub) return;
+    setMemberBusy(true);
+    try {
+      await api.managerUnblockUsers(activeClub.id, [userId]);
+      onToast(`${username} unblock ho gaya`);
+      loadMembers(activeClub.id);
+    } catch (err: any) {
+      onToast(err.message || 'Unblock failed');
+    } finally {
+      setMemberBusy(false);
+    }
   };
 
   const delMsg = async (m: ManagerMessage) => {
@@ -661,20 +716,72 @@ function ModerationTab({ onToast }: { onToast: (m: string) => void }) {
         <div className="glass-panel rounded-2xl p-4 mb-3">
           <p className="font-bold text-white text-sm">{activeClub.emoji} {activeClub.name}</p>
           <p className="text-[11px] text-[#c6c5d7] mt-1">
-            Tum is club ke manager ho — inappropriate message delete kar sakte ho. Sender ki identity kabhi nahi dikhti (na tumhe, na kisi ko).
+            Tum is club ke manager ho — sirf isi club ke members ke usernames dekh sakte ho, aur sirf isi club se add/block kar sakte ho. Dusre clubs mein koi interference nahi.
           </p>
         </div>
-        <div className="space-y-2">
-          {messages.map((m) => (
-            <div key={m.id} className="glass-panel rounded-2xl p-4 flex items-center justify-between gap-3">
-              <p className="text-sm text-white leading-relaxed min-w-0">{m.text}</p>
-              <button onClick={() => delMsg(m)} className="shrink-0 w-9 h-9 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-300 hover:bg-rose-500/20 transition-all cursor-pointer" title="Delete message">
-                <Trash2 className="w-4 h-4" />
-              </button>
-            </div>
-          ))}
-          {messages.length === 0 && <p className="text-sm text-[#7e7d94] text-center py-8">Is club mein abhi koi message nahi</p>}
+
+        <div className="flex flex-wrap gap-2 mb-3">
+          <button onClick={() => setClubSub('messages')} className={`px-4 py-2 rounded-xl text-sm font-bold transition-all cursor-pointer border ${clubSub === 'messages' ? 'bg-[#5b5fef]/20 border-[#5b5fef]/50 text-[#c0c1ff]' : 'bg-white/5 border-white/10 text-[#c6c5d7]'}`}>
+            <span className="flex items-center gap-1.5"><MessagesSquare className="w-4 h-4" /> Messages</span>
+          </button>
+          <button onClick={() => setClubSub('members')} className={`px-4 py-2 rounded-xl text-sm font-bold transition-all cursor-pointer border ${clubSub === 'members' ? 'bg-[#5b5fef]/20 border-[#5b5fef]/50 text-[#c0c1ff]' : 'bg-white/5 border-white/10 text-[#c6c5d7]'}`}>
+            <span className="flex items-center gap-1.5"><Users className="w-4 h-4" /> Members ({members.length})</span>
+          </button>
         </div>
+
+        {clubSub === 'messages' && (
+          <div className="space-y-2">
+            {messages.map((m) => (
+              <div key={m.id} className="glass-panel rounded-2xl p-4 flex items-center justify-between gap-3">
+                <p className="text-sm text-white leading-relaxed min-w-0">{m.text}</p>
+                <button onClick={() => delMsg(m)} className="shrink-0 w-9 h-9 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-300 hover:bg-rose-500/20 transition-all cursor-pointer" title="Delete message">
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
+            {messages.length === 0 && <p className="text-sm text-[#7e7d94] text-center py-8">Is club mein abhi koi message nahi</p>}
+          </div>
+        )}
+
+        {clubSub === 'members' && (
+          <div>
+            <form onSubmit={addMember} className="glass-panel rounded-2xl p-4 mb-3 flex flex-col sm:flex-row gap-2">
+              <input
+                type="text"
+                value={addUser}
+                onChange={(e) => setAddUser(e.target.value)}
+                placeholder="Username se member add karo (e.g. harsh1)"
+                maxLength={30}
+                className="flex-1 min-w-0 bg-[#13131b] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-[#6b6b7d] focus:outline-none focus:border-[#c0c1ff]"
+              />
+              <button type="submit" disabled={!addUser.trim() || memberBusy} className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#5b5fef] to-[#3cd7ff] text-white text-sm font-bold flex items-center gap-1.5 disabled:opacity-40 cursor-pointer">
+                <UserPlus className="w-4 h-4" /> Add member
+              </button>
+            </form>
+            <div className="space-y-2">
+              {members.map((m) => (
+                <div key={m.id} className="glass-panel rounded-2xl p-4 flex items-center justify-between gap-3 flex-wrap">
+                  <div className="min-w-0">
+                    <p className="font-bold text-white text-sm truncate">{m.username}</p>
+                    <p className="text-[11px] text-[#7e7d94]">{m.joinedAt ? `Joined ${new Date(m.joinedAt).toLocaleDateString('en-IN')}` : ''}{m.blocked ? ' · Blocked' : ''}</p>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    {m.blocked ? (
+                      <button onClick={() => unblockMember(m.id, m.username)} disabled={memberBusy} className="px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-[11px] font-bold hover:bg-emerald-500/20 transition-all disabled:opacity-40 cursor-pointer">
+                        Unblock
+                      </button>
+                    ) : (
+                      <button onClick={() => blockMember(m.id, m.username)} disabled={memberBusy} className="px-3 py-1.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-[11px] font-bold hover:bg-rose-500/20 transition-all disabled:opacity-40 cursor-pointer">
+                        Block
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+              {members.length === 0 && <p className="text-sm text-[#7e7d94] text-center py-8">Is club mein abhi koi member nahi</p>}
+            </div>
+          </div>
+        )}
       </div>
     );
   }
