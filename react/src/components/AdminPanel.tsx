@@ -894,10 +894,10 @@ function UserDetailModal({ details: d, onClose, onToast }: { details: AdminUserD
   const notStarted = d.projects.filter((p) => p.progress === 0 && p.status !== 'completed').length;
 
   return (
-    <div className="fixed inset-0 z-[90] bg-black/70 backdrop-blur-sm overflow-y-auto" onClick={onClose}>
+    <div className="fixed inset-0 z-[90] bg-black/70 backdrop-blur-sm overflow-hidden" onClick={onClose}>
       <div className="min-h-full flex items-start sm:items-center justify-center p-3 sm:p-6" onClick={(e) => e.stopPropagation()}>
-        <div className="w-full max-w-3xl glass-panel rounded-3xl p-5 sm:p-7 my-4">
-          <div className="flex items-start justify-between gap-3">
+        <div className="w-full max-w-3xl glass-panel rounded-3xl p-5 sm:p-7 my-4 max-h-[92vh] flex flex-col overflow-hidden">
+          <div className="flex items-start justify-between gap-3 shrink-0">
             <div className="flex items-center gap-3 min-w-0">
               <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#5b5fef] to-[#3cd7ff] flex items-center justify-center text-lg font-extrabold text-white shrink-0">
                 {d.user.username.slice(0, 2).toUpperCase()}
@@ -914,6 +914,7 @@ function UserDetailModal({ details: d, onClose, onToast }: { details: AdminUserD
             </button>
           </div>
 
+          <div className="flex-1 min-h-0 overflow-y-auto pr-1 mt-1">
           <div className="mt-4 flex flex-wrap gap-2">
             <span className="text-[10px] font-extrabold text-[#3cd7ff] bg-[#3cd7ff]/10 border border-[#3cd7ff]/40 px-2.5 py-1 rounded-full uppercase">
               {ROLES.find((r) => r.value === d.user.role)?.label || d.user.role}
@@ -952,7 +953,7 @@ function UserDetailModal({ details: d, onClose, onToast }: { details: AdminUserD
             <div className="glass-panel rounded-2xl p-4">
               <p className="text-[10px] font-extrabold text-[#c6c5d7] uppercase tracking-wider mb-3">Placement applications ({d.applications.length})</p>
               {d.applications.length === 0 && <p className="text-xs text-[#7e7d94]">Kisi drive par apply nahi kiya</p>}
-              <div className="space-y-2">
+              <div className="space-y-2 max-h-[170px] sm:max-h-[220px] overflow-y-auto pr-1">
                 {d.applications.map((a) => (
                   <div key={a.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-[#13131b] rounded-xl px-3 py-2.5">
                     <div className="min-w-0">
@@ -980,7 +981,7 @@ function UserDetailModal({ details: d, onClose, onToast }: { details: AdminUserD
             <div className="glass-panel rounded-2xl p-4">
               <p className="text-[10px] font-extrabold text-[#c6c5d7] uppercase tracking-wider mb-3">Skills ({skillCount})</p>
               {skillCount === 0 && <p className="text-xs text-[#7e7d94]">Abhi koi skill nahi ja</p>}
-              <div className="space-y-2">
+              <div className="space-y-2 max-h-[170px] sm:max-h-[220px] overflow-y-auto pr-1">
                 {d.skills.map((s) => (
                   <div key={s.id}>
                     <div className="flex items-center justify-between gap-2">
@@ -998,7 +999,7 @@ function UserDetailModal({ details: d, onClose, onToast }: { details: AdminUserD
             <div className="glass-panel rounded-2xl p-4">
               <p className="text-[10px] font-extrabold text-[#c6c5d7] uppercase tracking-wider mb-3">Projects ({completedProjects} done · {inProgress} ongoing · {notStarted} not started)</p>
               {d.projects.length === 0 && <p className="text-xs text-[#7e7d94]">Abhi koi project nahi</p>}
-              <div className="space-y-2">
+              <div className="space-y-2 max-h-[170px] sm:max-h-[220px] overflow-y-auto pr-1">
                 {d.projects.map((p) => (
                   <div key={p.id} className="flex items-center gap-2">
                     <span className={`w-2 h-2 rounded-full shrink-0 ${p.progress >= 100 ? 'bg-emerald-400' : p.progress > 0 ? 'bg-amber-400' : 'bg-[#4a4a5c]'}`} />
@@ -1013,7 +1014,7 @@ function UserDetailModal({ details: d, onClose, onToast }: { details: AdminUserD
               <div className="glass-panel rounded-2xl p-4">
                 <p className="text-[10px] font-extrabold text-[#c6c5d7] uppercase tracking-wider mb-3">Clubs ({d.clubs.length})</p>
                 {d.clubs.length === 0 && <p className="text-xs text-[#7e7d94]">Kisi club mein join nahi</p>}
-                <div className="space-y-1.5">
+                <div className="space-y-1.5 max-h-[170px] sm:max-h-[220px] overflow-y-auto pr-1">
                   {d.clubs.map((c) => (
                     <div key={c.id} className="flex items-center justify-between gap-2">
                       <span className="text-xs font-semibold text-white truncate">{c.emoji} {c.name}</span>
@@ -1043,7 +1044,7 @@ function UserDetailModal({ details: d, onClose, onToast }: { details: AdminUserD
               <div className="glass-panel rounded-2xl p-4">
                 <p className="text-[10px] font-extrabold text-[#c6c5d7] uppercase tracking-wider mb-3">Coding profiles ({d.codingProfiles.length})</p>
                 {d.codingProfiles.length === 0 && <p className="text-xs text-[#7e7d94]">Koi profile link nahi</p>}
-                <div className="space-y-1.5">
+                <div className="space-y-1.5 max-h-[170px] sm:max-h-[220px] overflow-y-auto pr-1">
                   {d.codingProfiles.map((c, i) => (
                     <div key={i} className="flex items-center justify-between gap-2">
                       <span className="text-xs font-semibold text-white truncate">{c.platform}: {c.name}</span>
@@ -1064,7 +1065,7 @@ function UserDetailModal({ details: d, onClose, onToast }: { details: AdminUserD
               <div className="glass-panel rounded-2xl p-4">
                 <p className="text-[10px] font-extrabold text-[#c6c5d7] uppercase tracking-wider mb-3">Resumes ({d.resumes.length})</p>
                 {d.resumes.length === 0 && <p className="text-xs text-[#7e7d94]">Resume upload nahi kiya</p>}
-                <div className="space-y-1.5">
+                <div className="space-y-1.5 max-h-[170px] sm:max-h-[220px] overflow-y-auto pr-1">
                   {d.resumes.map((r) => (
                     <div key={r.id} className="flex items-center justify-between gap-2">
                       <span className="text-xs font-semibold text-white truncate flex items-center gap-1.5"><FileText className="w-3.5 h-3.5 text-[#3cd7ff] shrink-0" /> {r.fileName || 'Resume'}</span>
@@ -1077,7 +1078,7 @@ function UserDetailModal({ details: d, onClose, onToast }: { details: AdminUserD
               <div className="glass-panel rounded-2xl p-4">
                 <p className="text-[10px] font-extrabold text-[#c6c5d7] uppercase tracking-wider mb-3">Friends ({d.friends.length})</p>
                 {d.friends.length === 0 && <p className="text-xs text-[#7e7d94]">Abhi koi friend nahi</p>}
-                <div className="flex flex-wrap gap-1.5">
+                <div className="flex flex-wrap gap-1.5 max-h-[170px] sm:max-h-[220px] overflow-y-auto pr-1">
                   {d.friends.map((f) => (
                     <span key={f.id} className="text-[10px] font-bold text-white bg-white/5 border border-white/10 px-2.5 py-1 rounded-full">{f.handle}</span>
                   ))}
@@ -1088,7 +1089,7 @@ function UserDetailModal({ details: d, onClose, onToast }: { details: AdminUserD
             <div className="glass-panel rounded-2xl p-4">
               <p className="text-[10px] font-extrabold text-[#c6c5d7] uppercase tracking-wider mb-3">Certificates ({d.certificates.length})</p>
               {d.certificates.length === 0 && <p className="text-xs text-[#7e7d94]">Koi certificate nahi</p>}
-              <div className="flex flex-wrap gap-1.5">
+              <div className="flex flex-wrap gap-1.5 max-h-[170px] sm:max-h-[220px] overflow-y-auto pr-1">
                 {d.certificates.map((c) => (
                   <span key={c.id} className="text-[10px] font-bold text-white bg-white/5 border border-white/10 px-2.5 py-1 rounded-full">{c.category ? `${c.category}: ` : ''}{c.title}</span>
                 ))}
@@ -1098,6 +1099,7 @@ function UserDetailModal({ details: d, onClose, onToast }: { details: AdminUserD
 
           <div className="mt-4 text-[10px] text-[#7e7d94]">
             Joined: {d.user.createdAt ? new Date(d.user.createdAt).toLocaleDateString('en-IN') : '—'} · Handle: use hona chahiye? — identity anonymous hoti hai
+          </div>
           </div>
         </div>
       </div>
