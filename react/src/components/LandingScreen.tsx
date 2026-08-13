@@ -18,7 +18,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNavigate, onOpen
 
       {/* Hero Section */}
       <section className="relative z-10 min-h-[75vh] flex flex-col items-center justify-center text-center px-4 max-w-5xl mx-auto">
-        <div className="mb-6 inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card border border-white/10 text-xs font-semibold text-[#c0c1ff]">
+        <div className="mb-6 inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full glass-card border border-white/10 text-[11px] sm:text-xs font-semibold text-[#c0c1ff]">
           <Brain className="w-4 h-4 text-[#3cd7ff] animate-pulse" />
           <span>Next-Gen Academic & Career Platform</span>
         </div>

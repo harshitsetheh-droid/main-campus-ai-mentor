@@ -344,7 +344,7 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ onNavigate, username }) 
               value={inputVal}
               onChange={(e) => setInputVal(e.target.value)}
               placeholder="Ask your mentor anything..."
-              className="bg-transparent border-none outline-none focus:outline-none focus:ring-0 flex-1 text-sm text-white placeholder-[#c6c5d7]/50"
+              className="bg-transparent border-none outline-none focus:outline-none focus:ring-0 flex-1 min-w-0 text-sm text-white placeholder-[#c6c5d7]/50"
             />
             <button
               type="submit"

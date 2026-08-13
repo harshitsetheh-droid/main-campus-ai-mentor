@@ -105,7 +105,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onSuccess, onSwitchToS
         </div>
 
         <div className="glass-card rounded-3xl p-8 sm:p-10 border border-white/10 shadow-[0_0_40px_rgba(192,193,255,0.15)]">
-          <div className="mb-6 inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card border border-white/10 text-xs font-semibold text-[#c0c1ff]">
+          <div className="mb-6 inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full glass-card border border-white/10 text-[11px] sm:text-xs font-semibold text-[#c0c1ff]">
             <Brain className="w-4 h-4 text-[#3cd7ff] animate-pulse" />
             <span>Welcome back! Sign in to continue</span>
           </div>

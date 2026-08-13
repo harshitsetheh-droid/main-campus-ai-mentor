@@ -1076,7 +1076,7 @@ export const PeerComparisonScreen: React.FC<PeerComparisonScreenProps> = ({ onNa
             </div>
 
             {/* Footer */}
-            <div className="px-6 py-4 border-t border-white/10 flex items-center justify-between gap-4">
+            <div className="px-6 py-4 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <p className="text-[10px] text-[#c6c5d7] uppercase tracking-wider font-bold">New Mastery</p>
                 <p className="text-2xl font-extrabold text-[#3cd7ff]">{simTotal}%</p>

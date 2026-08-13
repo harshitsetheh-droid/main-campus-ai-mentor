@@ -217,13 +217,13 @@ export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onNavigate, onOpe
 
           <div className="lg:hidden flex items-center gap-1.5 ml-auto">
             {role && (
-              <span className="flex items-center gap-1 text-[9px] font-extrabold text-[#3cd7ff] bg-[#3cd7ff]/10 border border-[#3cd7ff]/40 px-1.5 py-1 rounded-full uppercase tracking-wide whitespace-nowrap">
+              <span className="flex items-center gap-1 text-[9px] font-extrabold text-[#3cd7ff] bg-[#3cd7ff]/10 border border-[#3cd7ff]/40 px-1.5 py-1 rounded-full uppercase tracking-wide whitespace-nowrap max-w-[64px] truncate">
                 {ROLE_LABELS[role] || role}
               </span>
             )}
             <button
               onClick={onOpenWalkthrough}
-              className="bg-[#5b5fef] text-white px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1"
+              className="hidden min-[380px]:inline-flex bg-[#5b5fef] text-white px-2.5 py-1 rounded-full text-xs font-semibold items-center gap-1"
             >
               <PlayCircle className="w-3.5 h-3.5" />
               <span className="hidden min-[380px]:inline">2-Min Demo</span>

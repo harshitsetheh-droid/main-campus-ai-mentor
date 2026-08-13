@@ -658,11 +658,11 @@ function FacultyTab({ onToast }: { onToast: (m: string) => void }) {
         <div className="space-y-2">
           {stats.topSkills.map((s) => (
             <div key={s.name} className="flex items-center gap-3">
-              <span className="text-xs font-semibold text-white w-40 truncate">{s.name}</span>
+              <span className="text-xs font-semibold text-white w-28 sm:w-40 truncate">{s.name}</span>
               <div className="flex-1 h-2.5 rounded-full bg-[#13131b] overflow-hidden">
                 <div className="h-full rounded-full bg-gradient-to-r from-[#5b5fef] to-[#3cd7ff]" style={{ width: `${Math.max(4, s.avg_percentage)}%` }} />
               </div>
-              <span className="text-[11px] text-[#7e7d94] w-24 text-right shrink-0">{s.avg_percentage}% · {s.students} students</span>
+              <span className="text-[11px] text-[#7e7d94] w-20 sm:w-24 text-right shrink-0">{s.avg_percentage}% · {s.students} students</span>
             </div>
           ))}
         </div>

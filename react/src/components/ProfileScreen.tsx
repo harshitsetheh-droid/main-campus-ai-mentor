@@ -277,7 +277,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ onNavigate }) => {
         <div className="lg:col-span-2 space-y-8">
           {/* Technical Skills */}
           <section className="glass-card rounded-2xl p-6 sm:p-8">
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex justify-between items-center mb-6 flex-wrap gap-2">
               <h3 className="text-xl font-semibold text-white flex items-center gap-2">
                 <Terminal className="w-5 h-5 text-[#c0c1ff]" /> <span>Technical Skills</span>
               </h3>

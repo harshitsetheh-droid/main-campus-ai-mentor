@@ -424,7 +424,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ onNavigate }) 
       {/* Add Project Modal */}
       {showAddProject && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="glass-card rounded-2xl p-6 sm:p-8 w-full max-w-lg relative">
+          <div className="glass-card rounded-2xl p-6 sm:p-8 w-full max-w-lg relative max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setShowAddProject(false)}
               className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-[#c6c5d7] transition-all cursor-pointer"
