@@ -30,6 +30,9 @@ const DIFF_STYLE: Record<string, string> = {
 export const PlacementScreen: React.FC<PlacementScreenProps> = ({ onNavigate }) => {
   const [drives, setDrives] = useState<PlacementDrive[]>([]);
   const [loading, setLoading] = useState(true);
+  const [myApps, setMyApps] = useState<Record<number, { id: number; status: string }>>({});
+  const [appBusy, setAppBusy] = useState<number | null>(null);
+  const [appMsg, setAppMsg] = useState('');
 
   // Question suggester state
   const [company, setCompany] = useState('');
@@ -60,6 +63,14 @@ export const PlacementScreen: React.FC<PlacementScreenProps> = ({ onNavigate }) 
       .then((res) => setDrives(res.drives || []))
       .catch(() => {})
       .finally(() => setLoading(false));
+
+    api.getMyApplications()
+      .then((res) => {
+        const m: Record<number, { id: number; status: string }> = {};
+        for (const a of res.applications || []) m[a.drive_id] = { id: a.id, status: a.status };
+        setMyApps(m);
+      })
+      .catch(() => {});
 
     // Auto-suggest questions for the user's AI target company
     api.getProfile()
@@ -96,6 +107,45 @@ export const PlacementScreen: React.FC<PlacementScreenProps> = ({ onNavigate }) 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     fetchQuestions(company, level);
+  };
+
+  const applyToDrive = async (driveId: number) => {
+    setAppBusy(driveId);
+    setAppMsg('');
+    try {
+      const res = await api.applyToDrive(driveId);
+      setMyApps((m) => ({ ...m, [driveId]: { id: res.application.id, status: 'applied' } }));
+      setAppMsg('Applied ho gaya ✓ — PO jab status update karega woh yahan dikhega.');
+    } catch (err: any) {
+      setAppMsg(err.message || 'Apply failed. Try again.');
+    } finally {
+      setAppBusy(null);
+    }
+  };
+
+  const withdrawApplication = async (driveId: number) => {
+    setAppBusy(driveId);
+    setAppMsg('');
+    try {
+      await api.withdrawApplication(driveId);
+      setMyApps((m) => {
+        const n = { ...m };
+        delete n[driveId];
+        return n;
+      });
+      setAppMsg('Application withdraw kar diya.');
+    } catch (err: any) {
+      setAppMsg(err.message || 'Withdraw failed. Try again.');
+    } finally {
+      setAppBusy(null);
+    }
+  };
+
+  const APP_STATUS_STYLE: Record<string, string> = {
+    applied: 'bg-[#5b5fef]/15 text-[#c0c1ff] border border-[#5b5fef]/40',
+    waiting: 'bg-amber-500/15 text-amber-300 border border-amber-500/40',
+    selected: 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/40',
+    rejected: 'bg-rose-500/15 text-rose-300 border border-rose-500/40',
   };
 
   const switchLevel = (k: 'basic' | 'intermediate' | 'hard') => {
@@ -182,33 +232,61 @@ export const PlacementScreen: React.FC<PlacementScreenProps> = ({ onNavigate }) 
           {!loading && drives.length === 0 && (
             <p className="text-sm text-[#c6c5d7]">No drives announced yet. Check back soon!</p>
           )}
+          {appMsg && <p className="text-xs font-semibold text-[#3cd7ff]">{appMsg}</p>}
           <div className="space-y-3">
-            {drives.map((d) => (
-              <div key={d.id} className="bg-[#191924] rounded-2xl border border-white/10 p-4 flex flex-col sm:flex-row sm:items-center gap-3 hover:border-[#c0c1ff]/40 transition-all">
-                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#5b5fef]/30 to-[#3cd7ff]/20 border border-[#3cd7ff]/30 flex items-center justify-center shrink-0">
-                  <Target className="w-5 h-5 text-[#3cd7ff]" />
+            {drives.map((d) => {
+              const app = myApps[d.id];
+              return (
+                <div key={d.id} className="bg-[#191924] rounded-2xl border border-white/10 p-4 flex flex-col sm:flex-row sm:items-center gap-3 hover:border-[#c0c1ff]/40 transition-all">
+                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#5b5fef]/30 to-[#3cd7ff]/20 border border-[#3cd7ff]/30 flex items-center justify-center shrink-0">
+                    <Target className="w-5 h-5 text-[#3cd7ff]" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-bold text-white truncate">{d.company}</p>
+                    <p className="text-xs text-[#c6c5d7] truncate">{d.role}</p>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                    <span className="text-xs font-bold text-[#3cd7ff] whitespace-nowrap">{d.package}</span>
+                    <span className="flex items-center gap-1 text-[11px] text-[#c6c5d7] whitespace-nowrap">
+                      <Clock className="w-3.5 h-3.5" /> {d.deadline}
+                    </span>
+                    <span
+                      className={`text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full whitespace-nowrap ${
+                        d.status === 'open'
+                          ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'
+                          : 'bg-[#3cd7ff]/10 text-[#3cd7ff] border border-[#3cd7ff]/30'
+                      }`}
+                    >
+                      {d.status}
+                    </span>
+                    {app && (
+                      <span className={`text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full whitespace-nowrap ${APP_STATUS_STYLE[app.status] || APP_STATUS_STYLE.applied}`}>
+                        {app.status}
+                      </span>
+                    )}
+                    {d.status === 'open' && (
+                      app ? (
+                        <button
+                          onClick={() => withdrawApplication(d.id)}
+                          disabled={appBusy === d.id}
+                          className="px-3 py-1.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-bold hover:bg-rose-500/20 transition-all disabled:opacity-50 cursor-pointer"
+                        >
+                          {appBusy === d.id ? '…' : 'Withdraw'}
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => applyToDrive(d.id)}
+                          disabled={appBusy === d.id}
+                          className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#5b5fef] to-[#3cd7ff] text-white text-xs font-bold hover:opacity-90 transition-all disabled:opacity-50 cursor-pointer"
+                        >
+                          {appBusy === d.id ? '…' : 'Apply'}
+                        </button>
+                      )
+                    )}
+                  </div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-bold text-white truncate">{d.company}</p>
-                  <p className="text-xs text-[#c6c5d7] truncate">{d.role}</p>
-                </div>
-                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                  <span className="text-xs font-bold text-[#3cd7ff] whitespace-nowrap">{d.package}</span>
-                  <span className="flex items-center gap-1 text-[11px] text-[#c6c5d7] whitespace-nowrap">
-                    <Clock className="w-3.5 h-3.5" /> {d.deadline}
-                  </span>
-                  <span
-                    className={`text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full whitespace-nowrap ${
-                      d.status === 'open'
-                        ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'
-                        : 'bg-[#3cd7ff]/10 text-[#3cd7ff] border border-[#3cd7ff]/30'
-                    }`}
-                  >
-                    {d.status}
-                  </span>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </section>
 

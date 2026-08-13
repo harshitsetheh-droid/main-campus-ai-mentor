@@ -25,6 +25,10 @@ CREATE INDEX IF NOT EXISTS users_role_idx ON users(role);
 -- harsh1 is the super admin (idempotent bootstrap)
 UPDATE users SET role = 'super_admin' WHERE username = 'harsh1' AND role <> 'super_admin';
 
+-- Original/full name (filled at signup; backfilled with username for old accounts)
+ALTER TABLE users ADD COLUMN IF NOT EXISTS name TEXT NOT NULL DEFAULT '';
+UPDATE users SET name = username WHERE name = '';
+
 -- Friend requests (anonymous chat request flow: request -> approve -> friend)
 CREATE TABLE IF NOT EXISTS chat_requests (
   id SERIAL PRIMARY KEY,
@@ -278,6 +282,20 @@ CREATE TABLE IF NOT EXISTS placement_company_questions (
 );
 CREATE INDEX IF NOT EXISTS placement_company_questions_company_idx
   ON placement_company_questions (LOWER(company));
+
+-- Placement applications: student applies to a drive, PO/super admin moves it
+-- through applied -> waiting -> selected (or rejected). Drives the "kis
+-- placement mein baitha hai / kiski wait kar raha hai" view for the admin.
+CREATE TABLE IF NOT EXISTS placement_applications (
+  id SERIAL PRIMARY KEY,
+  drive_id INTEGER NOT NULL REFERENCES placement_drives(id) ON DELETE CASCADE,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  status TEXT NOT NULL DEFAULT 'applied',
+  applied_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE (drive_id, user_id)
+);
+CREATE INDEX IF NOT EXISTS placement_applications_user_idx ON placement_applications (user_id);
 
 -- ---------------------------------------------------------------------------
 -- IDEMPOTENT ADDITIONS FOR THE 2026 USER-CENTRIC REDESIGN

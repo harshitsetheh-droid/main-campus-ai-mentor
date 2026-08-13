@@ -118,14 +118,14 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ onSuccess, onSwitchT
 
     setIsLoading(true);
     try {
-      const res = await api.register(form.username, form.email, form.password, form.rollNo);
+      const res = await api.register(form.username, form.email, form.password, form.rollNo, form.name);
       sessionStorage.setItem('campusai_token', res.token);
       sessionStorage.setItem('campusai_user', JSON.stringify(res.user));
       localStorage.removeItem('campusai_token');
       localStorage.removeItem('campusai_user');
       // persist the captured profile details
       await api.updateProfile({
-        name: form.username, branch: form.branch, semester: form.semester,
+        name: form.name || form.username, branch: form.branch, semester: form.semester,
         targetRole: form.targetRole, targetCgpa: form.targetCgpa,
         targetCompanyType: form.targetCompanyType, targetCompanyName: form.targetCompanyName,
         timelineCurrent: form.timelineCurrent, timelineNext: form.timelineNext,
@@ -181,6 +181,13 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ onSuccess, onSwitchT
             <fieldset className="space-y-4">
               <legend className="text-xs font-bold uppercase tracking-wider text-[#3cd7ff] mb-1">Account</legend>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <Label>Full Name *</Label>
+                  <div className="relative">
+                    <NameIcon />
+                    <input type="text" value={form.name} onChange={set('name')} placeholder="e.g. Harshit Seth" required maxLength={80} className="input" />
+                  </div>
+                </div>
                 <div>
                   <Label>Username *</Label>
                   <div className="relative">
@@ -393,6 +400,7 @@ function Label({ children }: { children: React.ReactNode }) {
   return <label className="block text-xs font-semibold text-[#c6c5d7] uppercase tracking-wider mb-2">{children}</label>;
 }
 function UserIcon() { return <UserPlus className="w-5 h-5 text-[#c0c1ff] absolute left-4 top-1/2 -translate-y-1/2" />; }
+function NameIcon() { return <UserPlus className="w-5 h-5 text-[#c0c1ff] absolute left-4 top-1/2 -translate-y-1/2" />; }
 function MailIcon() { return <Mail className="w-5 h-5 text-[#c0c1ff] absolute left-4 top-1/2 -translate-y-1/2" />; }
 function HashIcon() { return <Hash className="w-5 h-5 text-[#c0c1ff] absolute left-4 top-1/2 -translate-y-1/2" />; }
 function LockIcon() { return <Lock className="w-5 h-5 text-[#c0c1ff] absolute left-4 top-1/2 -translate-y-1/2" />; }

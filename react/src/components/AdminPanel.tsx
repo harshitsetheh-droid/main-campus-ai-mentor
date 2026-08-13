@@ -14,6 +14,30 @@ const ROLES: { value: Role; label: string }[] = [
   { value: 'super_admin', label: 'Super Admin' },
 ];
 
+const APP_STATUS_STYLE: Record<string, string> = {
+  applied: 'bg-[#5b5fef]/15 text-[#c0c1ff] border border-[#5b5fef]/40',
+  waiting: 'bg-amber-500/15 text-amber-300 border border-amber-500/40',
+  selected: 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/40',
+  rejected: 'bg-rose-500/15 text-rose-300 border border-rose-500/40',
+};
+
+interface AppRow {
+  id: number;
+  status: string;
+  applied_at?: string;
+  updated_at?: string;
+  user_id: number;
+  username: string;
+  user_name: string;
+  roll_no: string;
+  drive_id: number;
+  company: string;
+  role: string;
+  package: string;
+  deadline: string;
+  drive_status: string;
+}
+
 interface Props {
   role: Role;
   username: string;
@@ -355,7 +379,10 @@ function PlacementTab({ onToast }: { onToast: (m: string) => void }) {
   const [companies, setCompanies] = useState<CompanyQuestionMeta[]>([]);
   const [questions, setQuestions] = useState<CompanyQuestion[]>([]);
   const [selCompany, setSelCompany] = useState('');
-  const [sub, setSub] = useState<'drives' | 'questions'>('drives');
+  const [sub, setSub] = useState<'drives' | 'questions' | 'apps'>('drives');
+
+  // applications
+  const [apps, setApps] = useState<AppRow[]>([]);
 
   // drive form
   const [dCompany, setDCompany] = useState('');
@@ -371,11 +398,22 @@ function PlacementTab({ onToast }: { onToast: (m: string) => void }) {
   const [qFreq, setQFreq] = useState('50');
 
   const loadDrives = () => api.getPlacementDrives().then((r) => setDrives(r.drives || [])).catch(() => {});
+  const loadApps = () => api.getApplications().then((r) => setApps(r.applications || [])).catch(() => {});
   const loadQ = (company?: string) => {
     api.getCompanyQuestionCompanies().then((r) => setCompanies(r.companies || [])).catch(() => {});
     api.getCompanyQuestions(company).then((r) => setQuestions(r.questions || [])).catch(() => {});
   };
-  useEffect(() => { loadDrives(); loadQ(); }, []);
+  useEffect(() => { loadDrives(); loadQ(); loadApps(); }, []);
+
+  const setAppStatus = async (appId: number, status: string) => {
+    try {
+      await api.updateApplicationStatus(appId, status);
+      onToast(`Status → ${status}`);
+      loadApps();
+    } catch (err: any) {
+      onToast(err.message || 'Update failed');
+    }
+  };
 
   const saveDrive = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -431,6 +469,9 @@ function PlacementTab({ onToast }: { onToast: (m: string) => void }) {
         </button>
         <button onClick={() => setSub('questions')} className={`px-4 py-2 rounded-xl text-sm font-bold transition-all cursor-pointer border ${sub === 'questions' ? 'bg-[#5b5fef]/20 border-[#5b5fef]/50 text-[#c0c1ff]' : 'bg-white/5 border-white/10 text-[#c6c5d7]'}`}>
           <span className="flex items-center gap-1.5"><BookOpen className="w-4 h-4" /> Company Question Bank</span>
+        </button>
+        <button onClick={() => setSub('apps')} className={`px-4 py-2 rounded-xl text-sm font-bold transition-all cursor-pointer border ${sub === 'apps' ? 'bg-[#5b5fef]/20 border-[#5b5fef]/50 text-[#c0c1ff]' : 'bg-white/5 border-white/10 text-[#c6c5d7]'}`}>
+          <span className="flex items-center gap-1.5"><Users className="w-4 h-4" /> Applications ({apps.length})</span>
         </button>
       </div>
 
@@ -535,6 +576,45 @@ function PlacementTab({ onToast }: { onToast: (m: string) => void }) {
               </div>
             ))}
             {questions.length === 0 && <p className="text-sm text-[#7e7d94] text-center py-8">Abhi koi question share nahi hua — sabse upar form se add karo</p>}
+          </div>
+        </div>
+      )}
+
+      {sub === 'apps' && (
+        <div>
+          <p className="text-xs font-bold text-[#c6c5d7] uppercase tracking-wider mb-3">
+            Students ke placement applications — status update karo
+          </p>
+          <div className="space-y-2">
+            {apps.map((a) => (
+              <div key={a.id} className="glass-panel rounded-2xl p-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-bold text-white text-sm truncate">
+                      {a.user_name || a.username} <span className="text-[#7e7d94] font-normal">@{a.username}{a.roll_no ? ` · ${a.roll_no}` : ''}</span>
+                    </p>
+                    <p className="text-[11px] text-[#c6c5d7] truncate">
+                      {a.company} · {a.role} · <span className="text-[#3cd7ff]">{a.package}</span>
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2 shrink-0">
+                    <span className={`text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full ${APP_STATUS_STYLE[a.status] || APP_STATUS_STYLE.applied}`}>
+                      {a.status}
+                    </span>
+                    <button onClick={() => setAppStatus(a.id, 'waiting')} disabled={a.status === 'waiting'} className="px-2.5 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[11px] font-bold hover:bg-amber-500/20 transition-all disabled:opacity-40 cursor-pointer">
+                      Waiting
+                    </button>
+                    <button onClick={() => setAppStatus(a.id, 'selected')} disabled={a.status === 'selected'} className="px-2.5 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-[11px] font-bold hover:bg-emerald-500/20 transition-all disabled:opacity-40 cursor-pointer">
+                      Selected
+                    </button>
+                    <button onClick={() => setAppStatus(a.id, 'rejected')} disabled={a.status === 'rejected'} className="px-2.5 py-1.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-[11px] font-bold hover:bg-rose-500/20 transition-all disabled:opacity-40 cursor-pointer">
+                      Rejected
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+            {apps.length === 0 && <p className="text-sm text-[#7e7d94] text-center py-8">Abhi koi application nahi aayi — students Placement screen se drives par apply karte hain</p>}
           </div>
         </div>
       )}
@@ -823,8 +903,10 @@ function UserDetailModal({ details: d, onClose, onToast }: { details: AdminUserD
                 {d.user.username.slice(0, 2).toUpperCase()}
               </div>
               <div className="min-w-0">
-                <h3 className="text-lg font-extrabold text-white truncate">{d.user.username}</h3>
-                <p className="text-[11px] text-[#7e7d94] truncate">{d.user.email || 'No email'}{d.user.rollNo ? ` · Roll: ${d.user.rollNo}` : ''}</p>
+                <h3 className="text-lg font-extrabold text-white truncate">{d.user.name || d.user.username}</h3>
+                <p className="text-[11px] text-[#7e7d94] truncate">
+                  @{d.user.username}{d.user.email ? ` · ${d.user.email}` : ''}{d.user.rollNo ? ` · Roll: ${d.user.rollNo}` : ''}
+                </p>
               </div>
             </div>
             <button onClick={onClose} className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[#c6c5d7] hover:bg-white/10 transition-all cursor-pointer shrink-0">
@@ -865,6 +947,34 @@ function UserDetailModal({ details: d, onClose, onToast }: { details: AdminUserD
                 <div><span className="text-[#7e7d94] block">Semester</span><span className="font-bold text-white">{d.user.semester || '—'}</span></div>
                 <div><span className="text-[#7e7d94] block">Company type</span><span className="font-bold text-white">{d.user.targetCompanyType || '—'}</span></div>
               </div>
+            </div>
+
+            <div className="glass-panel rounded-2xl p-4">
+              <p className="text-[10px] font-extrabold text-[#c6c5d7] uppercase tracking-wider mb-3">Placement applications ({d.applications.length})</p>
+              {d.applications.length === 0 && <p className="text-xs text-[#7e7d94]">Kisi drive par apply nahi kiya</p>}
+              <div className="space-y-2">
+                {d.applications.map((a) => (
+                  <div key={a.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-[#13131b] rounded-xl px-3 py-2.5">
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold text-white truncate">{a.company}{a.role ? ` · ${a.role}` : ''}</p>
+                      <p className="text-[10px] text-[#7e7d94]">{a.package}{a.deadline ? ` · ${a.deadline}` : ''}</p>
+                    </div>
+                    <span className={`text-[9px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full self-start sm:self-auto ${APP_STATUS_STYLE[a.status] || APP_STATUS_STYLE.applied}`}>
+                      {a.status}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              {d.applications.some((a) => a.status === 'selected') && (
+                <p className="text-[10px] font-bold text-emerald-300 mt-2">
+                  ✅ Baitha hua hai: {d.applications.filter((a) => a.status === 'selected').map((a) => a.company).join(', ')}
+                </p>
+              )}
+              {d.applications.some((a) => a.status === 'waiting') && (
+                <p className="text-[10px] font-bold text-amber-300 mt-1">
+                  ⏳ Wait kar raha hai: {d.applications.filter((a) => a.status === 'waiting').map((a) => a.company).join(', ')}
+                </p>
+              )}
             </div>
 
             <div className="glass-panel rounded-2xl p-4">

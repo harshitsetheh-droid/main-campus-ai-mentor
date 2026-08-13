@@ -309,6 +309,7 @@ app.post("/api/auth/register", authLimiter, async (req, res) => {
   const username = safeString(req.body.username, 30);
   const email = safeString(req.body.email, 200);
   const rollNo = safeString(req.body.rollNo, 20);
+  const name = safeString(req.body.name, 80);
   const { password } = req.body;
   // Signup always creates a Student account — staff roles are assigned only by the super admin
   const role = "student";
@@ -333,17 +334,17 @@ app.post("/api/auth/register", authLimiter, async (req, res) => {
     }
     const hash = await bcrypt.hash(password, 12);
     const userRes = await pool.query(
-      "INSERT INTO users (username, email, password_hash, roll_no, role) VALUES ($1, $2, $3, $4, $5) RETURNING id, username, email, roll_no, role",
-      [username, email, hash, rollNo, role]
+      "INSERT INTO users (username, email, password_hash, roll_no, role, name) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, username, email, roll_no, role, name",
+      [username, email, hash, rollNo, role, name || username]
     );
     const user = userRes.rows[0];
     await pool.query(
       `INSERT INTO profiles (user_id, name, institution)
        VALUES ($1, $2, $3)`,
-      [user.id, username, INSTITUTION]
+      [user.id, name || username, INSTITUTION]
     );
     const token = signToken(user.id, user.username);
-    res.status(201).json({ token, user: { id: user.id, username: user.username, email: user.email, rollNo: user.roll_no || "", role: user.role || "student" } });
+    res.status(201).json({ token, user: { id: user.id, username: user.username, email: user.email, rollNo: user.roll_no || "", role: user.role || "student", name: user.name || "" } });
   } catch (err) {
     console.error("Register error:", err);
     res.status(500).json({ error: "Something went wrong. Please try again." });
@@ -406,7 +407,7 @@ app.post("/api/auth/login", authLimiter, async (req, res) => {
   }
   try {
     const userRes = await pool.query(
-      "SELECT id, username, email, roll_no, password_hash, role FROM users WHERE username = $1 OR email = $1 OR roll_no = $1 LIMIT 1",
+      "SELECT id, username, email, roll_no, password_hash, role, name FROM users WHERE username = $1 OR email = $1 OR roll_no = $1 LIMIT 1",
       [identifier]
     );
     const user = userRes.rows[0];
@@ -431,7 +432,7 @@ app.post("/api/auth/login", authLimiter, async (req, res) => {
     }
     clearRoleLock(lockKey);
     const token = signToken(user.id, user.username);
-    res.json({ token, user: { id: user.id, username: user.username, email: user.email, rollNo: user.roll_no || "", role: user.role || "student" } });
+    res.json({ token, user: { id: user.id, username: user.username, email: user.email, rollNo: user.roll_no || "", role: user.role || "student", name: user.name || "" } });
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).json({ error: "Something went wrong. Please try again." });
@@ -440,10 +441,10 @@ app.post("/api/auth/login", authLimiter, async (req, res) => {
 
 app.get("/api/auth/me", requireAuth, async (req, res) => {
   try {
-    const userRes = await pool.query("SELECT id, username, email, role FROM users WHERE id = $1", [req.userId]);
+    const userRes = await pool.query("SELECT id, username, email, role, name FROM users WHERE id = $1", [req.userId]);
     if (userRes.rowCount === 0) return res.status(404).json({ error: "User not found" });
     const u = userRes.rows[0];
-    res.json({ user: { id: u.id, username: u.username, email: u.email, role: u.role || "student" } });
+    res.json({ user: { id: u.id, username: u.username, email: u.email, role: u.role || "student", name: u.name || "" } });
   } catch (err) {
     sendServerError(res, err);
   }
@@ -2632,7 +2633,7 @@ app.get("/api/admin/users/:id", requireAuth, requireRole("super_admin"), async (
     const id = parseInt(req.params.id, 10) || 0;
     if (!id) return res.status(400).json({ error: "Invalid user" });
     const u = await pool.query(
-      `SELECT u.id, u.username, u.email, u.roll_no, u.role, u.created_at,
+      `SELECT u.id, u.username, u.email, u.roll_no, u.role, u.created_at, u.name AS u_name,
               p.name, p.phone, p.branch, p.current_semester, p.target_role,
               p.target_cgpa, p.target_company_type, p.target_company_name,
               p.work_type, p.github_url, p.linkedin_url, p.photo_url
@@ -2640,7 +2641,7 @@ app.get("/api/admin/users/:id", requireAuth, requireRole("super_admin"), async (
       [id]
     );
     if (u.rowCount === 0) return res.status(404).json({ error: "User not found" });
-    const [skills, rankInfo, resumes, certs, projects, coding, clubs, friends, mentorUses, blockedList] = await Promise.all([
+    const [skills, rankInfo, resumes, certs, projects, coding, clubs, friends, mentorUses, blockedList, applications] = await Promise.all([
       pool.query(
         `SELECT id, name, category, platform, questions_solved, total_questions, mastery, status, updated_at
          FROM skills WHERE user_id=$1 ORDER BY mastery DESC`,
@@ -2675,12 +2676,20 @@ app.get("/api/admin/users/:id", requireAuth, requireRole("super_admin"), async (
       ),
       pool.query(`SELECT COUNT(*)::int AS c FROM chat_messages WHERE user_id=$1`, [id]),
       pool.query(`SELECT club_id FROM club_blocks WHERE user_id=$1`, [id]),
+      pool.query(
+        `SELECT a.id, a.status, a.applied_at, a.updated_at,
+                d.id AS drive_id, d.company, d.role, d.package, d.deadline, d.status AS drive_status
+         FROM placement_applications a
+         JOIN placement_drives d ON d.id = a.drive_id
+         WHERE a.user_id=$1 ORDER BY a.applied_at DESC`,
+        [id]
+      ),
     ]);
     const p = u.rows[0];
     res.json({
       user: {
         id: p.id, username: p.username, email: p.email, rollNo: p.roll_no || "",
-        phone: p.phone || "", role: p.role || "student", name: p.name || "",
+        phone: p.phone || "", role: p.role || "student", name: p.u_name || p.name || "",
         branch: p.branch || "", semester: p.current_semester || "",
         targetRole: p.target_role || "", targetCgpa: p.target_cgpa || "",
         targetCompanyType: p.target_company_type || "", targetCompanyName: p.target_company_name || "",
@@ -2714,6 +2723,13 @@ app.get("/api/admin/users/:id", requireAuth, requireRole("super_admin"), async (
       })),
       friends: friends.rows.map((f) => ({ id: f.fid, handle: anonymousHandle(f.fid) })),
       mentorUses: mentorUses.rows[0].c,
+      applications: applications.rows.map((a) => ({
+        id: a.id, driveId: a.drive_id, company: a.company, role: a.role || "",
+        package: a.package || "", deadline: a.deadline || "",
+        status: a.status || "applied", driveStatus: a.drive_status || "open",
+        appliedAt: a.applied_at ? a.applied_at.toISOString() : null,
+        updatedAt: a.updated_at ? a.updated_at.toISOString() : null,
+      })),
     });
   } catch (err) {
     sendServerError(res, err);
@@ -3008,6 +3024,98 @@ app.delete("/api/placement/drives/:id", requireAuth, requireRole("placement_offi
     const r = await pool.query("DELETE FROM placement_drives WHERE id=$1 RETURNING id", [id]);
     if (r.rowCount === 0) return res.status(404).json({ error: "Drive not found" });
     res.json({ success: true });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+// Student applies to a placement drive
+app.post("/api/placement/drives/:id/apply", requireAuth, async (req, res) => {
+  try {
+    const driveId = parseInt(req.params.id, 10) || 0;
+    if (!driveId) return res.status(400).json({ error: "Invalid drive" });
+    const drive = await pool.query("SELECT id FROM placement_drives WHERE id=$1", [driveId]);
+    if (drive.rowCount === 0) return res.status(404).json({ error: "Drive not found" });
+    const exists = await pool.query(
+      "SELECT id FROM placement_applications WHERE drive_id=$1 AND user_id=$2",
+      [driveId, req.userId]
+    );
+    if (exists.rowCount > 0) return res.status(409).json({ error: "Already applied to this drive" });
+    const r = await pool.query(
+      `INSERT INTO placement_applications (drive_id, user_id, status)
+       VALUES ($1, $2, 'applied') RETURNING id, status, applied_at`,
+      [driveId, req.userId]
+    );
+    res.status(201).json({ application: r.rows[0] });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+// Student withdraws their application from a drive
+app.delete("/api/placement/drives/:id/apply", requireAuth, async (req, res) => {
+  try {
+    const driveId = parseInt(req.params.id, 10) || 0;
+    const r = await pool.query(
+      "DELETE FROM placement_applications WHERE drive_id=$1 AND user_id=$2 RETURNING id",
+      [driveId, req.userId]
+    );
+    if (r.rowCount === 0) return res.status(404).json({ error: "No application found for this drive" });
+    res.json({ success: true });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+// Student's own applications (with drive details)
+app.get("/api/placement/my-applications", requireAuth, async (req, res) => {
+  try {
+    const r = await pool.query(
+      `SELECT a.id, a.status, a.applied_at, a.updated_at,
+              d.id AS drive_id, d.company, d.role, d.package, d.deadline, d.status AS drive_status
+       FROM placement_applications a
+       JOIN placement_drives d ON d.id = a.drive_id
+       WHERE a.user_id = $1 ORDER BY a.applied_at DESC`,
+      [req.userId]
+    );
+    res.json({ applications: r.rows });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+// PO / Super Admin: every application with student + drive info
+app.get("/api/placement/applications", requireAuth, requireRole("placement_officer", "super_admin"), async (req, res) => {
+  try {
+    const r = await pool.query(
+      `SELECT a.id, a.status, a.applied_at, a.updated_at,
+              a.user_id, u.username, u.name AS user_name, u.roll_no,
+              d.id AS drive_id, d.company, d.role, d.package, d.deadline, d.status AS drive_status
+       FROM placement_applications a
+       JOIN users u ON u.id = a.user_id
+       JOIN placement_drives d ON d.id = a.drive_id
+       ORDER BY a.applied_at DESC LIMIT 500`
+    );
+    res.json({ applications: r.rows });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+// PO / Super Admin: move an application to waiting / selected / rejected
+app.patch("/api/placement/applications/:appId", requireAuth, requireRole("placement_officer", "super_admin"), async (req, res) => {
+  try {
+    const appId = parseInt(req.params.appId, 10) || 0;
+    const status = safeString(req.body.status, 20);
+    if (!["applied", "waiting", "selected", "rejected"].includes(status)) {
+      return res.status(400).json({ error: "Invalid status" });
+    }
+    const r = await pool.query(
+      `UPDATE placement_applications SET status=$1, updated_at=NOW() WHERE id=$2 RETURNING id, status`,
+      [status, appId]
+    );
+    if (r.rowCount === 0) return res.status(404).json({ error: "Application not found" });
+    res.json({ application: r.rows[0] });
   } catch (err) {
     sendServerError(res, err);
   }

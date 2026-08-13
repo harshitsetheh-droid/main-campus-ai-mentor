@@ -66,6 +66,7 @@ export interface AuthUser {
   email: string;
   rollNo?: string;
   role?: Role;
+  name?: string;
 }
 
 export type Role = 'student' | 'placement_officer' | 'club_manager' | 'faculty' | 'super_admin';
@@ -173,6 +174,18 @@ export interface AdminUserDetails {
   clubs: { id: number; name: string; emoji: string; joinedAt?: string | null; blocked: boolean }[];
   friends: { id: number; handle: string }[];
   mentorUses: number;
+  applications: {
+    id: number;
+    driveId: number;
+    company: string;
+    role: string;
+    package: string;
+    deadline: string;
+    status: string;
+    driveStatus: string;
+    appliedAt?: string | null;
+    updatedAt?: string | null;
+  }[];
 }
 
 export interface Skill {
@@ -436,8 +449,8 @@ export interface PlacementQuestion {
 
 export const api = {
   // Auth
-  register: (username: string, email: string, password: string, rollNo?: string) =>
-    sendJson<{ token: string; user: AuthUser }>('/auth/register', 'POST', { username, email, password, rollNo }),
+  register: (username: string, email: string, password: string, rollNo?: string, name?: string) =>
+    sendJson<{ token: string; user: AuthUser }>('/auth/register', 'POST', { username, email, password, rollNo, name }),
   login: (identifier: string, password: string, role?: string) =>
     sendJson<{ token: string; user: AuthUser }>('/auth/login', 'POST', { identifier, password, role }),
   checkUsername: (username: string) =>
@@ -594,4 +607,25 @@ export const api = {
   getPlacementDrives: () => getJson<{ drives: PlacementDrive[] }>('/placement/drives'),
   getPlacementQuestions: (company: string, level: string) =>
     sendJson<{ company: string; level: string; questions: PlacementQuestion[] }>('/placement/questions', 'POST', { company, level }),
+  applyToDrive: (driveId: number) =>
+    sendJson<{ application: { id: number; status: string; applied_at?: string } }>(`/placement/drives/${driveId}/apply`, 'POST', {}),
+  withdrawApplication: (driveId: number) =>
+    sendJson<{ success: boolean }>(`/placement/drives/${driveId}/apply`, 'DELETE', {}),
+  getMyApplications: () =>
+    getJson<{
+      applications: {
+        id: number; status: string; applied_at?: string; updated_at?: string;
+        drive_id: number; company: string; role: string; package: string; deadline: string; drive_status: string;
+      }[];
+    }>('/placement/my-applications'),
+  getApplications: () =>
+    getJson<{
+      applications: {
+        id: number; status: string; applied_at?: string; updated_at?: string;
+        user_id: number; username: string; user_name: string; roll_no: string;
+        drive_id: number; company: string; role: string; package: string; deadline: string; drive_status: string;
+      }[];
+    }>('/placement/applications'),
+  updateApplicationStatus: (appId: number, status: string) =>
+    sendJson<{ application: { id: number; status: string } }>(`/placement/applications/${appId}`, 'PATCH', { status }),
 };
