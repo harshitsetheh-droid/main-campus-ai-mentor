@@ -150,9 +150,6 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onSuccess, onSwitchToS
                   <option key={v} value={v}>{l}</option>
                 ))}
               </select>
-              <p className="text-[10px] text-[#7e7d94] mt-1.5">
-                Roles sirf Super Admin (harsh1) assign karta hai — galat type chuno toh login block ho jayega.
-              </p>
             </div>
 
             <button
