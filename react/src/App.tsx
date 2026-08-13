@@ -27,6 +27,20 @@ export default function App() {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [photoUrl, setPhotoUrl] = useState('');
   const [dmTarget, setDmTarget] = useState<{ id: number; handle: string } | null>(null);
+  const [adminTab, setAdminTab] = useState<string>('people');
+
+  const ADMIN_TAB_DEFAULT: Record<string, string> = {
+    super_admin: 'people',
+    placement_officer: 'placement',
+    club_manager: 'moderation',
+    faculty: 'faculty',
+  };
+
+  useEffect(() => {
+    if (!user) return;
+    setAdminTab(ADMIN_TAB_DEFAULT[user.role ?? 'student'] ?? 'people');
+    if (user.role !== 'student') setCurrentScreen('admin');
+  }, [user?.id]);
 
   useEffect(() => {
     // Per-tab session: do alag tabs = do alag accounts, no cross-tab confusion.
@@ -138,6 +152,8 @@ export default function App() {
         photoUrl={photoUrl}
         role={user.role}
         onLogout={handleLogout}
+        activeAdminTab={adminTab}
+        onAdminNavigate={(t) => { setAdminTab(t); handleNavigate('admin', 'none'); }}
       />
 
       {/* Screen Container */}
@@ -187,7 +203,7 @@ export default function App() {
             <FriendsScreen onNavigate={handleNavigate} initialDmTarget={dmTarget} />
           )}
           {currentScreen === 'admin' && user.role && user.role !== 'student' && (
-            <AdminPanel role={user.role} username={user.username} />
+            <AdminPanel role={user.role} username={user.username} tab={adminTab} onTabChange={setAdminTab} />
           )}
         </motion.div>
       </AnimatePresence>

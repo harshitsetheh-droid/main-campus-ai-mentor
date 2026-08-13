@@ -1,6 +1,6 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { ScreenType } from '../types';
-import { Sparkles, Home, LayoutDashboard, Bot, User, Bell, PlayCircle, Users, LogOut, Award, FolderGit2, FileText, ChevronRight, MessageSquare, Briefcase, UserPlus, ShieldCheck } from 'lucide-react';
+import { Sparkles, Home, LayoutDashboard, Bot, User, Bell, PlayCircle, Users, LogOut, Award, FolderGit2, FileText, ChevronRight, MessageSquare, Briefcase, UserPlus, ShieldCheck, BarChart3 } from 'lucide-react';
 import { api, Notification, Role } from '../api';
 
 interface NavbarProps {
@@ -11,6 +11,17 @@ interface NavbarProps {
   photoUrl?: string;
   role?: Role;
   onLogout: () => void;
+  activeAdminTab?: string;
+  onAdminNavigate?: (tab: string) => void;
+}
+
+interface NavItem {
+  key: string;
+  label: string;
+  short?: string;
+  icon: React.ComponentType<{ className?: string }>;
+  screen: ScreenType;
+  adminTab?: string;
 }
 
 const ROLE_LABELS: Record<string, string> = {
@@ -29,7 +40,7 @@ function formatNotificationDate(value: string): string {
   return `${date}, ${time}`;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onNavigate, onOpenWalkthrough, username, photoUrl, role, onLogout }) => {
+export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onNavigate, onOpenWalkthrough, username, photoUrl, role, onLogout, activeAdminTab, onAdminNavigate }) => {
   const [notifs, setNotifs] = useState<Notification[]>([]);
   const [notifOpen, setNotifOpen] = useState(false);
 
@@ -63,6 +74,63 @@ export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onNavigate, onOpe
     onNavigate(screen, 'none');
   };
 
+  const navItems: NavItem[] = (() => {
+    if (!role || role === 'student') {
+      return [
+        { key: 'home', label: 'Home', icon: Home, screen: 'landing' },
+        { key: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, screen: 'dashboard' },
+        { key: 'compare', label: 'Compare', icon: Users, screen: 'compare' },
+        { key: 'chat', label: 'AI Mentor', icon: Bot, screen: 'chat' },
+        { key: 'clubs', label: 'Clubs', icon: MessageSquare, screen: 'clubs' },
+        { key: 'friends', label: 'Friends', icon: UserPlus, screen: 'friends' },
+        { key: 'placement', label: 'Placement', icon: Briefcase, screen: 'placement' },
+        { key: 'certificates', label: 'Certificates', short: 'Certs', icon: Award, screen: 'certificates' },
+        { key: 'projects', label: 'Projects', icon: FolderGit2, screen: 'projects' },
+        { key: 'resume', label: 'Resume', icon: FileText, screen: 'resume' },
+        { key: 'profile', label: 'Profile', icon: User, screen: 'profile' },
+      ];
+    }
+    if (role === 'super_admin') {
+      return [
+        { key: 'placement', label: 'Placement', icon: Briefcase, screen: 'admin', adminTab: 'placement' },
+        { key: 'clubs', label: 'Clubs', icon: MessageSquare, screen: 'admin', adminTab: 'clubs' },
+        { key: 'people', label: 'People', icon: Users, screen: 'admin', adminTab: 'people' },
+        { key: 'admin', label: 'Admin', icon: ShieldCheck, screen: 'admin', adminTab: 'admin' },
+        { key: 'profile', label: 'Profile', icon: User, screen: 'admin', adminTab: 'profile' },
+      ];
+    }
+    if (role === 'placement_officer') {
+      return [
+        { key: 'placement', label: 'Placement', icon: Briefcase, screen: 'admin', adminTab: 'placement' },
+        { key: 'profile', label: 'Profile', icon: User, screen: 'admin', adminTab: 'profile' },
+      ];
+    }
+    if (role === 'faculty') {
+      return [
+        { key: 'stats', label: 'Stats', icon: BarChart3, screen: 'admin', adminTab: 'faculty' },
+        { key: 'profile', label: 'Profile', icon: User, screen: 'admin', adminTab: 'profile' },
+      ];
+    }
+    return [
+      { key: 'clubs', label: 'My Clubs', icon: ShieldCheck, screen: 'admin', adminTab: 'moderation' },
+      { key: 'profile', label: 'Profile', icon: User, screen: 'admin', adminTab: 'profile' },
+    ];
+  })();
+
+  const isNavActive = (item: NavItem) => {
+    if (item.adminTab) return currentScreen === 'admin' && activeAdminTab === item.adminTab;
+    return currentScreen === item.screen;
+  };
+
+  const handleItemClick = (e: React.MouseEvent, item: NavItem) => {
+    e.preventDefault();
+    if (item.adminTab) {
+      onAdminNavigate?.(item.adminTab);
+    } else {
+      onNavigate(item.screen, 'none');
+    }
+  };
+
   return (
     <>
       {/* Top Navigation Bar */}
@@ -82,128 +150,19 @@ export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onNavigate, onOpe
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-4 xl:gap-6 whitespace-nowrap leading-none">
-            <a
-              href="#"
-              onClick={(e) => handleNavClick(e, 'landing')}
-              className={`text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-1.5 ${
-                currentScreen === 'landing' ? 'text-[#c0c1ff]' : 'text-[#c6c5d7] hover:text-white'
-              }`}
-            >
-              <Home className="w-4 h-4" />
-              <span className="hidden 2xl:inline">Home</span>
-            </a>
-            <a
-              href="#"
-              onClick={(e) => handleNavClick(e, 'dashboard')}
-              className={`text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-1.5 ${
-                currentScreen === 'dashboard' ? 'text-[#c0c1ff]' : 'text-[#c6c5d7] hover:text-white'
-              }`}
-            >
-              <LayoutDashboard className="w-4 h-4" />
-              <span className="hidden 2xl:inline">Dashboard</span>
-            </a>
-            <a
-              href="#"
-              onClick={(e) => handleNavClick(e, 'compare')}
-              className={`text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-1.5 ${
-                currentScreen === 'compare' ? 'text-[#c0c1ff]' : 'text-[#c6c5d7] hover:text-white'
-              }`}
-            >
-              <Users className="w-4 h-4" />
-              <span className="hidden 2xl:inline">Compare Skills</span>
-            </a>
-<a
-              href="#"
-              onClick={(e) => handleNavClick(e, 'chat')}
-              className={`text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-1.5 ${
-                currentScreen === 'chat' ? 'text-[#c0c1ff]' : 'text-[#c6c5d7] hover:text-white'
-              }`}
-            >
-              <Bot className="w-4 h-4" />
-              <span className="hidden 2xl:inline">AI Mentor</span>
-            </a>
-            <a
-              href="#"
-              onClick={(e) => handleNavClick(e, 'clubs')}
-              className={`text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-1.5 ${
-                currentScreen === 'clubs' ? 'text-[#c0c1ff]' : 'text-[#c6c5d7] hover:text-white'
-              }`}
-            >
-              <MessageSquare className="w-4 h-4" />
-              <span className="hidden 2xl:inline">Clubs</span>
-            </a>
-            <a
-              href="#"
-              onClick={(e) => handleNavClick(e, 'friends')}
-              className={`text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-1.5 ${
-                currentScreen === 'friends' ? 'text-[#c0c1ff]' : 'text-[#c6c5d7] hover:text-white'
-              }`}
-            >
-              <UserPlus className="w-4 h-4" />
-              <span className="hidden 2xl:inline">Friends</span>
-            </a>
-            <a
-              href="#"
-              onClick={(e) => handleNavClick(e, 'placement')}
-              className={`text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-1.5 ${
-                currentScreen === 'placement' ? 'text-[#c0c1ff]' : 'text-[#c6c5d7] hover:text-white'
-              }`}
-            >
-              <Briefcase className="w-4 h-4" />
-              <span className="hidden 2xl:inline">Placement</span>
-            </a>
-            <a
-              href="#"
-              onClick={(e) => handleNavClick(e, 'certificates')}
-              className={`text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-1.5 ${
-                currentScreen === 'certificates' ? 'text-[#c0c1ff]' : 'text-[#c6c5d7] hover:text-white'
-              }`}
-            >
-              <Award className="w-4 h-4" />
-              <span className="hidden 2xl:inline">Certificates</span>
-            </a>
-            <a
-              href="#"
-              onClick={(e) => handleNavClick(e, 'projects')}
-              className={`text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-1.5 ${
-                currentScreen === 'projects' ? 'text-[#c0c1ff]' : 'text-[#c6c5d7] hover:text-white'
-              }`}
-            >
-              <FolderGit2 className="w-4 h-4" />
-              <span className="hidden 2xl:inline">Projects</span>
-            </a>
-            <a
-              href="#"
-              onClick={(e) => handleNavClick(e, 'resume')}
-              className={`text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-1.5 ${
-                currentScreen === 'resume' ? 'text-[#c0c1ff]' : 'text-[#c6c5d7] hover:text-white'
-              }`}
-            >
-              <FileText className="w-4 h-4" />
-              <span className="hidden 2xl:inline">Resume</span>
-            </a>
-            <a
-              href="#"
-              onClick={(e) => handleNavClick(e, 'profile')}
-              className={`text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-1.5 ${
-                currentScreen === 'profile' ? 'text-[#c0c1ff]' : 'text-[#c6c5d7] hover:text-white'
-              }`}
-            >
-              <User className="w-4 h-4" />
-              <span className="hidden 2xl:inline">Profile</span>
-            </a>
-            {role && role !== 'student' && (
+            {navItems.map((item) => (
               <a
+                key={item.key}
                 href="#"
-                onClick={(e) => handleNavClick(e, 'admin')}
+                onClick={(e) => handleItemClick(e, item)}
                 className={`text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-1.5 ${
-                  currentScreen === 'admin' ? 'text-[#c0c1ff]' : 'text-[#c6c5d7] hover:text-white'
+                  isNavActive(item) ? 'text-[#c0c1ff]' : 'text-[#c6c5d7] hover:text-white'
                 }`}
               >
-                <ShieldCheck className="w-4 h-4" />
-                <span className="hidden 2xl:inline">Admin</span>
+                <item.icon className="w-4 h-4" />
+                <span className="hidden 2xl:inline">{item.label}</span>
               </a>
-            )}
+            ))}
 
             <button
               onClick={onOpenWalkthrough}
@@ -342,163 +301,21 @@ export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onNavigate, onOpe
 {/* Mobile Bottom Navigation Bar inside a nav tag */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#1f1f28]/90 backdrop-blur-xl border-t border-white/10 shadow-[0_-4px_20px_rgba(0,0,0,0.4)]">
         <div className="flex items-center h-16 overflow-x-auto px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <a
-            href="#"
-            onClick={(e) => handleNavClick(e, 'landing')}
-            className={`flex flex-col items-center justify-center transition-all flex-1 min-w-[58px] shrink-0 ${
-              currentScreen === 'landing'
-                ? 'text-[#c0c1ff] drop-shadow-[0_0_8px_rgba(192,193,255,0.5)]'
-                : 'text-[#c6c5d7]/70 hover:text-[#c0c1ff]'
-            }`}
-          >
-            <Home className="w-5 h-5" />
-            <span className="text-[10px] font-semibold mt-0.5 whitespace-nowrap max-w-[70px] truncate">Home</span>
-          </a>
-
-          <a
-            href="#"
-            onClick={(e) => handleNavClick(e, 'dashboard')}
-            className={`flex flex-col items-center justify-center transition-all flex-1 min-w-[58px] shrink-0 ${
-              currentScreen === 'dashboard'
-                ? 'text-[#c0c1ff] drop-shadow-[0_0_8px_rgba(192,193,255,0.5)]'
-                : 'text-[#c6c5d7]/70 hover:text-[#c0c1ff]'
-            }`}
-          >
-            <LayoutDashboard className="w-5 h-5" />
-            <span className="text-[10px] font-semibold mt-0.5 whitespace-nowrap max-w-[70px] truncate">Dashboard</span>
-          </a>
-
-          <a
-            href="#"
-            onClick={(e) => handleNavClick(e, 'compare')}
-            className={`flex flex-col items-center justify-center transition-all flex-1 min-w-[58px] shrink-0 ${
-              currentScreen === 'compare'
-                ? 'text-[#c0c1ff] drop-shadow-[0_0_8px_rgba(192,193,255,0.5)]'
-                : 'text-[#c6c5d7]/70 hover:text-[#c0c1ff]'
-            }`}
-          >
-            <Users className="w-5 h-5" />
-            <span className="text-[10px] font-semibold mt-0.5 whitespace-nowrap max-w-[70px] truncate">Compare</span>
-          </a>
-
-          <a
-            href="#"
-            onClick={(e) => handleNavClick(e, 'chat')}
-            className={`flex flex-col items-center justify-center transition-all flex-1 min-w-[58px] shrink-0 ${
-              currentScreen === 'chat'
-                ? 'text-[#c0c1ff] drop-shadow-[0_0_8px_rgba(192,193,255,0.5)]'
-                : 'text-[#c6c5d7]/70 hover:text-[#c0c1ff]'
-            }`}
-          >
-            <Bot className="w-5 h-5" />
-            <span className="text-[10px] font-semibold mt-0.5 whitespace-nowrap max-w-[70px] truncate">AI Mentor</span>
-          </a>
-
-          <a
-            href="#"
-            onClick={(e) => handleNavClick(e, 'clubs')}
-            className={`flex flex-col items-center justify-center transition-all flex-1 min-w-[58px] shrink-0 ${
-              currentScreen === 'clubs'
-                ? 'text-[#c0c1ff] drop-shadow-[0_0_8px_rgba(192,193,255,0.5)]'
-                : 'text-[#c6c5d7]/70 hover:text-[#c0c1ff]'
-            }`}
-          >
-            <MessageSquare className="w-5 h-5" />
-            <span className="text-[10px] font-semibold mt-0.5 whitespace-nowrap max-w-[70px] truncate">Clubs</span>
-          </a>
-
-          <a
-            href="#"
-            onClick={(e) => handleNavClick(e, 'friends')}
-            className={`flex flex-col items-center justify-center transition-all flex-1 min-w-[58px] shrink-0 ${
-              currentScreen === 'friends'
-                ? 'text-[#c0c1ff] drop-shadow-[0_0_8px_rgba(192,193,255,0.5)]'
-                : 'text-[#c6c5d7]/70 hover:text-[#c0c1ff]'
-            }`}
-          >
-            <UserPlus className="w-5 h-5" />
-            <span className="text-[10px] font-semibold mt-0.5 whitespace-nowrap max-w-[70px] truncate">Friends</span>
-          </a>
-
-          {role && role !== 'student' && (
+          {navItems.map((item) => (
             <a
+              key={item.key}
               href="#"
-              onClick={(e) => handleNavClick(e, 'admin')}
+              onClick={(e) => handleItemClick(e, item)}
               className={`flex flex-col items-center justify-center transition-all flex-1 min-w-[58px] shrink-0 ${
-                currentScreen === 'admin'
+                isNavActive(item)
                   ? 'text-[#c0c1ff] drop-shadow-[0_0_8px_rgba(192,193,255,0.5)]'
                   : 'text-[#c6c5d7]/70 hover:text-[#c0c1ff]'
               }`}
             >
-              <ShieldCheck className="w-5 h-5" />
-              <span className="text-[10px] font-semibold mt-0.5 whitespace-nowrap max-w-[70px] truncate">Admin</span>
+              <item.icon className="w-5 h-5" />
+              <span className="text-[10px] font-semibold mt-0.5 whitespace-nowrap max-w-[70px] truncate">{item.short || item.label}</span>
             </a>
-          )}
-
-          <a
-            href="#"
-            onClick={(e) => handleNavClick(e, 'placement')}
-            className={`flex flex-col items-center justify-center transition-all flex-1 min-w-[58px] shrink-0 ${
-              currentScreen === 'placement'
-                ? 'text-[#c0c1ff] drop-shadow-[0_0_8px_rgba(192,193,255,0.5)]'
-                : 'text-[#c6c5d7]/70 hover:text-[#c0c1ff]'
-            }`}
-          >
-            <Briefcase className="w-5 h-5" />
-            <span className="text-[10px] font-semibold mt-0.5 whitespace-nowrap max-w-[70px] truncate">Placement</span>
-          </a>
-
-          <a
-            href="#"
-            onClick={(e) => handleNavClick(e, 'certificates')}
-            className={`flex flex-col items-center justify-center transition-all flex-1 min-w-[58px] shrink-0 ${
-              currentScreen === 'certificates'
-                ? 'text-[#c0c1ff] drop-shadow-[0_0_8px_rgba(192,193,255,0.5)]'
-                : 'text-[#c6c5d7]/70 hover:text-[#c0c1ff]'
-            }`}
-          >
-            <Award className="w-5 h-5" />
-            <span className="text-[10px] font-semibold mt-0.5 whitespace-nowrap max-w-[70px] truncate">Certs</span>
-          </a>
-
-          <a
-            href="#"
-            onClick={(e) => handleNavClick(e, 'projects')}
-            className={`flex flex-col items-center justify-center transition-all flex-1 min-w-[58px] shrink-0 ${
-              currentScreen === 'projects'
-                ? 'text-[#c0c1ff] drop-shadow-[0_0_8px_rgba(192,193,255,0.5)]'
-                : 'text-[#c6c5d7]/70 hover:text-[#c0c1ff]'
-            }`}
-          >
-            <FolderGit2 className="w-5 h-5" />
-            <span className="text-[10px] font-semibold mt-0.5 whitespace-nowrap max-w-[70px] truncate">Projects</span>
-          </a>
-
-          <a
-            href="#"
-            onClick={(e) => handleNavClick(e, 'resume')}
-            className={`flex flex-col items-center justify-center transition-all flex-1 min-w-[58px] shrink-0 ${
-              currentScreen === 'resume'
-                ? 'text-[#c0c1ff] drop-shadow-[0_0_8px_rgba(192,193,255,0.5)]'
-                : 'text-[#c6c5d7]/70 hover:text-[#c0c1ff]'
-            }`}
-          >
-            <FileText className="w-5 h-5" />
-            <span className="text-[10px] font-semibold mt-0.5 whitespace-nowrap max-w-[70px] truncate">Resume</span>
-          </a>
-
-          <a
-            href="#"
-            onClick={(e) => handleNavClick(e, 'profile')}
-            className={`flex flex-col items-center justify-center transition-all flex-1 min-w-[58px] shrink-0 ${
-              currentScreen === 'profile'
-                ? 'text-[#c0c1ff] drop-shadow-[0_0_8px_rgba(192,193,255,0.5)]'
-                : 'text-[#c6c5d7]/70 hover:text-[#c0c1ff]'
-            }`}
-          >
-            <User className="w-5 h-5" />
-            <span className="text-[10px] font-semibold mt-0.5 whitespace-nowrap max-w-[70px] truncate">Profile</span>
-          </a>
+          ))}
 
           <button
             onClick={(e) => { e.preventDefault(); onLogout(); }}

@@ -17,10 +17,22 @@ const ROLES: { value: Role; label: string }[] = [
 interface Props {
   role: Role;
   username: string;
+  tab?: string;
+  onTabChange?: (tab: string) => void;
 }
 
-export const AdminPanel: React.FC<Props> = ({ role, username }) => {
-  const [tab, setTab] = useState<string>(role === 'super_admin' ? 'people' : role === 'placement_officer' ? 'placement' : role === 'club_manager' ? 'moderation' : 'faculty');
+export const AdminPanel: React.FC<Props> = ({ role, username, tab: tabProp, onTabChange }) => {
+  const [tab, setTabState] = useState<string>(tabProp ?? (role === 'super_admin' ? 'people' : role === 'placement_officer' ? 'placement' : role === 'club_manager' ? 'moderation' : 'faculty'));
+
+  useEffect(() => {
+    if (tabProp && tabProp !== tab) setTabState(tabProp);
+  }, [tabProp]);
+
+  const setTab = (t: string) => {
+    setTabState(t);
+    onTabChange?.(t);
+  };
+
   const [toast, setToast] = useState('');
 
   const showToast = (msg: string) => {
