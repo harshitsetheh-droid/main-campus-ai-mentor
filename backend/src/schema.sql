@@ -246,6 +246,15 @@ CREATE TABLE IF NOT EXISTS club_managers (
   UNIQUE (club_id, user_id)
 );
 
+-- Club blocks: super admin blocks a user from joining / posting in a club
+CREATE TABLE IF NOT EXISTS club_blocks (
+  id SERIAL PRIMARY KEY,
+  club_id INTEGER NOT NULL REFERENCES clubs(id) ON DELETE CASCADE,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE (club_id, user_id)
+);
+
 -- On-campus placement drives (shared college feed)
 CREATE TABLE IF NOT EXISTS placement_drives (
   id SERIAL PRIMARY KEY,

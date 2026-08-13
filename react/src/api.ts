@@ -134,6 +134,47 @@ export interface FacultyStats {
   clubsActiveLast7d: number;
 }
 
+export interface AdminUserDetails {
+  user: {
+    id: number;
+    username: string;
+    email: string;
+    rollNo: string;
+    phone: string;
+    role: string;
+    name: string;
+    branch: string;
+    semester: string;
+    targetRole: string;
+    targetCgpa: string;
+    targetCompanyType: string;
+    targetCompanyName: string;
+    workType: string;
+    githubUrl: string;
+    linkedinUrl: string;
+    createdAt?: string | null;
+  };
+  skills: {
+    id: number;
+    name: string;
+    category: string;
+    platform: string;
+    questionsSolved: number;
+    totalQuestions: number;
+    mastery: number;
+    status: string;
+    updatedAt?: string | null;
+  }[];
+  rank: { userRank: number; totalStudents: number };
+  resumes: { id: number; fileName: string; filePath: string; resumeNo: number; createdAt?: string | null }[];
+  certificates: { id: number; title: string; category: string; createdAt?: string | null }[];
+  projects: { id: number; title: string; status: string; progress: number; level: string }[];
+  codingProfiles: { platform: string; name: string; url: string }[];
+  clubs: { id: number; name: string; emoji: string; joinedAt?: string | null; blocked: boolean }[];
+  friends: { id: number; handle: string }[];
+  mentorUses: number;
+}
+
 export interface Skill {
   id: string;
   name: string;
@@ -525,6 +566,11 @@ export const api = {
 
   // Super admin
   getAdminUsers: (q?: string) => getJson<{ users: AdminUser[] }>(`/admin/users${q ? `?q=${encodeURIComponent(q)}` : ''}`),
+  getAdminUserDetails: (id: number) => getJson<AdminUserDetails>(`/admin/users/${id}`),
+  blockClubUsers: (clubId: number, userIds: number[]) =>
+    sendJson<{ success: boolean }>(`/admin/clubs/${clubId}/block`, 'POST', { userIds }),
+  unblockClubUsers: (clubId: number, userIds: number[]) =>
+    sendJson<{ success: boolean }>(`/admin/clubs/${clubId}/unblock`, 'POST', { userIds }),
   setUserRole: (id: number, role: string) => sendJson<{ user: AdminUser }>(`/admin/users/${id}/role`, 'POST', { role }),
   deleteUser: (id: number) => sendJson<{ success: boolean }>(`/admin/users/${id}`, 'DELETE', {}),
   getAdminClubs: () => getJson<{ clubs: AdminClub[] }>('/admin/clubs'),

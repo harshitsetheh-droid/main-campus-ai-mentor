@@ -2187,6 +2187,13 @@ app.post("/api/club/:id/join", requireAuth, async (req, res) => {
     if (!clubId || Number.isNaN(clubId)) return res.status(400).json({ error: "Invalid club" });
     const club = await pool.query("SELECT id FROM clubs WHERE id=$1", [clubId]);
     if (club.rowCount === 0) return res.status(404).json({ error: "Club not found" });
+    const blocked = await pool.query(
+      "SELECT 1 FROM club_blocks WHERE club_id=$1 AND user_id=$2",
+      [clubId, req.userId]
+    );
+    if (blocked.rowCount > 0) {
+      return res.status(403).json({ error: "Tum is club se block ho — join nahi kar sakte" });
+    }
     await pool.query(
       "INSERT INTO club_members (club_id, user_id) VALUES ($1,$2) ON CONFLICT (club_id, user_id) DO NOTHING",
       [clubId, req.userId]
@@ -2612,6 +2619,139 @@ app.delete("/api/admin/users/:id", requireAuth, requireRole("super_admin"), asyn
     const r = await pool.query("DELETE FROM users WHERE id=$1 RETURNING id", [id]);
     if (r.rowCount === 0) return res.status(404).json({ error: "User not found" });
     res.json({ success: true });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+// Full student profile for the super admin: skills, rank, resumes, projects,
+// certificates, coding profiles, clubs, friends, mentor usage, placement prep.
+app.get("/api/admin/users/:id", requireAuth, requireRole("super_admin"), async (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10) || 0;
+    if (!id) return res.status(400).json({ error: "Invalid user" });
+    const u = await pool.query(
+      `SELECT u.id, u.username, u.email, u.roll_no, u.role, u.created_at,
+              p.name, p.phone, p.branch, p.current_semester, p.target_role,
+              p.target_cgpa, p.target_company_type, p.target_company_name,
+              p.work_type, p.github_url, p.linkedin_url, p.photo_url
+       FROM users u LEFT JOIN profiles p ON p.user_id = u.id WHERE u.id = $1`,
+      [id]
+    );
+    if (u.rowCount === 0) return res.status(404).json({ error: "User not found" });
+    const [skills, rankInfo, resumes, certs, projects, coding, clubs, friends, mentorUses, blockedList] = await Promise.all([
+      pool.query(
+        `SELECT id, name, category, platform, questions_solved, total_questions, mastery, status, updated_at
+         FROM skills WHERE user_id=$1 ORDER BY mastery DESC`,
+        [id]
+      ),
+      computeOverallRank(id),
+      pool.query(
+        `SELECT id, file_name, file_path, resume_no, uploaded_at FROM resumedocs WHERE user_id=$1 ORDER BY id DESC`,
+        [id]
+      ),
+      pool.query(
+        `SELECT id, title, category, created_at FROM certificates WHERE user_id=$1 ORDER BY created_at DESC`,
+        [id]
+      ),
+      pool.query(
+        `SELECT id, title, status, progress, level FROM projects WHERE user_id=$1 ORDER BY id DESC`,
+        [id]
+      ),
+      pool.query(
+        `SELECT platform, name, url FROM coding_profiles WHERE user_id=$1 ORDER BY platform`,
+        [id]
+      ),
+      pool.query(
+        `SELECT c.id, c.name, c.emoji, m.joined_at FROM clubs c
+         JOIN club_members m ON m.club_id = c.id AND m.user_id=$1 ORDER BY c.name`,
+        [id]
+      ),
+      pool.query(
+        `SELECT CASE WHEN user_a = $1 THEN user_b ELSE user_a END AS fid FROM friends
+         WHERE user_a = $1 OR user_b = $1 ORDER BY fid`,
+        [id]
+      ),
+      pool.query(`SELECT COUNT(*)::int AS c FROM chat_messages WHERE user_id=$1`, [id]),
+      pool.query(`SELECT club_id FROM club_blocks WHERE user_id=$1`, [id]),
+    ]);
+    const p = u.rows[0];
+    res.json({
+      user: {
+        id: p.id, username: p.username, email: p.email, rollNo: p.roll_no || "",
+        phone: p.phone || "", role: p.role || "student", name: p.name || "",
+        branch: p.branch || "", semester: p.current_semester || "",
+        targetRole: p.target_role || "", targetCgpa: p.target_cgpa || "",
+        targetCompanyType: p.target_company_type || "", targetCompanyName: p.target_company_name || "",
+        workType: p.work_type || "", githubUrl: p.github_url || "", linkedinUrl: p.linkedin_url || "",
+        createdAt: p.created_at ? p.created_at.toISOString() : null,
+      },
+      skills: skills.rows.map((s) => ({
+        id: s.id, name: s.name, category: s.category || "", platform: s.platform || "",
+        questionsSolved: s.questions_solved || 0, totalQuestions: s.total_questions || 0,
+        mastery: s.mastery || 0, status: s.status || "learning",
+        updatedAt: s.updated_at ? s.updated_at.toISOString() : null,
+      })),
+      rank: { userRank: rankInfo.userRank, totalStudents: rankInfo.totalStudents },
+      resumes: resumes.rows.map((r) => ({
+        id: r.id, fileName: r.file_name, filePath: r.file_path, resumeNo: r.resume_no,
+        createdAt: r.uploaded_at ? r.uploaded_at.toISOString() : null,
+      })),
+      certificates: certs.rows.map((c) => ({
+        id: c.id, title: c.title, category: c.category || "",
+        createdAt: c.created_at ? c.created_at.toISOString() : null,
+      })),
+      projects: projects.rows.map((pr) => ({
+        id: pr.id, title: pr.title, status: pr.status, progress: pr.progress || 0,
+        level: pr.level || "",
+      })),
+      codingProfiles: coding.rows.map((c) => ({ platform: c.platform, name: c.name, url: c.url })),
+      clubs: clubs.rows.map((c) => ({
+        id: c.id, name: c.name, emoji: c.emoji,
+        joinedAt: c.joined_at ? c.joined_at.toISOString() : null,
+        blocked: blockedList.rows.some((b) => b.club_id === c.id),
+      })),
+      friends: friends.rows.map((f) => ({ id: f.fid, handle: anonymousHandle(f.fid) })),
+      mentorUses: mentorUses.rows[0].c,
+    });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+// Block one or more users from a club (removes membership + blocks rejoin)
+app.post("/api/admin/clubs/:clubId/block", requireAuth, requireRole("super_admin"), async (req, res) => {
+  try {
+    const clubId = parseInt(req.params.clubId, 10) || 0;
+    const ids = Array.isArray(req.body.userIds)
+      ? req.body.userIds.map((x) => parseInt(x, 10)).filter((x) => Number.isInteger(x) && x > 0)
+      : [];
+    if (!clubId || ids.length === 0) return res.status(400).json({ error: "Club aur kam se kam 1 user chahiye" });
+    const club = await pool.query("SELECT id FROM clubs WHERE id=$1", [clubId]);
+    if (club.rowCount === 0) return res.status(404).json({ error: "Club not found" });
+    await pool.query(
+      `INSERT INTO club_blocks (club_id, user_id)
+       SELECT $1, x FROM unnest($2::int[]) AS x
+       ON CONFLICT (club_id, user_id) DO NOTHING`,
+      [clubId, ids]
+    );
+    await pool.query("DELETE FROM club_members WHERE club_id=$1 AND user_id = ANY($2::int[])", [clubId, ids]);
+    res.json({ success: true, blocked: ids.length });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+// Unblock users from a club (they can join again)
+app.post("/api/admin/clubs/:clubId/unblock", requireAuth, requireRole("super_admin"), async (req, res) => {
+  try {
+    const clubId = parseInt(req.params.clubId, 10) || 0;
+    const ids = Array.isArray(req.body.userIds)
+      ? req.body.userIds.map((x) => parseInt(x, 10)).filter((x) => Number.isInteger(x) && x > 0)
+      : [];
+    if (!clubId || ids.length === 0) return res.status(400).json({ error: "Club aur kam se kam 1 user chahiye" });
+    await pool.query("DELETE FROM club_blocks WHERE club_id=$1 AND user_id = ANY($2::int[])", [clubId, ids]);
+    res.json({ success: true, unblocked: ids.length });
   } catch (err) {
     sendServerError(res, err);
   }
