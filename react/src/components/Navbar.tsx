@@ -241,7 +241,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onNavigate, onOpe
               <span className="text-xs font-semibold text-white hidden lg:inline max-w-[90px] truncate">
                 {username}
               </span>
-              {role && role !== 'student' && (
+              {role && (
                 <span className="hidden lg:inline-flex items-center gap-1 text-[9px] font-extrabold text-[#3cd7ff] bg-[#3cd7ff]/10 border border-[#3cd7ff]/40 px-1.5 py-0.5 rounded-full uppercase tracking-wide">
                   {ROLE_LABELS[role] || role}
                 </span>
@@ -257,7 +257,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onNavigate, onOpe
           </nav>
 
           <div className="lg:hidden flex items-center gap-1.5 ml-auto">
-            {role && role !== 'student' && (
+            {role && (
               <span className="flex items-center gap-1 text-[9px] font-extrabold text-[#3cd7ff] bg-[#3cd7ff]/10 border border-[#3cd7ff]/40 px-1.5 py-1 rounded-full uppercase tracking-wide whitespace-nowrap">
                 {ROLE_LABELS[role] || role}
               </span>

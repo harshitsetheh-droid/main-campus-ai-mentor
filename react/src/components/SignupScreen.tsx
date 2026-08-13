@@ -14,6 +14,7 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ onSuccess, onSwitchT
   const [form, setForm] = useState({
     username: '', email: '', password: '', confirm: '',
     rollNo: '',
+    role: 'student',
     name: '', branch: 'CSE', semester: 'Sem 1', targetRole: '',
     targetCgpa: '', targetCompanyType: '', targetCompanyName: '',
     workType: '', timelineCurrent: 'This Semester', timelineNext: 'Next Semester',
@@ -63,7 +64,7 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ onSuccess, onSwitchT
 
     setIsLoading(true);
     try {
-      const res = await api.register(form.username, form.email, form.password, form.rollNo);
+      const res = await api.register(form.username, form.email, form.password, form.rollNo, form.role);
       sessionStorage.setItem('campusai_token', res.token);
       sessionStorage.setItem('campusai_user', JSON.stringify(res.user));
       localStorage.removeItem('campusai_token');
@@ -160,6 +161,33 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ onSuccess, onSwitchT
                   </div>
                 </div>
               </div>
+            </fieldset>
+
+            {/* Account Type */}
+            <fieldset className="space-y-4">
+              <legend className="text-xs font-bold uppercase tracking-wider text-[#3cd7ff] mb-1">Account Type</legend>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {([
+                  ['student', 'Student', 'Placements, skills, projects aur AI mentor — regular student account'],
+                  ['placement_officer', 'Placement Officer', 'Drives + company question bank manage karo'],
+                  ['faculty', 'Faculty', 'Cohort-level aggregate stats dekho'],
+                ] as [string, string, string][]).map(([val, label, desc]) => (
+                  <button
+                    key={val}
+                    type="button"
+                    onClick={() => setForm((f) => ({ ...f, role: val }))}
+                    className={`text-left p-4 rounded-2xl border transition-all cursor-pointer ${
+                      form.role === val
+                        ? 'bg-[#5b5fef]/20 border-[#5b5fef]/60 shadow-[0_0_20px_rgba(91,95,239,0.15)]'
+                        : 'bg-white/5 border-white/10 hover:border-white/25'
+                    }`}
+                  >
+                    <p className={`text-sm font-bold ${form.role === val ? 'text-[#c0c1ff]' : 'text-white'}`}>{label}</p>
+                    <p className="text-[10px] text-[#7e7d94] mt-1 leading-snug">{desc}</p>
+                  </button>
+                ))}
+              </div>
+              <p className="text-[10px] text-[#7e7d94]">Club Manager aur Super Admin accounts sirf Admin panel se assign hote hain.</p>
             </fieldset>
 
             {/* Academic */}

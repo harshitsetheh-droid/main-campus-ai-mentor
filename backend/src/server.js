@@ -268,6 +268,8 @@ app.post("/api/auth/register", authLimiter, async (req, res) => {
   const email = safeString(req.body.email, 200);
   const rollNo = safeString(req.body.rollNo, 20);
   const { password } = req.body;
+  const role =
+    req.body.role === "placement_officer" || req.body.role === "faculty" ? req.body.role : "student";
   if (!username || !email || !password) {
     return res.status(400).json({ error: "Please fill in all the required fields." });
   }
@@ -289,8 +291,8 @@ app.post("/api/auth/register", authLimiter, async (req, res) => {
     }
     const hash = await bcrypt.hash(password, 12);
     const userRes = await pool.query(
-      "INSERT INTO users (username, email, password_hash, roll_no) VALUES ($1, $2, $3, $4) RETURNING id, username, email, roll_no",
-      [username, email, hash, rollNo]
+      "INSERT INTO users (username, email, password_hash, roll_no, role) VALUES ($1, $2, $3, $4, $5) RETURNING id, username, email, roll_no, role",
+      [username, email, hash, rollNo, role]
     );
     const user = userRes.rows[0];
     await pool.query(

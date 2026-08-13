@@ -395,8 +395,8 @@ export interface PlacementQuestion {
 
 export const api = {
   // Auth
-  register: (username: string, email: string, password: string, rollNo?: string) =>
-    sendJson<{ token: string; user: AuthUser }>('/auth/register', 'POST', { username, email, password, rollNo }),
+  register: (username: string, email: string, password: string, rollNo?: string, role?: string) =>
+    sendJson<{ token: string; user: AuthUser }>('/auth/register', 'POST', { username, email, password, rollNo, role }),
   login: (identifier: string, password: string) =>
     sendJson<{ token: string; user: AuthUser }>('/auth/login', 'POST', { identifier, password }),
   me: () => getJson<{ user: AuthUser }>('/auth/me'),
