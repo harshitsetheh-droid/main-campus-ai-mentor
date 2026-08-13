@@ -13,6 +13,52 @@ CREATE TABLE IF NOT EXISTS users (
 ALTER TABLE users ADD COLUMN IF NOT EXISTS roll_no TEXT DEFAULT '';
 CREATE UNIQUE INDEX IF NOT EXISTS users_roll_no_uq ON users(roll_no) WHERE roll_no <> '';
 
+-- Unique fixed QR code payload token per user (generated once; used to
+-- auto-send friend requests when another student scans it)
+ALTER TABLE users ADD COLUMN IF NOT EXISTS qr_token TEXT NOT NULL DEFAULT '';
+CREATE UNIQUE INDEX IF NOT EXISTS users_qr_token_uq ON users(qr_token) WHERE qr_token <> '';
+UPDATE users SET qr_token = md5(random()::text || clock_timestamp()::text || id::text) WHERE qr_token = '';
+
+-- Friend requests (anonymous chat request flow: request -> approve -> friend)
+CREATE TABLE IF NOT EXISTS chat_requests (
+  id SERIAL PRIMARY KEY,
+  from_user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  to_user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','accepted','declined')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE (from_user_id, to_user_id)
+);
+CREATE INDEX IF NOT EXISTS chat_requests_to_idx ON chat_requests(to_user_id, status);
+
+-- Accepted friendships (dono users ek dusre ki friend list mein)
+CREATE TABLE IF NOT EXISTS friends (
+  id SERIAL PRIMARY KEY,
+  user_a INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  user_b INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE (user_a, user_b),
+  CHECK (user_a < user_b)
+);
+
+-- Direct messages between friends (anonymous handles only, text + emoji)
+CREATE TABLE IF NOT EXISTS dm_messages (
+  id SERIAL PRIMARY KEY,
+  sender_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  receiver_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  text TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS dm_pair_idx ON dm_messages(sender_id, receiver_id, id);
+
+-- Block list (blocked user: no requests, no DMs, friendship removed)
+CREATE TABLE IF NOT EXISTS blocked_users (
+  id SERIAL PRIMARY KEY,
+  blocker_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  blocked_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE (blocker_id, blocked_id)
+);
+
 -- Student profile (one per user)
 CREATE TABLE IF NOT EXISTS profiles (
   id SERIAL PRIMARY KEY,
@@ -157,6 +203,70 @@ CREATE TABLE IF NOT EXISTS chat_messages (
   text TEXT NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- Group chatroom (peer-to-peer messages shared by all students)
+CREATE TABLE IF NOT EXISTS clubs (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE,
+  description TEXT NOT NULL DEFAULT '',
+  emoji TEXT NOT NULL DEFAULT '💬',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Anonymous club membership (identity is never exposed)
+CREATE TABLE IF NOT EXISTS club_members (
+  id SERIAL PRIMARY KEY,
+  club_id INTEGER NOT NULL REFERENCES clubs(id) ON DELETE CASCADE,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  joined_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE (club_id, user_id)
+);
+
+-- Anonymous club chat messages (text + emoji only, no identity stored)
+CREATE TABLE IF NOT EXISTS club_messages (
+  id SERIAL PRIMARY KEY,
+  club_id INTEGER NOT NULL REFERENCES clubs(id) ON DELETE CASCADE,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  text TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Demo clubs (idempotent seed, safe to run repeatedly)
+INSERT INTO clubs (name, description, emoji) VALUES
+  ('DSA Paglu', 'LeetCode grinders ki maha-sabha — problems, patterns aur rank charcha', '🤓'),
+  ('Senior Bitching', 'Seniors ki latest tips, gossip aur college ke andar ki baatein', '😏'),
+  ('Placement Charcha', 'Drives, packages aur interview experiences — sab kuch', '🎯'),
+  ('Exam Ki Tension', 'Assignments, internals aur viva ka darr — yahan sab saath hain', '🥶'),
+  ('Canteen & Chai', 'Khaane-peene ki recommendations aur chai pe charcha', '☕'),
+  ('Hackathon Warriors', 'Hackathons, team building aur all-nighters ke shahid', '💻'),
+  ('Doubt Buddy', 'Coding doubts — koi bhi pucho, anonymously', '🆘'),
+  ('Late Night Memes', 'Raat 2 baje ke memes aur sleepy-heads club', '😴')
+ON CONFLICT (name) DO NOTHING;
+
+-- On-campus placement drives (shared college feed)
+CREATE TABLE IF NOT EXISTS placement_drives (
+  id SERIAL PRIMARY KEY,
+  company TEXT NOT NULL,
+  role TEXT NOT NULL DEFAULT '',
+  package TEXT NOT NULL DEFAULT '',
+  deadline TEXT NOT NULL DEFAULT '',
+  status TEXT NOT NULL DEFAULT 'open',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Demo placement drives (idempotent seed, safe to run repeatedly)
+INSERT INTO placement_drives (company, role, package, deadline, status)
+SELECT * FROM (VALUES
+  ('TCS', 'Systems Engineer', '7.5 LPA', 'Open', 'open'),
+  ('Infosys', 'System Engineer Trainee', '8.0 LPA', 'Open', 'open'),
+  ('Wipro', 'Project Engineer', '6.5 LPA', 'Open', 'open'),
+  ('Cognizant', 'Programmer Analyst', '7.0 LPA', 'Open', 'open'),
+  ('Accenture', 'Associate Software Engineer', '9.0 LPA', 'This Friday', 'open'),
+  ('Capgemini', 'Analyst', '7.5 LPA', 'Next Week', 'open'),
+  ('Microsoft', 'SDE Intern', '25 LPA (Intern offer)', 'Seasonal', 'upcoming'),
+  ('Amazon', 'SDE Intern', '22 LPA (Intern offer)', 'Seasonal', 'upcoming')
+) AS v(company, role, package, deadline, status)
+WHERE NOT EXISTS (SELECT 1 FROM placement_drives);
 
 -- Shared reference cohorts (global benchmark groups, not user data)
 INSERT INTO cohorts (id, name, total_students, user_rank) VALUES

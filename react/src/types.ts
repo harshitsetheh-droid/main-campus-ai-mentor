@@ -1,4 +1,4 @@
-export type ScreenType = 'landing' | 'profile' | 'dashboard' | 'resume' | 'chat' | 'compare' | 'certificates' | 'projects';
+export type ScreenType = 'landing' | 'profile' | 'dashboard' | 'resume' | 'chat' | 'compare' | 'certificates' | 'projects' | 'clubs' | 'placement' | 'friends';
 
 export interface ChatMessage {
   id: string;

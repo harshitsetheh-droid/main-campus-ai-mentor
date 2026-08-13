@@ -9,6 +9,9 @@ import { ChatScreen } from './components/ChatScreen';
 import { PeerComparisonScreen } from './components/PeerComparisonScreen';
 import { CertificatesScreen } from './components/CertificatesScreen';
 import { ProjectsScreen } from './components/ProjectsScreen';
+import { ClubScreen } from './components/ClubScreen';
+import { PlacementScreen } from './components/PlacementScreen';
+import { FriendsScreen } from './components/FriendsScreen';
 import { VideoWalkthroughModal } from './components/VideoWalkthroughModal';
 import { LoginScreen } from './components/LoginScreen';
 import { SignupScreen } from './components/SignupScreen';
@@ -22,6 +25,7 @@ export default function App() {
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
   const [user, setUser] = useState<AuthUser | null>(null);
   const [photoUrl, setPhotoUrl] = useState('');
+  const [dmTarget, setDmTarget] = useState<{ id: number; handle: string } | null>(null);
 
   useEffect(() => {
     const saved = localStorage.getItem('campusai_user');
@@ -60,7 +64,8 @@ export default function App() {
     setCurrentScreen('landing');
   };
 
-  const handleNavigate = (screen: ScreenType, transition: 'none' | 'push' | 'slide_up' = 'none') => {
+  const handleNavigate = (screen: ScreenType, transition: 'none' | 'push' | 'slide_up' = 'none', dmTarget?: { id: number; handle: string }) => {
+    if (dmTarget) setDmTarget(dmTarget);
     setTransitionType(transition);
     setCurrentScreen(screen);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -155,6 +160,15 @@ export default function App() {
           )}
           {currentScreen === 'projects' && (
             <ProjectsScreen onNavigate={handleNavigate} />
+          )}
+          {currentScreen === 'clubs' && (
+            <ClubScreen onNavigate={handleNavigate} />
+          )}
+          {currentScreen === 'placement' && (
+            <PlacementScreen onNavigate={handleNavigate} />
+          )}
+          {currentScreen === 'friends' && (
+            <FriendsScreen onNavigate={handleNavigate} initialDmTarget={dmTarget} />
           )}
         </motion.div>
       </AnimatePresence>

@@ -485,6 +485,11 @@ app.post("/api/profile/skills", requireAuth, async (req, res) => {
   try {
     const { name, category, platform, totalQuestions } = req.body;
     if (!name) return res.status(400).json({ error: "Skill name is required" });
+    const dupKey = String(name).toLowerCase().trim();
+    const mine = await pool.query("SELECT name FROM skills WHERE user_id=$1", [req.userId]);
+    if (mine.rows.some((r) => String(r.name).toLowerCase().trim() === dupKey)) {
+      return res.status(400).json({ error: `You already track "${String(name).trim()}" — skill names are always unique` });
+    }
     const cat = category || "Core CS";
     const plat = platform || "";
     const total = Math.max(1, parseInt(totalQuestions, 10) || 5);
@@ -1894,7 +1899,14 @@ async function computeSkillBenchmarks(uid, allowedUserIds = null) {
     groups.get(key).push({ userId: row.user_id, mastery: row.mastery });
   }
   const bench = {};
-  for (const [key, rows] of groups) {
+  for (const [key, raw] of groups) {
+    const rows = [];
+    const seen = new Set(); // count each student once, keep their best mastery row
+    for (const r of raw) {
+      if (seen.has(r.userId)) continue;
+      seen.add(r.userId);
+      rows.push(r);
+    }
     const n = rows.length;
     const avg = (arr) => Math.round(arr.reduce((a, b) => a + b.mastery, 0) / arr.length);
     const topN = Math.max(1, Math.ceil(n * 0.1));
@@ -1996,6 +2008,11 @@ app.post("/api/compare/skills", requireAuth, async (req, res) => {
   try {
     const { name, category, platform, totalQuestions } = req.body;
     if (!name) return res.status(400).json({ error: "name is required" });
+    const dupKey = String(name).toLowerCase().trim();
+    const mine = await pool.query("SELECT name FROM skills WHERE user_id=$1", [req.userId]);
+    if (mine.rows.some((r) => String(r.name).toLowerCase().trim() === dupKey)) {
+      return res.status(400).json({ error: `You already track "${String(name).trim()}" — skill names are always unique` });
+    }
     const cat = category || "General CS";
     const total = Math.max(1, parseInt(totalQuestions, 10) || 5);
     const ref = SKILL_PLATFORM[platform?.toLowerCase()] || { cohort: 60, top: 90 };
@@ -2026,6 +2043,448 @@ app.get("/api/notifications", requireAuth, async (req, res) => {
 app.post("/api/notifications/read/:id", requireAuth, async (req, res) => {
   await pool.query("UPDATE notifications SET is_read=TRUE WHERE id=$1 AND user_id=$2", [req.params.id, req.userId]);
   res.json({ success: true });
+});
+
+// ---------------------------------------------------------------------------
+// ANONYMOUS CLUBS (identity never revealed — text + emoji only)
+// ---------------------------------------------------------------------------
+// Stable, unguessable anonymous handle per user (same every time they post).
+function anonymousHandle(uid) {
+  return "Student #" + ((((uid * 2654435761) % 8999) + 1000) | 0);
+}
+
+app.get("/api/clubs", requireAuth, async (req, res) => {
+  try {
+    const r = await pool.query(
+      `SELECT c.id, c.name, c.description, c.emoji,
+              COUNT(m.id)::int AS members
+       FROM clubs c
+       LEFT JOIN club_members m ON m.club_id = c.id
+       GROUP BY c.id ORDER BY c.id`
+    );
+    res.json({ clubs: r.rows });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+app.get("/api/club/:id/messages", requireAuth, async (req, res) => {
+  try {
+    const clubId = parseInt(req.params.id, 10);
+    if (!clubId || Number.isNaN(clubId)) return res.status(400).json({ error: "Invalid club" });
+    const after = parseInt(req.query.after, 10) || 0;
+    const club = await pool.query("SELECT id FROM clubs WHERE id=$1", [clubId]);
+    if (club.rowCount === 0) return res.status(404).json({ error: "Club not found" });
+    // auto-join so member counts reflect real activity
+    await pool.query(
+      "INSERT INTO club_members (club_id, user_id) VALUES ($1,$2) ON CONFLICT (club_id, user_id) DO NOTHING",
+      [clubId, req.userId]
+    );
+    const r = await pool.query(
+      `SELECT id, user_id, text, created_at
+       FROM club_messages WHERE club_id = $1 AND id > $2
+       ORDER BY id DESC LIMIT 100`,
+      [clubId, after]
+    );
+    const me = anonymousHandle(req.userId);
+    const messages = r.rows.reverse().map((m) => ({
+      id: m.id,
+      text: m.text,
+      handle: m.user_id === req.userId ? me : anonymousHandle(m.user_id),
+      // uid is an unguessable numeric id — never revealing-to-identity; used
+      // only so anyone can send an anonymous PM request to a specific person
+      senderUid: m.user_id,
+      isMine: m.user_id === req.userId,
+      createdAt: m.created_at ? m.created_at.toISOString() : null,
+    }));
+    res.json({ messages });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+app.post("/api/club/:id/messages", requireAuth, async (req, res) => {
+  try {
+    const clubId = parseInt(req.params.id, 10);
+    if (!clubId || Number.isNaN(clubId)) return res.status(400).json({ error: "Invalid club" });
+    const text = safeString(req.body.text, 300).trim();
+    if (!text) return res.status(400).json({ error: "Message cannot be empty" });
+    // text + emoji only: strip anything that is not letters, digits, emoji or punctuation
+    if (text.length > 300) return res.status(400).json({ error: "Message too long (max 300)" });
+    const club = await pool.query("SELECT id FROM clubs WHERE id=$1", [clubId]);
+    if (club.rowCount === 0) return res.status(404).json({ error: "Club not found" });
+    await pool.query(
+      "INSERT INTO club_members (club_id, user_id) VALUES ($1,$2) ON CONFLICT (club_id, user_id) DO NOTHING",
+      [clubId, req.userId]
+    );
+    const r = await pool.query(
+      `INSERT INTO club_messages (club_id, user_id, text)
+       VALUES ($1,$2,$3) RETURNING id, user_id, text, created_at`,
+      [clubId, req.userId, text]
+    );
+    const row = r.rows[0];
+    const me = anonymousHandle(req.userId);
+    res.json({
+      message: {
+        id: row.id,
+        text: row.text,
+        handle: me,
+        isMine: true,
+        createdAt: row.created_at ? row.created_at.toISOString() : null,
+      },
+    });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+// ---------------------------------------------------------------------------
+// ANONYMOUS FRIENDS & DMs (chat request -> approve -> friend -> DM)
+// Identity is NEVER revealed: handles are always "Student #XXXX"
+// ---------------------------------------------------------------------------
+async function friendsWith(a, b) {
+  const small = Math.min(a, b);
+  const big = Math.max(a, b);
+  const r = await pool.query("SELECT 1 FROM friends WHERE user_a=$1 AND user_b=$2", [small, big]);
+  return r.rowCount > 0;
+}
+async function blockedEither(a, b) {
+  const r = await pool.query(
+    "SELECT 1 FROM blocked_users WHERE (blocker_id=$1 AND blocked_id=$2) OR (blocker_id=$2 AND blocked_id=$1) LIMIT 1",
+    [a, b]
+  );
+  return r.rowCount > 0;
+}
+async function pendingRequestBetween(a, b) {
+  const r = await pool.query(
+    "SELECT id, from_user_id, status FROM chat_requests WHERE ((from_user_id=$1 AND to_user_id=$2) OR (from_user_id=$2 AND to_user_id=$1)) AND status='pending'",
+    [a, b]
+  );
+  return r.rows[0] || null;
+}
+
+app.get("/api/friends", requireAuth, async (req, res) => {
+  try {
+    const r = await pool.query(
+      `SELECT CASE WHEN user_a=$1 THEN user_b ELSE user_a END AS fid
+       FROM friends WHERE user_a=$1 OR user_b=$1`,
+      [req.userId]
+    );
+    res.json({ friends: r.rows.map((row) => ({ id: row.fid, handle: anonymousHandle(row.fid) })) });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+app.get("/api/friends/requests", requireAuth, async (req, res) => {
+  try {
+    const inc = await pool.query(
+      `SELECT r.id, r.from_user_id, r.created_at FROM chat_requests r
+       WHERE r.to_user_id=$1 AND r.status='pending' ORDER BY r.id DESC`,
+      [req.userId]
+    );
+    const out = await pool.query(
+      `SELECT r.id, r.to_user_id, r.status, r.created_at FROM chat_requests r
+       WHERE r.from_user_id=$1 ORDER BY r.id DESC`,
+      [req.userId]
+    );
+    res.json({
+      incoming: inc.rows.map((r) => ({
+        id: r.id,
+        fromHandle: anonymousHandle(r.from_user_id),
+        createdAt: r.created_at ? r.created_at.toISOString() : null,
+      })),
+      outgoing: out.rows.map((r) => ({
+        id: r.id,
+        toHandle: anonymousHandle(r.to_user_id),
+        status: r.status,
+        createdAt: r.created_at ? r.created_at.toISOString() : null,
+      })),
+    });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+// One request endpoint for every trigger: username search, uid (from club
+// message PM button), or scanned QR payload. Returns the relationship state.
+app.post("/api/friends/request", requireAuth, async (req, res) => {
+  try {
+    let targetId = null;
+    const username = safeString(req.body.username, 60).trim().toLowerCase();
+    const uid = parseInt(req.body.uid, 10) || 0;
+    let code = safeString(req.body.code, 200).trim();
+    if (username) {
+      const r = await pool.query("SELECT id FROM users WHERE LOWER(username)=$1", [username]);
+      if (r.rowCount === 0) return res.status(404).json({ error: "User not found" });
+      targetId = r.rows[0].id;
+    } else if (uid) {
+      targetId = uid;
+    } else if (code) {
+      if (code.startsWith("CAMPUSAI|")) code = code.slice("CAMPUSAI|".length);
+      const parts = code.split("|");
+      if (parts.length < 2) return res.status(400).json({ error: "Invalid QR code" });
+      const [idPart, token] = parts;
+      const uidFromCode = parseInt(idPart, 10) || 0;
+      const r = await pool.query("SELECT id FROM users WHERE id=$1 AND qr_token=$2", [uidFromCode, token]);
+      if (r.rowCount === 0) return res.status(404).json({ error: "Invalid QR code" });
+      targetId = uidFromCode;
+    } else {
+      return res.status(400).json({ error: "username, uid or code required" });
+    }
+
+    if (targetId === req.userId) return res.status(400).json({ error: "You cannot add yourself" });
+    const target = await pool.query("SELECT id FROM users WHERE id=$1", [targetId]);
+    if (target.rowCount === 0) return res.status(404).json({ error: "User not found" });
+    if (await blockedEither(req.userId, targetId)) {
+      return res.status(403).json({ error: "This request is not possible right now" });
+    }
+    if (await friendsWith(req.userId, targetId)) {
+      return res.json({ relation: "friends", friend: { id: targetId, handle: anonymousHandle(targetId) } });
+    }
+    const pending = await pendingRequestBetween(req.userId, targetId);
+    if (pending) {
+      if (pending.from_user_id === req.userId) {
+        return res.json({ relation: "requested", requestId: pending.id, toHandle: anonymousHandle(targetId) });
+      }
+      return res.json({ relation: "pending", requestId: pending.id });
+    }
+    const ins = await pool.query(
+      "INSERT INTO chat_requests (from_user_id, to_user_id) VALUES ($1,$2) RETURNING id",
+      [req.userId, targetId]
+    );
+    res.json({ relation: "requested", requestId: ins.rows[0].id, toHandle: anonymousHandle(targetId) });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+app.post("/api/friends/requests/:id/accept", requireAuth, async (req, res) => {
+  try {
+    const rid = parseInt(req.params.id, 10) || 0;
+    const r = await pool.query(
+      "SELECT id, from_user_id, to_user_id FROM chat_requests WHERE id=$1 AND to_user_id=$2 AND status='pending'",
+      [rid, req.userId]
+    );
+    if (r.rowCount === 0) return res.status(404).json({ error: "Request not found" });
+    const { from_user_id: fromId } = r.rows[0];
+    if (await blockedEither(req.userId, fromId)) {
+      return res.status(403).json({ error: "This request is not possible right now" });
+    }
+    await pool.query("UPDATE chat_requests SET status='accepted' WHERE id=$1", [rid]);
+    const small = Math.min(req.userId, fromId);
+    const big = Math.max(req.userId, fromId);
+    await pool.query(
+      "INSERT INTO friends (user_a, user_b) VALUES ($1,$2) ON CONFLICT DO NOTHING",
+      [small, big]
+    );
+    res.json({ friend: { id: fromId, handle: anonymousHandle(fromId) } });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+app.post("/api/friends/requests/:id/decline", requireAuth, async (req, res) => {
+  try {
+    const rid = parseInt(req.params.id, 10) || 0;
+    const r = await pool.query(
+      "UPDATE chat_requests SET status='declined' WHERE id=$1 AND to_user_id=$2 AND status='pending' RETURNING id",
+      [rid, req.userId]
+    );
+    if (r.rowCount === 0) return res.status(404).json({ error: "Request not found" });
+    res.json({ success: true });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+app.post("/api/friends/:id/block", requireAuth, async (req, res) => {
+  try {
+    const other = parseInt(req.params.id, 10) || 0;
+    if (!other || other === req.userId) return res.status(400).json({ error: "Invalid user" });
+    await pool.query(
+      "INSERT INTO blocked_users (blocker_id, blocked_id) VALUES ($1,$2) ON CONFLICT DO NOTHING",
+      [req.userId, other]
+    );
+    const small = Math.min(req.userId, other);
+    const big = Math.max(req.userId, other);
+    await pool.query("DELETE FROM friends WHERE user_a=$1 AND user_b=$2", [small, big]);
+    await pool.query(
+      "DELETE FROM chat_requests WHERE (from_user_id=$1 AND to_user_id=$2) OR (from_user_id=$2 AND to_user_id=$1)",
+      [req.userId, other]
+    );
+    res.json({ success: true });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+app.post("/api/friends/:id/unblock", requireAuth, async (req, res) => {
+  try {
+    const other = parseInt(req.params.id, 10) || 0;
+    if (!other) return res.status(400).json({ error: "Invalid user" });
+    await pool.query(
+      "DELETE FROM blocked_users WHERE blocker_id=$1 AND blocked_id=$2",
+      [req.userId, other]
+    );
+    res.json({ success: true });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+app.get("/api/friends/blocked", requireAuth, async (req, res) => {
+  try {
+    const r = await pool.query("SELECT blocked_id FROM blocked_users WHERE blocker_id=$1", [req.userId]);
+    res.json({ blocked: r.rows.map((row) => ({ id: row.blocked_id, handle: anonymousHandle(row.blocked_id) })) });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+app.get("/api/dms/:friendId/messages", requireAuth, async (req, res) => {
+  try {
+    const fid = parseInt(req.params.friendId, 10) || 0;
+    if (!fid || fid === req.userId) return res.status(400).json({ error: "Invalid chat" });
+    if (!(await friendsWith(req.userId, fid))) return res.status(403).json({ error: "Not friends yet" });
+    if (await blockedEither(req.userId, fid)) return res.status(403).json({ error: "Chat unavailable" });
+    const after = parseInt(req.query.after, 10) || 0;
+    const r = await pool.query(
+      `SELECT id, sender_id, text, created_at
+       FROM dm_messages WHERE ((sender_id=$1 AND receiver_id=$2) OR (sender_id=$2 AND receiver_id=$1)) AND id>$3
+       ORDER BY id DESC LIMIT 100`,
+      [req.userId, fid, after]
+    );
+    const me = anonymousHandle(req.userId);
+    const messages = r.rows.reverse().map((m) => ({
+      id: m.id,
+      text: m.text,
+      handle: m.sender_id === req.userId ? me : anonymousHandle(m.sender_id),
+      isMine: m.sender_id === req.userId,
+      createdAt: m.created_at ? m.created_at.toISOString() : null,
+    }));
+    res.json({ messages });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+app.post("/api/dms/:friendId/messages", requireAuth, async (req, res) => {
+  try {
+    const fid = parseInt(req.params.friendId, 10) || 0;
+    if (!fid || fid === req.userId) return res.status(400).json({ error: "Invalid chat" });
+    if (!(await friendsWith(req.userId, fid))) return res.status(403).json({ error: "Not friends yet" });
+    if (await blockedEither(req.userId, fid)) return res.status(403).json({ error: "Chat unavailable" });
+    const text = safeString(req.body.text, 300).trim();
+    if (!text) return res.status(400).json({ error: "Message cannot be empty" });
+    if (text.length > 300) return res.status(400).json({ error: "Message too long (max 300)" });
+    const r = await pool.query(
+      `INSERT INTO dm_messages (sender_id, receiver_id, text)
+       VALUES ($1,$2,$3) RETURNING id, sender_id, text, created_at`,
+      [req.userId, fid, text]
+    );
+    const row = r.rows[0];
+    res.json({
+      message: {
+        id: row.id,
+        text: row.text,
+        handle: anonymousHandle(req.userId),
+        isMine: true,
+        createdAt: row.created_at ? row.created_at.toISOString() : null,
+      },
+    });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+app.get("/api/me/qrcode", requireAuth, async (req, res) => {
+  try {
+    const r = await pool.query("SELECT qr_token FROM users WHERE id=$1", [req.userId]);
+    const token = (r.rows[0] && r.rows[0].qr_token) || "";
+    res.json({ code: `CAMPUSAI|${req.userId}|${token}` });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+// ---------------------------------------------------------------------------
+// PLACEMENT (on-campus drive feed)
+// ---------------------------------------------------------------------------
+app.get("/api/placement/drives", requireAuth, async (req, res) => {
+  try {
+    const r = await pool.query(
+      "SELECT id, company, role, package, deadline, status FROM placement_drives ORDER BY id"
+    );
+    res.json({ drives: r.rows });
+  } catch (err) {
+    sendServerError(res, err);
+  }
+});
+
+// AI placement question suggester: company + difficulty -> questions with
+// real-world metadata (how often asked, which years, which skills needed).
+app.post("/api/placement/questions", requireAuth, async (req, res) => {
+  try {
+    const c = safeString(req.body.company, 100).trim();
+    if (!c) return res.status(400).json({ error: "Company name is required" });
+    const lvl = ["basic", "intermediate", "hard"].includes(String(req.body.level).toLowerCase())
+      ? String(req.body.level).toLowerCase()
+      : "basic";
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      return res.json({
+        company: c, level: lvl,
+        questions: [
+          { question: `Tell us about yourself and why you want to join ${c}.`, frequency: 90, years: ["2019", "2020", "2021", "2022", "2023", "2024", "2025"], skills: ["Communication"], difficulty: "basic" },
+          { question: `What is your approach to solving a coding problem under time pressure?`, frequency: 75, years: ["2020", "2022", "2023", "2024", "2025"], skills: ["DSA", "Problem Solving"], difficulty: lvl },
+          { question: `Explain a project you built and the challenges you faced.`, frequency: 80, years: ["2019", "2021", "2023", "2025"], skills: ["Project Work", "Presentations"], difficulty: "basic" },
+        ],
+      });
+    }
+    const ai = new GoogleGenAI({ apiKey });
+    const prompt =
+      `You are an Indian campus placement expert. Generate exactly 6 REALISTIC interview questions that ` +
+      `students are actually asked at ${c} (India campus recruitment, fresher level) at ${lvl.toUpperCase()} difficulty ` +
+      `(basic = common/hr/fundamental, intermediate = moderate technical, hard = deep technical/problem solving).\n` +
+      `IMPORTANT constraints:\n` +
+      `- Only questions genuinely associated with ${c}'s hiring process; if unknown, use typical Indian IT recruiter questions for that role.\n` +
+      `- Sort the 6 questions by RELEVANCE (most commonly asked first).\n` +
+      `- For EVERY question give realistic interview-stat metadata:\n` +
+      `  "frequency": integer 1-100 (how often this question appears in real drives, be honest: HR rounds ~70-90, core DSA ~60-85, niche tech lower)\n` +
+      `  "years": array of strings (realistic years the question trended in, e.g. ["2020","2022","2023","2025"])\n` +
+      `  "skills": 1-4 skills a student needs to answer it well (e.g. ["Arrays","Time Complexity"])\n` +
+      `  "difficulty": "basic" | "intermediate" | "hard"\n` +
+      `Return ONLY a JSON array, no markdown, no explanation:\n` +
+      `[{"question":"...","frequency":85,"years":["2020","2022","2024"],"skills":["DSA","Arrays"],"difficulty":"basic"}]`;
+    const response = await Promise.race([
+      ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: [{ role: "user", parts: [{ text: prompt }] }],
+        config: { temperature: 0.4 },
+      }),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("Gemini timed out")), 25000)),
+    ]);
+    const text = response.candidates?.[0]?.content?.parts?.[0]?.text || response.text || "";
+    const m = text.match(/\[[\s\S]*\]/);
+    if (!m) return res.status(502).json({ error: "AI could not generate questions. Please try again." });
+    const parsed = JSON.parse(m[0]);
+    const questions = (Array.isArray(parsed) ? parsed : parsed.questions || [])
+      .slice(0, 8)
+      .map((q) => ({
+        question: String(q.question || "").trim().slice(0, 500),
+        frequency: Math.max(1, Math.min(100, parseInt(q.frequency, 10) || 1)),
+        years: Array.isArray(q.years) ? q.years.filter((y) => typeof y === "string" || typeof y === "number").map(String).slice(0, 10) : [],
+        skills: Array.isArray(q.skills) ? q.skills.map((s) => String(s).trim()).filter(Boolean).slice(0, 8) : [],
+        difficulty: ["basic", "intermediate", "hard"].includes(String(q.difficulty).toLowerCase()) ? String(q.difficulty).toLowerCase() : lvl,
+      }))
+      .filter((q) => q.question)
+      .sort((a, b) => b.frequency - a.frequency);
+    if (!questions.length) return res.status(502).json({ error: "AI returned no questions. Please try again." });
+    res.json({ company: c, level: lvl, questions });
+  } catch (err) {
+    sendServerError(res, err);
+  }
 });
 
 // ---------------------------------------------------------------------------

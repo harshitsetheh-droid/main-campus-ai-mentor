@@ -22,6 +22,12 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ onSuccess, onSwitchT
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const resumeRef = useRef<HTMLInputElement>(null);
+  const errorRef = useRef<HTMLDivElement>(null);
+
+  const showError = (msg: string) => {
+    setError(msg);
+    setTimeout(() => errorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
+  };
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -47,13 +53,13 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ onSuccess, onSwitchT
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    if (form.password !== form.confirm) { setError('Passwords do not match'); return; }
-    if (form.password.length < 8) { setError('Password must be at least 8 characters'); return; }
-    if (!/[A-Z]/.test(form.password)) { setError('Password must contain at least 1 capital letter'); return; }
-    if (!/[a-z]/.test(form.password)) { setError('Password must contain at least 1 small letter'); return; }
-    if (!/[0-9]/.test(form.password)) { setError('Password must contain at least 1 number'); return; }
-    if (!/[^A-Za-z0-9]/.test(form.password)) { setError('Password must contain at least 1 symbol (e.g. !@#$%^&*)'); return; }
-    if (!form.targetRole.trim()) { setError('Set your target role to get better recommendations'); return; }
+    if (form.password !== form.confirm) { showError('Passwords do not match'); return; }
+    if (form.password.length < 8) { showError('Password must be at least 8 characters'); return; }
+    if (!/[A-Z]/.test(form.password)) { showError('Password must contain at least 1 capital letter'); return; }
+    if (!/[a-z]/.test(form.password)) { showError('Password must contain at least 1 small letter'); return; }
+    if (!/[0-9]/.test(form.password)) { showError('Password must contain at least 1 number'); return; }
+    if (!/[^A-Za-z0-9]/.test(form.password)) { showError('Password must contain at least 1 symbol (e.g. !@#$%^&*)'); return; }
+    if (!form.targetRole.trim()) { showError('Set your target role to get better recommendations'); return; }
 
     setIsLoading(true);
     try {
@@ -70,7 +76,7 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ onSuccess, onSwitchT
       }).catch((err: any) => console.error('Profile save (proceed anyway):', err.message));
       onSuccess(res.user);
     } catch (err: any) {
-      setError(err.message || 'Signup failed');
+      showError(err.message || 'Signup failed');
     } finally {
       setIsLoading(false);
     }
@@ -106,7 +112,7 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ onSuccess, onSwitchT
           <p className="text-sm text-[#c6c5d7] mb-8">Set up your academic profile and career targets to get personalized mentoring.</p>
 
           {error && (
-            <div className="mb-4 px-4 py-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-sm font-medium">
+            <div ref={errorRef} className="mb-4 px-4 py-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-sm font-medium scroll-mt-24">
               {error}
             </div>
           )}

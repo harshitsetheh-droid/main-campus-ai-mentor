@@ -264,6 +264,65 @@ export interface ProjectSuggestResponse {
   role: string;
 }
 
+export interface Club {
+  id: number;
+  name: string;
+  description: string;
+  emoji: string;
+  members: number;
+}
+
+export interface ClubMessage {
+  id: number;
+  text: string;
+  handle: string;
+  senderUid?: number;
+  isMine: boolean;
+  createdAt?: string;
+}
+
+export interface Friend {
+  id: number;
+  handle: string;
+}
+
+export interface ChatRequestItem {
+  id: number;
+  fromHandle?: string;
+  toHandle?: string;
+  status?: string;
+  createdAt?: string;
+}
+
+export interface DmMessage {
+  id: number;
+  text: string;
+  handle: string;
+  isMine: boolean;
+  createdAt?: string;
+}
+
+export type FriendRequestResult =
+  | { relation: 'friends'; friend: Friend }
+  | { relation: 'requested' | 'pending'; requestId: number; toHandle?: string };
+
+export interface PlacementDrive {
+  id: number;
+  company: string;
+  role: string;
+  package: string;
+  deadline: string;
+  status: 'open' | 'closed' | 'upcoming';
+}
+
+export interface PlacementQuestion {
+  question: string;
+  frequency: number;
+  years: string[];
+  skills: string[];
+  difficulty: 'basic' | 'intermediate' | 'hard';
+}
+
 export const api = {
   // Auth
   register: (username: string, email: string, password: string, rollNo?: string) =>
@@ -353,4 +412,32 @@ export const api = {
     sendJson<{ id: string; sender: string; text: string }>('/chat/messages', 'POST', { sender, text }),
   mentor: (message: string, history: { sender: string; text: string }[]) =>
     sendJson<{ reply: string }>('/mentor', 'POST', { message, history }),
+
+  // Clubs (anonymous)
+  getClubs: () => getJson<{ clubs: Club[] }>('/clubs'),
+  getClubMessages: (clubId: number, after?: number) =>
+    getJson<{ messages: ClubMessage[] }>(`/club/${clubId}/messages${after ? `?after=${after}` : ''}`),
+  sendClubMessage: (clubId: number, text: string) =>
+    sendJson<{ message: ClubMessage }>(`/club/${clubId}/messages`, 'POST', { text }),
+
+  // Friends & anonymous DMs
+  getFriends: () => getJson<{ friends: Friend[] }>('/friends'),
+  getChatRequests: () => getJson<{ incoming: ChatRequestItem[]; outgoing: ChatRequestItem[] }>('/friends/requests'),
+  sendFriendRequest: (body: { username?: string; uid?: number; code?: string }) =>
+    sendJson<FriendRequestResult>('/friends/request', 'POST', body),
+  acceptFriendRequest: (id: number) => sendJson<{ friend: Friend }>(`/friends/requests/${id}/accept`, 'POST', {}),
+  declineFriendRequest: (id: number) => sendJson<{ success: boolean }>(`/friends/requests/${id}/decline`, 'POST', {}),
+  blockFriend: (id: number) => sendJson<{ success: boolean }>(`/friends/${id}/block`, 'POST', {}),
+  unblockFriend: (id: number) => sendJson<{ success: boolean }>(`/friends/${id}/unblock`, 'POST', {}),
+  getBlockedFriends: () => getJson<{ blocked: Friend[] }>('/friends/blocked'),
+  getDmMessages: (friendId: number, after?: number) =>
+    getJson<{ messages: DmMessage[] }>(`/dms/${friendId}/messages${after ? `?after=${after}` : ''}`),
+  sendDmMessage: (friendId: number, text: string) =>
+    sendJson<{ message: DmMessage }>(`/dms/${friendId}/messages`, 'POST', { text }),
+  getMyQrCode: () => getJson<{ code: string }>('/me/qrcode'),
+
+  // Placement
+  getPlacementDrives: () => getJson<{ drives: PlacementDrive[] }>('/placement/drives'),
+  getPlacementQuestions: (company: string, level: string) =>
+    sendJson<{ company: string; level: string; questions: PlacementQuestion[] }>('/placement/questions', 'POST', { company, level }),
 };
