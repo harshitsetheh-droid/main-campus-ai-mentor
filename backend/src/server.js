@@ -64,7 +64,8 @@ app.use((req, res, next) => {
   if (!origin) return next();
   const host = req.headers.host || "";
   const isSameOrigin = origin === `https://${host}` || origin === `http://${host}`;
-  if (isSameOrigin || allowedOrigins.includes(origin)) {
+  const isLocalDev = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+  if (isSameOrigin || isLocalDev || allowedOrigins.includes(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
     res.setHeader("Access-Control-Allow-Credentials", "true");
     res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
