@@ -223,6 +223,18 @@ CREATE TABLE IF NOT EXISTS clubs (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- Default college clubs (idempotent seed, safe to run repeatedly)
+INSERT INTO clubs (name, description, emoji) VALUES
+  ('DSA Paglu', 'LeetCode grinders ki maha-sabha — problems, patterns aur rank charcha', '🤓'),
+  ('Senior Bitching', 'Seniors ki latest tips, gossip aur college ke andar ki baatein', '😏'),
+  ('Placement Charcha', 'Drives, packages aur interview experiences — sab kuch', '🎯'),
+  ('Exam Ki Tension', 'Assignments, internals aur viva ka darr — yahan sab saath hain', '🥶'),
+  ('Canteen & Chai', 'Khaane-peene ki recommendations aur chai pe charcha', '☕'),
+  ('Hackathon Warriors', 'Hackathons, team building aur all-nighters ke shahid', '💻'),
+  ('Doubt Buddy', 'Coding doubts — koi bhi pucho, anonymously', '🆘'),
+  ('Late Night Memes', 'Raat 2 baje ke memes aur sleepy-heads club', '😴')
+ON CONFLICT (name) DO NOTHING;
+
 -- Anonymous club membership (identity is never exposed)
 CREATE TABLE IF NOT EXISTS club_members (
   id SERIAL PRIMARY KEY,
