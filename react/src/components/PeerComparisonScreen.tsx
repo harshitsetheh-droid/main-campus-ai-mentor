@@ -48,9 +48,9 @@ export const PeerComparisonScreen: React.FC<PeerComparisonScreenProps> = ({ onNa
     }
   };
 
-  // Seed the per-skill topic checklist from each skill's stored mastery so that
-  // opening the expanded view shows previously selected topics as checked.
-  // Existing (already toggled) state is preserved; only unknown skills are added.
+  // Seed the per-skill topic checklist from each skill's stored checked topics
+  // (exact selection saved by the simulator) so the expanded view shows exactly
+  // what was selected. Only unknown skills fall back to a mastery-based guess.
   const syncCheckedTopics = (skills: CompareSkill[]) => {
     if (!skills?.length) return;
     setCheckedTopics((prev) => {
@@ -58,7 +58,11 @@ export const PeerComparisonScreen: React.FC<PeerComparisonScreenProps> = ({ onNa
       let changed = false;
       for (const s of skills) {
         if (next[s.id] !== undefined) continue;
-        next[s.id] = topicsForMastery(s, s.mastery);
+        if (s.checkedTopics && s.checkedTopics.length) {
+          next[s.id] = Object.fromEntries(s.checkedTopics.map((t) => [t, true]));
+        } else {
+          next[s.id] = topicsForMastery(s, s.mastery);
+        }
         changed = true;
       }
       return changed ? next : prev;
@@ -132,7 +136,10 @@ export const PeerComparisonScreen: React.FC<PeerComparisonScreenProps> = ({ onNa
     const next = { ...prev, [topic]: !prev[topic] };
     setCheckedTopics((s) => ({ ...s, [skill.id]: next }));
     try {
-      await api.updateSkill(skill.id, { masteryScore: topicTotalFor(skill, next) });
+      await api.updateSkill(skill.id, {
+        masteryScore: topicTotalFor(skill, next),
+        checkedTopics: Object.keys(next).filter((t) => next[t]),
+      });
       loadCompare(sortBy);
     } catch (err) { console.error(err); }
   };
@@ -146,7 +153,10 @@ export const PeerComparisonScreen: React.FC<PeerComparisonScreenProps> = ({ onNa
     arr.forEach((t) => { next[t] = !allChecked; });
     setCheckedTopics((s) => ({ ...s, [skill.id]: next }));
     try {
-      await api.updateSkill(skill.id, { masteryScore: topicTotalFor(skill, next) });
+      await api.updateSkill(skill.id, {
+        masteryScore: topicTotalFor(skill, next),
+        checkedTopics: Object.keys(next).filter((t) => next[t]),
+      });
       loadCompare(sortBy);
     } catch (err) { console.error(err); }
   };
@@ -338,10 +348,15 @@ export const PeerComparisonScreen: React.FC<PeerComparisonScreenProps> = ({ onNa
     const all = {} as Record<string, boolean>;
     const topics = getTopics(skill);
     Object.values(topics).forEach((arr) => arr.forEach((t) => { all[t] = false; }));
-    // restore previously selected topics from the stored mastery so the modal
-    // reopens showing what was selected last time
-    const fromMastery = topicsForMastery(skill, skill.mastery);
-    Object.keys(fromMastery).forEach((t) => { if (fromMastery[t]) all[t] = true; });
+    // restore the EXACT topics selected last time (stored by the simulator);
+    // fall back to a mastery-based guess only for skills saved before this
+    // feature existed
+    if (skill.checkedTopics && skill.checkedTopics.length) {
+      skill.checkedTopics.forEach((t) => { if (t in all) all[t] = true; });
+    } else {
+      const fromMastery = topicsForMastery(skill, skill.mastery);
+      Object.keys(fromMastery).forEach((t) => { if (fromMastery[t]) all[t] = true; });
+    }
     setSimTopics(all);
     setSimOpenLevel('beginner');
     setSimModalOpen(true);
@@ -373,7 +388,10 @@ export const PeerComparisonScreen: React.FC<PeerComparisonScreenProps> = ({ onNa
     if (!simSelected) return;
     setSavingSim(true);
     try {
-      await api.updateSkill(simSelected.id, { masteryScore: simTotal });
+      await api.updateSkill(simSelected.id, {
+        masteryScore: simTotal,
+        checkedTopics: Object.keys(simTopics).filter((t) => simTopics[t]),
+      });
       setSimModalOpen(false);
       await loadCompare(sortBy);
     } catch (err: any) {

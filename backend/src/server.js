@@ -702,17 +702,21 @@ app.get("/api/profile/skills/:id", requireAuth, async (req, res) => {
 
 app.patch("/api/profile/skills/:id", requireAuth, async (req, res) => {
   try {
-    const { requiredLevel, totalQuestions, questionsSolved, masteryScore } = req.body;
+    const { requiredLevel, totalQuestions, questionsSolved, masteryScore, checkedTopics } = req.body;
     const prevSkill = await pool.query("SELECT name, mastery FROM skills WHERE id=$1 AND user_id=$2", [req.params.id, req.userId]);
+    const topics = Array.isArray(checkedTopics)
+      ? checkedTopics.map((t) => String(t).trim()).filter(Boolean).slice(0, 60)
+      : null;
     await pool.query(
       `UPDATE skills SET
          required_level = COALESCE($3, required_level),
          total_questions = COALESCE($4, total_questions),
          questions_solved = COALESCE($5, questions_solved),
          mastery = COALESCE($6, mastery),
+         checked_topics = COALESCE($7, checked_topics),
          updated_at = NOW()
        WHERE id=$1 AND user_id=$2`,
-      [req.params.id, req.userId, requiredLevel ?? null, totalQuestions ?? null, questionsSolved ?? null, typeof masteryScore === "number" ? Math.round(masteryScore) : null]
+      [req.params.id, req.userId, requiredLevel ?? null, totalQuestions ?? null, questionsSolved ?? null, typeof masteryScore === "number" ? Math.round(masteryScore) : null, topics]
     );
     // if a score came from the skill simulator modal, map it onto checkpoints
     // (mark the top N checkpoints done so group mastery = masteryScore)
@@ -2089,6 +2093,7 @@ app.get("/api/compare", requireAuth, async (req, res) => {
         totalQuestions: s.total_questions,
         status: s.status,
         requiredLevel: s.required_level,
+        checkedTopics: s.checked_topics || [],
         updatedAt: s.updated_at ? s.updated_at.toISOString() : null,
       };
     });

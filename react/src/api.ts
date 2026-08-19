@@ -361,6 +361,7 @@ export interface CompareSkill {
   totalQuestions: number;
   status: string;
   requiredLevel: number;
+  checkedTopics?: string[];
   updatedAt?: string | null;
 }
 
