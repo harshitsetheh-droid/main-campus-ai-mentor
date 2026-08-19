@@ -130,9 +130,9 @@ export const FriendsScreen: React.FC<Props> = ({ onNavigate, initialDmTarget }) 
                   setFriends((prev) => (prev.some((f) => f.id === res.friend.id) ? prev : [...prev, res.friend]));
                   showToast(`Already friends with ${res.friend.handle}`);
                 } else if (res.relation === 'requested') {
-                  showToast(`Request sent to ${res.toHandle} — approval ke baad friend`);
+                  showToast(`Request sent to ${res.toHandle} — friend after approval`);
                 } else {
-                  showToast('Request already pending — unka approval wait karo');
+                  showToast('Request already pending — waiting for their approval');
                 }
                 refreshAll();
               })
@@ -143,7 +143,7 @@ export const FriendsScreen: React.FC<Props> = ({ onNavigate, initialDmTarget }) 
         }
       }, 180);
     } catch (err) {
-      setCamError('Camera access denied ya unavailable. Isliye username search ya QR share use karo.');
+      setCamError('Camera access denied or unavailable. Use username search or QR share instead.');
       setScanning(false);
     }
   };
@@ -218,7 +218,7 @@ export const FriendsScreen: React.FC<Props> = ({ onNavigate, initialDmTarget }) 
         showToast(`Request sent to ${res.toHandle}`);
         refreshAll();
       } else {
-        showToast('Request already pending — unka approval wait karo');
+        showToast('Request already pending — waiting for their approval');
       }
       setSearchName('');
     } catch (err: any) {
@@ -233,7 +233,7 @@ export const FriendsScreen: React.FC<Props> = ({ onNavigate, initialDmTarget }) 
       const res = await api.acceptFriendRequest(id);
       setFriends((prev) => [...prev, res.friend]);
       refreshAll();
-      showToast(`${res.friend.handle} se ab tum chat kar sakte ho`);
+      showToast(`You can now chat with ${res.friend.handle}`);
     } catch (err: any) {
       showToast(err.message || 'Could not accept');
     }
@@ -243,7 +243,7 @@ export const FriendsScreen: React.FC<Props> = ({ onNavigate, initialDmTarget }) 
     try {
       await api.declineFriendRequest(id);
       refreshAll();
-      showToast('Request rejected — sender 5 min baad phir se bhej sakta hai');
+      showToast('Request rejected — sender can try again after 5 minutes');
     } catch (err: any) {
       showToast(err.message || 'Could not decline');
     }
@@ -267,7 +267,7 @@ export const FriendsScreen: React.FC<Props> = ({ onNavigate, initialDmTarget }) 
     try {
       await api.unblockFriend(id);
       setBlocked((prev) => prev.filter((b) => b.id !== id));
-      showToast('Unblocked — ab phir se request send kar sakte ho');
+      showToast('Unblocked — you can send a request again');
     } catch (err: any) {
       showToast(err.message || 'Could not unblock');
     }
@@ -318,9 +318,9 @@ export const FriendsScreen: React.FC<Props> = ({ onNavigate, initialDmTarget }) 
             {dmMessages.length === 0 && (
               <div className="h-full flex flex-col items-center justify-center text-center px-6">
                 <UserCheck className="w-10 h-10 text-[#3cd7ff] mb-3" />
-                <p className="text-sm font-semibold text-white">Ab tum dono friends ho</p>
+                <p className="text-sm font-semibold text-white">You're now friends</p>
                 <p className="text-xs text-[#c6c5d7] mt-1 max-w-xs">
-                  Message bhejna shuru karo — {activeDm.handle} ko bhi tumhara naam nahi dikhega, sirf anonymous handle.
+                  Start messaging — {activeDm.handle} won't see your name either, only your anonymous handle.
                 </p>
               </div>
             )}
@@ -376,7 +376,7 @@ export const FriendsScreen: React.FC<Props> = ({ onNavigate, initialDmTarget }) 
               type="text"
               value={dmText}
               onChange={(e) => setDmText(e.target.value)}
-              placeholder="Anonymous message bhejo — sirf text + emoji…"
+              placeholder="Send an anonymous message — text + emoji only…"
               maxLength={300}
               className="flex-1 min-w-0 bg-[#13131b] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-[#6b6b7d] focus:outline-none focus:border-[#c0c1ff]"
             />
@@ -401,7 +401,7 @@ export const FriendsScreen: React.FC<Props> = ({ onNavigate, initialDmTarget }) 
                 <h3 className="font-extrabold text-white">Block {blockTarget.handle}?</h3>
               </div>
               <p className="text-sm text-[#c6c5d7]">
-                Block karne par: friendship remove, messages band, aur woh tumhe dobara request nahi bhej sakta. Tum kabhi bhi unblock kar sakte ho.
+                Blocking removes the friendship, stops messages, and they can't send you another request. You can unblock anytime.
               </p>
               <div className="mt-5 flex gap-3">
                 <button
@@ -444,11 +444,11 @@ export const FriendsScreen: React.FC<Props> = ({ onNavigate, initialDmTarget }) 
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight flex items-center gap-3 flex-wrap">
             Friends
             <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 rounded-full normal-case">
-              <ShieldCheck className="w-3.5 h-3.5" /> Naam kabhi nahi
+              <ShieldCheck className="w-3.5 h-3.5" /> Names never shown
             </span>
           </h1>
           <p className="text-xs sm:text-sm text-[#c6c5d7] mt-1 max-w-2xl">
-            Chat request bhejo, approve hote hi dono friend list mein — aur bar-baar request nahi. Original naam kabhi nahi dikhega, QR scan se bhi request turant jati hai.
+            Send a chat request — once approved, you're both in each other's friend list, no repeat requests. Real names are never shown, and QR scans send the request instantly.
           </p>
         </div>
       </section>
@@ -480,9 +480,9 @@ export const FriendsScreen: React.FC<Props> = ({ onNavigate, initialDmTarget }) 
           {friends.length === 0 && blocked.length === 0 && (
             <div className="glass-panel rounded-2xl p-8 text-center">
               <Users className="w-10 h-10 text-[#3cd7ff] mx-auto mb-3" />
-              <p className="text-sm font-semibold text-white">Abhi koi friend nahi</p>
+              <p className="text-sm font-semibold text-white">No friends yet</p>
               <p className="text-xs text-[#c6c5d7] mt-1 max-w-md mx-auto">
-                Club chat mein kisi message par PM dabao, username se request bhejo, ya QR scan karo — approve hote hi friend list ban jayegi.
+                Tap PM on any club message, send a request by username, or scan a QR — once approved, they appear in your friend list.
               </p>
             </div>
           )}
@@ -546,13 +546,13 @@ export const FriendsScreen: React.FC<Props> = ({ onNavigate, initialDmTarget }) 
       {tab === 'requests' && (
         <div className="mt-5 space-y-5">
           <form onSubmit={sendRequestByName} className="glass-panel rounded-2xl p-4">
-            <p className="text-xs font-bold text-[#c6c5d7] uppercase tracking-wider mb-2">Username se request bhejo</p>
+            <p className="text-xs font-bold text-[#c6c5d7] uppercase tracking-wider mb-2">Send request by username</p>
             <div className="flex gap-2">
               <input
                 type="text"
                 value={searchName}
                 onChange={(e) => setSearchName(e.target.value)}
-                placeholder="Username likho (e.g. rahul_joshi)"
+                placeholder="Enter username (e.g. rahul_joshi)"
                 maxLength={60}
                 className="flex-1 min-w-0 bg-[#13131b] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-[#6b6b7d] focus:outline-none focus:border-[#c0c1ff]"
               />
@@ -565,14 +565,14 @@ export const FriendsScreen: React.FC<Props> = ({ onNavigate, initialDmTarget }) 
               </button>
             </div>
             <p className="text-[10px] text-[#7e7d94] mt-2">
-              Approval ke baad dono ek dusre ki friend list mein — bar-baar request nahi bhejni padegi.
+              After approval you're both in each other's friend list — no need to send repeated requests.
             </p>
           </form>
 
           {incoming.length === 0 && outgoing.length === 0 && (
             <div className="glass-panel rounded-2xl p-8 text-center">
               <UserPlus className="w-10 h-10 text-[#3cd7ff] mx-auto mb-3" />
-              <p className="text-sm font-semibold text-white">Koi pending request nahi</p>
+              <p className="text-sm font-semibold text-white">No pending requests</p>
             </div>
           )}
 
@@ -586,8 +586,8 @@ export const FriendsScreen: React.FC<Props> = ({ onNavigate, initialDmTarget }) 
                       {r.fromHandle?.split(' ')[1] || '?'}
                     </div>
                     <div className="min-w-0">
-                      <p className="font-bold text-white text-sm truncate">{r.fromHandle} chahta hai tumse chat kare</p>
-                      <p className="text-[11px] text-[#7e7d94]">Approve karne par friend list mein add</p>
+                      <p className="font-bold text-white text-sm truncate">{r.fromHandle} wants to chat with you</p>
+                      <p className="text-[11px] text-[#7e7d94]">Adds them to your friend list when approved</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
@@ -620,7 +620,7 @@ export const FriendsScreen: React.FC<Props> = ({ onNavigate, initialDmTarget }) 
                   <div className="min-w-0">
                     <p className="font-bold text-white text-sm truncate">{r.toHandle}</p>
                     <p className="text-[11px] text-amber-300 font-semibold">
-                      {r.status === 'pending' ? 'Pending — approval ka wait' : 'Rejected · 5 min cooldown'}
+                      {r.status === 'pending' ? 'Pending — waiting for approval' : 'Rejected · 5 min cooldown'}
                     </p>
                   </div>
                 </div>
@@ -634,7 +634,7 @@ export const FriendsScreen: React.FC<Props> = ({ onNavigate, initialDmTarget }) 
       {tab === 'qr' && (
         <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="glass-panel rounded-2xl p-6 text-center">
-            <p className="text-xs font-bold text-[#c6c5d7] uppercase tracking-wider mb-3">Mera QR Code</p>
+            <p className="text-xs font-bold text-[#c6c5d7] uppercase tracking-wider mb-3">My QR Code</p>
             <div className="w-52 h-52 mx-auto rounded-2xl overflow-hidden border-4 border-white/20 bg-white p-2">
               {qrDataUrl ? (
                 <img src={qrDataUrl} alt="My QR code" className="w-full h-full rounded-lg" />
@@ -643,13 +643,13 @@ export const FriendsScreen: React.FC<Props> = ({ onNavigate, initialDmTarget }) 
               )}
             </div>
             <p className="text-[11px] text-[#7e7d94] mt-3">
-              Ye QR unique + fixed hai. Koi bhi scan kare to tumhe chat request automatically chali jayegi — tumhara naam kabhi nahi dikhega.
+              This QR is unique and permanent. Anyone who scans it automatically sends you a chat request — your name is never shown.
             </p>
           </div>
           <div className="glass-panel rounded-2xl p-6 flex flex-col">
-            <p className="text-xs font-bold text-[#c6c5d7] uppercase tracking-wider mb-3">Kisi aur ka QR scan karo</p>
+            <p className="text-xs font-bold text-[#c6c5d7] uppercase tracking-wider mb-3">Scan someone else's QR</p>
             <p className="text-sm text-[#c6c5d7] mb-4">
-              Camera kholo aur dusre bande ka QR dikhao — request turant bhej jayegi. Approve karte hi friend list mein add.
+              Open the camera and point it at their QR — the request is sent instantly and they appear in your friend list once approved.
             </p>
             <button
               onClick={startScan}
@@ -666,7 +666,7 @@ export const FriendsScreen: React.FC<Props> = ({ onNavigate, initialDmTarget }) 
                 <canvas ref={canvasRef} className="hidden" />
                 <div className="absolute inset-0 border-4 border-[#3cd7ff]/70 rounded-2xl pointer-events-none" />
                 <div className="absolute bottom-2 inset-x-0 text-center text-[11px] font-bold text-white bg-black/50 py-1">
-                  QR ko frame ke andar dikhao…
+                  Hold the QR inside the frame…
                 </div>
               </div>
             )}
@@ -691,7 +691,7 @@ export const FriendsScreen: React.FC<Props> = ({ onNavigate, initialDmTarget }) 
               <h3 className="font-extrabold text-white">Block {blockTarget.handle}?</h3>
             </div>
             <p className="text-sm text-[#c6c5d7]">
-              Block karne par: friendship remove, messages band, aur woh tumhe dobara request nahi bhej sakta. Tum kabhi bhi unblock kar sakte ho.
+              Blocking removes the friendship, stops messages, and they can't send you another request. You can unblock anytime.
             </p>
             <div className="mt-5 flex gap-3">
               <button
