@@ -146,6 +146,64 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNavigate, onOpen
         </div>
       </section>
 
+      {/* SEO Content Section — visible text for crawlers */}
+      <section className="relative z-10 py-16 px-4 max-w-5xl mx-auto">
+        <div className="space-y-12">
+          {/* What is CampusAI Mentor */}
+          <div>
+            <h2 className="text-2xl font-bold text-white mb-4">What is CampusAI Mentor?</h2>
+            <p className="text-[#c6c5d7] leading-relaxed text-sm sm:text-base">
+              CampusAI Mentor is a free AI-powered academic and career mentorship platform designed exclusively for college students in India. Whether you are preparing for placements, building your resume, tracking skills, or exploring anonymous peer discussions — CampusAI Mentor provides personalized guidance powered by advanced AI models, completely free of cost. Students from universities across India use CampusAI Mentor to prepare for company placements, analyze their resumes for ATS scoring, compare skills with peers, and get AI-driven career roadmaps tailored to their target roles.
+            </p>
+          </div>
+
+          {/* How It Works */}
+          <div>
+            <h2 className="text-2xl font-bold text-white mb-4">How Does CampusAI Mentor Work?</h2>
+            <ol className="list-decimal list-inside text-[#c6c5d7] leading-relaxed space-y-3 text-sm sm:text-base">
+              <li><strong className="text-white">Create Your Free Profile</strong> — Sign up with your college email, set your target role, target company, and current semester. Your profile powers all AI recommendations.</li>
+              <li><strong className="text-white">Upload Your Resume</strong> — Get an instant ATS score, keyword analysis, strengths breakdown, and personalized improvement suggestions — all powered by AI resume analysis.</li>
+              <li><strong className="text-white">Track Your Skills</strong> — Add technical skills like DSA, React, Python, and track your progress with mastery percentages, checkpoints, and peer benchmarks.</li>
+              <li><strong className="text-white">Chat with AI Mentor</strong> — Ask your personal AI mentor anything — career advice, placement strategies, skill roadmaps, interview prep, or project guidance — available 24/7.</li>
+              <li><strong className="text-white">Compare with Peers</strong> — See how your skills stack up against other students targeting the same roles. Get ranked and discover skill gaps.</li>
+              <li><strong className="text-white">Apply for Placements</strong> — Browse placement drives, apply directly, and track your application status from applied to selected.</li>
+              <li><strong className="text-white">Join Anonymous Clubs</strong> — Participate in college-wide anonymous discussion clubs for DSA, placement tips, doubts, memes, and more.</li>
+            </ol>
+          </div>
+
+          {/* FAQ Section */}
+          <div>
+            <h2 className="text-2xl font-bold text-white mb-6">Frequently Asked Questions</h2>
+            <div className="space-y-6">
+              <div className="border border-white/10 rounded-xl p-5">
+                <h3 className="text-base font-bold text-white mb-2">Is CampusAI Mentor really free?</h3>
+                <p className="text-[#c6c5d7] text-sm leading-relaxed">Yes, CampusAI Mentor is 100% free for all college students. There are no hidden charges, no premium tiers, and no subscription required. All features including AI mentor chat, resume analysis, skill tracking, peer comparison, and anonymous clubs are completely free.</p>
+              </div>
+              <div className="border border-white/10 rounded-xl p-5">
+                <h3 className="text-base font-bold text-white mb-2">What is the AI Mentor feature?</h3>
+                <p className="text-[#c6c5d7] text-sm leading-relaxed">The AI Mentor is a personalized career advisor powered by Google Gemini AI. It analyzes your profile — skills, resume, projects, certificates, and target role — to provide tailored career advice, skill roadmaps, placement preparation strategies, and interview tips specific to your career goals.</p>
+              </div>
+              <div className="border border-white/10 rounded-xl p-5">
+                <h3 className="text-base font-bold text-white mb-2">How does the resume ATS analysis work?</h3>
+                <p className="text-[#c6c5d7] text-sm leading-relaxed">Upload your resume PDF and CampusAI Mentor's AI analyzes it against ATS (Applicant Tracking System) standards. You receive an ATS score out of 100, keyword detection results, strengths analysis, and specific actionable improvements to boost your resume's chances of passing automated screening.</p>
+              </div>
+              <div className="border border-white/10 rounded-xl p-5">
+                <h3 className="text-base font-bold text-white mb-2">What are anonymous student clubs?</h3>
+                <p className="text-[#c6c5d7] text-sm leading-relaxed">Anonymous clubs are college-wide discussion groups where students can chat without revealing their identity. Topics include DSA discussions, placement preparation, exam tips, memes, doubts, and more. Your identity is never exposed — only an anonymous handle is shown.</p>
+              </div>
+              <div className="border border-white/10 rounded-xl p-5">
+                <h3 className="text-base font-bold text-white mb-2">Can I compare my skills with other students?</h3>
+                <p className="text-[#c6c5d7] text-sm leading-relaxed">Yes! The peer comparison feature lets you compare your skill levels and progress with other students targeting similar roles. You can see cohort averages, top 10% scores, and discover which skills you need to improve for your dream job.</p>
+              </div>
+              <div className="border border-white/10 rounded-xl p-5">
+                <h3 className="text-base font-bold text-white mb-2">Is my data private and secure?</h3>
+                <p className="text-[#c6c5d7] text-sm leading-relaxed">Absolutely. CampusAI Mentor uses encrypted data storage, secure authentication, and role-based access control. Your personal data is never shared with third parties. Club chats are fully anonymous — even administrators cannot see who sent which message.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="relative z-10 py-16 px-4 max-w-4xl mx-auto text-center">
         <div className="glass-card relative overflow-hidden rounded-3xl p-6 sm:p-14 border border-[#5b5fef]/30">
@@ -175,25 +233,46 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNavigate, onOpen
 
           <div className="flex items-center gap-6">
             <a
-              href="#"
+              href="#dashboard"
               onClick={(e) => { e.preventDefault(); onNavigate('dashboard', 'none'); }}
               className="hover:text-white transition-colors"
             >
               <span>Dashboard</span>
             </a>
             <a
-              href="#"
+              href="#chat"
               onClick={(e) => { e.preventDefault(); onNavigate('chat', 'none'); }}
               className="hover:text-white transition-colors"
             >
               <span>AI Mentor</span>
             </a>
             <a
-              href="#"
+              href="#profile"
               onClick={(e) => { e.preventDefault(); onNavigate('profile', 'none'); }}
               className="hover:text-white transition-colors"
             >
               <span>Profile</span>
+            </a>
+            <a
+              href="#clubs"
+              onClick={(e) => { e.preventDefault(); onNavigate('clubs', 'none'); }}
+              className="hover:text-white transition-colors"
+            >
+              <span>Clubs</span>
+            </a>
+            <a
+              href="#placement"
+              onClick={(e) => { e.preventDefault(); onNavigate('placement', 'none'); }}
+              className="hover:text-white transition-colors"
+            >
+              <span>Placement</span>
+            </a>
+            <a
+              href="#compare"
+              onClick={(e) => { e.preventDefault(); onNavigate('compare', 'none'); }}
+              className="hover:text-white transition-colors"
+            >
+              <span>Compare</span>
             </a>
           </div>
 

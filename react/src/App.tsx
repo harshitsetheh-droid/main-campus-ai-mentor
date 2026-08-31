@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ScreenType } from './types';
 import { Navbar } from './components/Navbar';
 import { LandingScreen } from './components/LandingScreen';
@@ -19,8 +19,54 @@ import { SignupScreen } from './components/SignupScreen';
 import { motion, AnimatePresence, Transition } from 'motion/react';
 import { AuthUser, api } from './api';
 
+const SEO_TITLES: Record<string, string> = {
+  landing: 'CampusAI Mentor — Free AI Career & Academic Mentor for College Students',
+  profile: 'My Profile — CampusAI Mentor',
+  dashboard: 'Dashboard — CampusAI Mentor',
+  resume: 'Resume ATS Analysis — CampusAI Mentor',
+  chat: 'AI Mentor Chat — CampusAI Mentor',
+  compare: 'Peer Skill Comparison — CampusAI Mentor',
+  certificates: 'Certificates & Verification — CampusAI Mentor',
+  projects: 'Projects Tracker — CampusAI Mentor',
+  clubs: 'Anonymous Student Clubs — CampusAI Mentor',
+  placement: 'Placement Preparation — CampusAI Mentor',
+  friends: 'Friends & Anonymous Chat — CampusAI Mentor',
+  admin: 'Admin Panel — CampusAI Mentor',
+};
+
+const SEO_DESCRIPTIONS: Record<string, string> = {
+  landing: 'Free AI-powered career and academic mentor for college students. Personalized skill roadmaps, resume analysis, peer comparison, placement prep and anonymous clubs.',
+  clubs: 'Join anonymous student clubs at your college. Discuss DSA, placement tips, memes and doubts — all anonymously.',
+  placement: 'College placement preparation: company-wise question banks, drive applications, resume tips and AI-powered interview prep.',
+  chat: 'Chat with your AI Mentor for personalized career advice, skill roadmaps, resume improvement and placement preparation strategies.',
+  compare: 'Compare your skills and progress with peers. See where you rank in DSA, web development, and other technical skills.',
+  resume: 'Upload your resume for ATS score analysis, keyword detection, and AI-powered improvement suggestions.',
+};
+
+const SCREEN_TO_HASH: Record<string, string> = {
+  landing: '',
+  profile: 'profile',
+  dashboard: 'dashboard',
+  resume: 'resume',
+  chat: 'chat',
+  compare: 'compare',
+  certificates: 'certificates',
+  projects: 'projects',
+  clubs: 'clubs',
+  placement: 'placement',
+  friends: 'friends',
+  admin: 'admin',
+};
+
+const HASH_TO_SCREEN: Record<string, ScreenType> = Object.fromEntries(
+  Object.entries(SCREEN_TO_HASH).filter(([_, v]) => v).map(([k, v]) => [v, k as ScreenType])
+);
+
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState<ScreenType>('landing');
+  const [currentScreen, setCurrentScreen] = useState<ScreenType>(() => {
+    const h = window.location.hash.replace('#/', '').replace('#', '');
+    return HASH_TO_SCREEN[h] || 'landing';
+  });
   const [transitionType, setTransitionType] = useState<'none' | 'push' | 'slide_up'>('none');
   const [isWalkthroughOpen, setIsWalkthroughOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
@@ -83,6 +129,33 @@ export default function App() {
       .catch(() => setPhotoUrl(''));
   }, [user, currentScreen]);
 
+  // SEO: update document.title and URL hash on every screen change
+  useEffect(() => {
+    document.title = SEO_TITLES[currentScreen] || SEO_TITLES.landing;
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc && SEO_DESCRIPTIONS[currentScreen]) {
+      metaDesc.setAttribute('content', SEO_DESCRIPTIONS[currentScreen]);
+    }
+    const hash = SCREEN_TO_HASH[currentScreen];
+    if (hash !== undefined) {
+      const newUrl = hash ? `#${hash}` : window.location.pathname + window.location.search;
+      if (window.location.hash !== newUrl) {
+        window.history.pushState({}, '', newUrl);
+      }
+    }
+  }, [currentScreen]);
+
+  // SEO: handle browser back/forward for hash routes
+  useEffect(() => {
+    const onHashChange = () => {
+      const h = window.location.hash.replace('#/', '').replace('#', '');
+      const screen = HASH_TO_SCREEN[h];
+      if (screen && screen !== currentScreen) setCurrentScreen(screen);
+    };
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, [currentScreen]);
+
   const handleLogout = () => {
     sessionStorage.removeItem('campusai_token');
     sessionStorage.removeItem('campusai_user');
@@ -93,12 +166,12 @@ export default function App() {
     setCurrentScreen('landing');
   };
 
-  const handleNavigate = (screen: ScreenType, transition: 'none' | 'push' | 'slide_up' = 'none', dmTarget?: { id: number; handle: string }) => {
+  const handleNavigate = useCallback((screen: ScreenType, transition: 'none' | 'push' | 'slide_up' = 'none', dmTarget?: { id: number; handle: string }) => {
     if (dmTarget) setDmTarget(dmTarget);
     setTransitionType(transition);
     setCurrentScreen(screen);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  }, []);
 
   // Auth gate: show login/signup until logged in
   if (!user) {
